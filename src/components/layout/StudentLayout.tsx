@@ -52,7 +52,7 @@ export const StudentLayout: React.FC<StudentLayoutProps> = ({
   const handleLogout = async () => {
     setShowUserMenu(false);
     await logout();
-    navigate('/login', { replace: true });
+    navigate('/', { replace: true });
   };
 
   const sidebarContent = (

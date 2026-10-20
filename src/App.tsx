@@ -309,47 +309,12 @@ export default function App() {
             {/* Admin Base Route */}
             <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
 
-            {/* Protected Student Routes */}
-            <Route
-              path="/"
-              element={
-                <StudentRoute>
-                  <StudentPortal view="dashboard" />
-                </StudentRoute>
-              }
-            />
-            <Route
-              path="/submit-feedback"
-              element={
-                <StudentRoute>
-                  <StudentPortal view="submit" />
-                </StudentRoute>
-              }
-            />
-            <Route
-              path="/my-submissions"
-              element={
-                <StudentRoute>
-                  <StudentPortal view="submissions" />
-                </StudentRoute>
-              }
-            />
-            <Route
-              path="/notifications"
-              element={
-                <StudentRoute>
-                  <StudentPortal view="notifications" />
-                </StudentRoute>
-              }
-            />
-            <Route
-              path="/profile"
-              element={
-                <StudentRoute>
-                  <StudentPortal view="profile" />
-                </StudentRoute>
-              }
-            />
+            {/* Student & Public Redressal Routes */}
+            <Route path="/" element={<StudentPortal view="dashboard" />} />
+            <Route path="/submit-feedback" element={<StudentPortal view="submit" />} />
+            <Route path="/my-submissions" element={<StudentPortal view="submissions" />} />
+            <Route path="/notifications" element={<StudentPortal view="notifications" />} />
+            <Route path="/profile" element={<StudentPortal view="profile" />} />
 
             {/* Protected Administrator Routes */}
             <Route

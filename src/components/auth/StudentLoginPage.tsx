@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useSystem } from '../../context/SystemContext';
 import {
@@ -170,6 +170,15 @@ export const StudentLoginPage: React.FC = () => {
               </svg>
               <span>{isLoading ? 'Connecting to Google Workspace...' : 'Sign in with Google (OAuth)'}</span>
             </button>
+
+            <div className="pt-2 text-center">
+              <Link
+                to="/"
+                className="text-xs font-medium text-ink-secondary hover:text-brand-700 transition-colors inline-flex items-center gap-1.5"
+              >
+                &larr; Return to Portal Home (Browse without sign-in)
+              </Link>
+            </div>
           </div>
         </div>
       </div>

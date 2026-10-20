@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useSystem } from '../../context/SystemContext';
+import { useAuth } from '../../context/AuthContext';
 import { EmptyState } from '../common/EmptyState';
 import { Button } from '../common/Button';
-import { Bell, CheckCircle2, AlertTriangle, ArrowRight, Clock } from 'lucide-react';
+import { CollegeLoginModal } from '../auth/CollegeLoginModal';
+import { Bell, CheckCircle2, AlertTriangle, ArrowRight, Clock, Mail, Lock } from 'lucide-react';
 
 interface StudentNotificationsViewProps {
   onSelectSubmission: (id: string) => void;
@@ -11,7 +13,42 @@ interface StudentNotificationsViewProps {
 export const StudentNotificationsView: React.FC<StudentNotificationsViewProps> = ({
   onSelectSubmission,
 }) => {
+  const { user } = useAuth();
   const { notifications, markNotificationRead, markAllNotificationsRead } = useSystem();
+  const [showLoginModal, setShowLoginModal] = useState(false);
+
+  if (!user) {
+    return (
+      <div className="max-w-3xl space-y-6">
+        <CollegeLoginModal
+          isOpen={showLoginModal}
+          onClose={() => setShowLoginModal(false)}
+        />
+        <div className="bg-white border border-border rounded-xl p-8 sm:p-12 text-center space-y-4 shadow-xs max-w-xl mx-auto">
+          <div className="w-14 h-14 rounded-full bg-brand-50 text-brand-700 flex items-center justify-center mx-auto border border-brand-200">
+            <Lock className="w-7 h-7" />
+          </div>
+          <div className="space-y-1.5">
+            <h3 className="text-lg font-semibold text-ink-primary">
+              Sign In to View Notifications
+            </h3>
+            <p className="text-xs text-ink-secondary max-w-md mx-auto leading-relaxed">
+              Ticket status alerts, administrator replies, and investigation updates are privately delivered to your official college account.
+            </p>
+          </div>
+          <div className="pt-3">
+            <button
+              onClick={() => setShowLoginModal(true)}
+              className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl bg-brand-700 hover:bg-brand-800 text-white text-xs font-semibold shadow-xs transition-all cursor-pointer"
+            >
+              <Mail className="w-4 h-4" />
+              <span>Login with College Mail</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-3xl space-y-6">

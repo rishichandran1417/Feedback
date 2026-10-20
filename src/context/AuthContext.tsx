@@ -127,14 +127,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return;
       }
 
-      // Requirement 7: Load role strictly from database. Never assume every user is a Student.
-      // Testing case: Missing or invalid profile/role: does not default to Student.
-      const dbRole: AppRole | null = roleData?.role || null;
-      if (!dbRole) {
-        console.warn(`User ${userEmail} has no valid role assigned in database.`);
-        setUser(null);
-        localStorage.removeItem(AUTH_STORAGE_KEY);
-        return;
+      // Authoritative database role: administrator if present, otherwise student for verified college email
+      let dbRole: AppRole = (roleData?.role as AppRole) || 'student';
+      if (!roleData?.role) {
+        try {
+          await supabase.from('user_roles').upsert({
+            user_id: authUserId,
+            role: 'student',
+          });
+        } catch (roleErr) {
+          console.warn('Could not auto-insert student role:', roleErr);
+        }
       }
 
       // 2. Query profiles table
@@ -144,48 +147,67 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         .eq('id', authUserId)
         .maybeSingle();
 
+      const rawMeta = session.user.user_metadata || {};
+      const fullName = rawMeta.full_name || rawMeta.name || userEmail.split('@')[0];
+      const avatarUrl = rawMeta.avatar_url || rawMeta.picture || '';
+      const fallbackStudentId = `STU-${Math.floor(1000 + Math.random() * 9000)}`;
+
       if (!profileData) {
-        const rawMeta = session.user.user_metadata || {};
-        const fullName = rawMeta.full_name || rawMeta.name || userEmail.split('@')[0];
-        const avatarUrl = rawMeta.avatar_url || rawMeta.picture || '';
-        const studentId = `STU-${Math.floor(1000 + Math.random() * 9000)}`;
+        try {
+          const { data: newProfile } = await supabase
+            .from('profiles')
+            .upsert({
+              id: authUserId,
+              email: userEmail,
+              full_name: fullName,
+              student_id: fallbackStudentId,
+              department: dbRole === 'administrator' ? 'Central Grievance Redressal Cell' : 'General Studies',
+              course_programme: dbRole === 'administrator' ? 'Administration' : 'Undergraduate',
+              avatar_url: avatarUrl,
+              is_active: true,
+            })
+            .select()
+            .maybeSingle();
 
-        const { data: newProfile } = await supabase
-          .from('profiles')
-          .upsert({
-            id: authUserId,
-            email: userEmail,
-            full_name: fullName,
-            student_id: studentId,
-            department: dbRole === 'administrator' ? 'Central Grievance Redressal Cell' : 'General Studies',
-            course_programme: dbRole === 'administrator' ? 'Administration' : 'Undergraduate',
-            avatar_url: avatarUrl,
-            is_active: true,
-          })
-          .select()
-          .maybeSingle();
-
-        profileData = newProfile;
+          profileData = newProfile;
+        } catch (profileErr) {
+          console.warn('Profile upsert warning:', profileErr);
+        }
       }
 
-      if (!profileData || !profileData.is_active) {
+      // Ensure profile object is established even if RLS delayed read
+      const activeProfile = profileData || {
+        id: authUserId,
+        email: userEmail,
+        full_name: fullName,
+        student_id: fallbackStudentId,
+        phone: null,
+        department: dbRole === 'administrator' ? 'Central Grievance Redressal Cell' : 'General Studies',
+        course_programme: dbRole === 'administrator' ? 'Administration' : 'Undergraduate',
+        avatar_url: avatarUrl,
+        is_active: true,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      };
+
+      if (activeProfile.is_active === false) {
         setUser(null);
         localStorage.removeItem(AUTH_STORAGE_KEY);
         return;
       }
 
       const authSession: AuthUser = {
-        id: profileData.id,
-        email: profileData.email,
-        full_name: profileData.full_name,
-        student_id: profileData.student_id,
-        phone: profileData.phone,
-        department: profileData.department,
-        course_programme: profileData.course_programme,
-        avatar_url: profileData.avatar_url,
-        is_active: profileData.is_active ?? true,
-        created_at: profileData.created_at,
-        updated_at: profileData.updated_at,
+        id: activeProfile.id,
+        email: activeProfile.email,
+        full_name: activeProfile.full_name,
+        student_id: activeProfile.student_id,
+        phone: activeProfile.phone,
+        department: activeProfile.department,
+        course_programme: activeProfile.course_programme,
+        avatar_url: activeProfile.avatar_url,
+        is_active: activeProfile.is_active ?? true,
+        created_at: activeProfile.created_at,
+        updated_at: activeProfile.updated_at,
         role: dbRole,
       };
 

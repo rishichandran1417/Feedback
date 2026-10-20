@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useSystem } from '../../context/SystemContext';
+import { CollegeLoginModal } from '../auth/CollegeLoginModal';
 import {
   User,
   GraduationCap,
@@ -15,30 +16,57 @@ import {
 export const StudentProfileAndHelp: React.FC = () => {
   const { user } = useAuth();
   const { settings, departments } = useSystem();
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
   return (
     <div className="max-w-4xl space-y-6 sm:space-y-8">
+      <CollegeLoginModal
+        isOpen={showLoginModal}
+        onClose={() => setShowLoginModal(false)}
+      />
+
       {/* Student Profile Overview */}
       <div className="bg-white border border-border rounded-xl p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 shadow-xs">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 sm:pb-6 border-b border-border">
-          <div className="flex items-center gap-3.5 sm:gap-4 min-w-0">
-            <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-brand-50 text-brand-700 font-bold text-lg sm:text-xl flex items-center justify-center border border-brand-200 shrink-0">
-              {user?.full_name?.charAt(0) || 'S'}
+        {!user ? (
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 sm:pb-6 border-b border-border">
+            <div className="flex items-center gap-3.5 sm:gap-4 min-w-0">
+              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-slate-100 text-slate-500 font-bold text-lg sm:text-xl flex items-center justify-center border border-border shrink-0">
+                <User className="w-6 h-6 text-slate-400" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <h2 className="text-base sm:text-lg font-semibold text-ink-primary">Student / Campus Visitor</h2>
+                <p className="text-xs text-ink-secondary">Sign in with your @cet.ac.in college email to verify your student identity and record submissions.</p>
+              </div>
             </div>
-            <div className="min-w-0 flex-1">
-              <h2 className="text-base sm:text-lg font-semibold text-ink-primary truncate">{user?.full_name}</h2>
-              <p className="text-xs text-ink-secondary truncate font-mono">{user?.email}</p>
-              <div className="flex flex-wrap items-center gap-2 mt-1.5">
-                <span className="text-[11px] font-mono font-medium px-2 py-0.5 rounded bg-surface border border-border text-brand-700">
-                  {user?.student_id || 'ID Pending'}
-                </span>
-                <span className="text-[11px] text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 font-medium">
-                  Verified College Identity
-                </span>
+            <button
+              onClick={() => setShowLoginModal(true)}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-brand-700 hover:bg-brand-800 text-white text-xs font-semibold shadow-xs transition-all cursor-pointer self-start sm:self-auto shrink-0"
+            >
+              <Mail className="w-4 h-4" />
+              <span>Login with College Mail</span>
+            </button>
+          </div>
+        ) : (
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 sm:pb-6 border-b border-border">
+            <div className="flex items-center gap-3.5 sm:gap-4 min-w-0">
+              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-brand-50 text-brand-700 font-bold text-lg sm:text-xl flex items-center justify-center border border-brand-200 shrink-0">
+                {user?.full_name?.charAt(0) || 'S'}
+              </div>
+              <div className="min-w-0 flex-1">
+                <h2 className="text-base sm:text-lg font-semibold text-ink-primary truncate">{user?.full_name}</h2>
+                <p className="text-xs text-ink-secondary truncate font-mono">{user?.email}</p>
+                <div className="flex flex-wrap items-center gap-2 mt-1.5">
+                  <span className="text-[11px] font-mono font-medium px-2 py-0.5 rounded bg-surface border border-border text-brand-700">
+                    {user?.student_id || 'ID Pending'}
+                  </span>
+                  <span className="text-[11px] text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 font-medium">
+                    Verified College Identity
+                  </span>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* College Grievance Policy & FAQs */}

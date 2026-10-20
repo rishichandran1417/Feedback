@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth, isAllowedCollegeEmail } from '../../context/AuthContext';
 import { isUsingRealSupabase, supabase } from '../../lib/supabase';
+import { AppRole } from '../../types/database';
 import {
   ShieldAlert,
   AlertCircle,
@@ -121,14 +122,17 @@ export const AuthCallback: React.FC = () => {
           return;
         }
 
-        // 5. Requirement 7: Missing or invalid profile/role: does NOT default to Student
+        // 5. Determine or provision role for verified eligible user
+        let assignedRole: AppRole = (roleData?.role as AppRole) || 'student';
         if (!roleData?.role) {
-          console.warn(`User ${userEmail} has no valid role assigned in database.`);
-          await supabase.auth.signOut();
-          localStorage.removeItem('ait_auth_session_v2');
-          localStorage.removeItem('ait_auth_session');
-          navigate('/login?error=no_role', { replace: true });
-          return;
+          try {
+            await supabase.from('user_roles').upsert({
+              user_id: authUser.id,
+              role: 'student',
+            });
+          } catch (roleErr) {
+            console.warn('Could not auto-insert student role:', roleErr);
+          }
         }
 
         // 6. Ensure profile exists for eligible user
@@ -144,17 +148,21 @@ export const AuthCallback: React.FC = () => {
           const avatarUrl = rawMeta.avatar_url || rawMeta.picture || '';
           const studentId = `STU-${Math.floor(1000 + Math.random() * 9000)}`;
 
-          // Create initial profile record matching verified database role
-          await supabase.from('profiles').upsert({
-            id: authUser.id,
-            email: userEmail,
-            full_name: fullName,
-            student_id: studentId,
-            department: roleData.role === 'administrator' ? 'Central Grievance Redressal Cell' : 'General Studies',
-            course_programme: roleData.role === 'administrator' ? 'Administration' : 'Undergraduate',
-            avatar_url: avatarUrl,
-            is_active: true,
-          });
+          try {
+            // Create initial profile record matching verified database role
+            await supabase.from('profiles').upsert({
+              id: authUser.id,
+              email: userEmail,
+              full_name: fullName,
+              student_id: studentId,
+              department: assignedRole === 'administrator' ? 'Central Grievance Redressal Cell' : 'General Studies',
+              course_programme: assignedRole === 'administrator' ? 'Administration' : 'Undergraduate',
+              avatar_url: avatarUrl,
+              is_active: true,
+            });
+          } catch (profileErr) {
+            console.warn('Profile upsert warning in callback:', profileErr);
+          }
         }
 
         // 7. Refresh AuthContext state
@@ -163,12 +171,12 @@ export const AuthCallback: React.FC = () => {
 
         // 8. Redirect authorized administrator to /admin/dashboard, student to dashboard
         setTimeout(() => {
-          if (roleData?.role === 'administrator') {
+          if (assignedRole === 'administrator') {
             navigate('/admin/dashboard', { replace: true });
           } else {
             navigate('/', { replace: true });
           }
-        }, 500);
+        }, 400);
       } catch (err: any) {
         console.error('OAuth callback handler error:', err);
         setStatus('error');

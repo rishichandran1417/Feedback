@@ -12,6 +12,7 @@ import {
   PlusCircle,
   ArrowRight,
   MessageSquare,
+  ShieldCheck,
 } from 'lucide-react';
 
 interface StudentDashboardProps {
@@ -55,7 +56,9 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
             {user?.full_name ? `Welcome back, ${user.full_name.split(' ')[0]}` : 'Welcome to voIcE'}
           </h2>
           <p className="text-sm text-ink-secondary mt-1 max-w-xl">
-            Track your submitted campus grievances, reply to faculty inquiries, and submit new feedback directly to the responsible departments.
+            {user
+              ? 'Track your submitted campus grievances, reply to faculty inquiries, and submit new feedback directly to the responsible departments.'
+              : 'Submit academic or campus grievances, provide suggestions, and track college resolutions with verified institutional security.'}
           </p>
         </div>
 
@@ -68,6 +71,24 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
           Submit Feedback
         </Button>
       </div>
+
+      {/* Guest Information Banner if not logged in */}
+      {!user && (
+        <div className="bg-brand-50/60 border border-brand-200 rounded-xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-brand-900">
+          <div className="flex items-center gap-2.5">
+            <ShieldCheck className="w-5 h-5 text-brand-700 shrink-0" />
+            <span>
+              You can browse categories, policies, and draft submissions freely. Login with your official college mail (<strong>@cet.ac.in</strong>) is only required when you submit feedback.
+            </span>
+          </div>
+          <button
+            onClick={() => onNavigate('submit')}
+            className="text-xs font-semibold px-3.5 py-1.5 rounded-lg bg-brand-700 text-white hover:bg-brand-800 shrink-0 self-start sm:self-auto cursor-pointer"
+          >
+            Start Feedback &rarr;
+          </button>
+        </div>
+      )}
 
       {/* Action Required Alert Banner if awaiting response */}
       {awaitingStudentCount > 0 && (
