@@ -8,9 +8,6 @@ import {
   RotateCcw,
   ShieldCheck,
   AlertCircle,
-  Sparkles,
-  ArrowRight,
-  Lock,
 } from 'lucide-react';
 
 export const StudentLoginPage: React.FC = () => {
@@ -173,25 +170,7 @@ export const StudentLoginPage: React.FC = () => {
               </svg>
               <span>{isLoading ? 'Connecting to Google Workspace...' : 'Sign in with Google (OAuth)'}</span>
             </button>
-
-            <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-ink-secondary space-y-1.5">
-              <div className="flex items-center justify-between text-[11px]">
-                <span className="font-semibold text-ink-primary">Authorized Domain:</span>
-                <span className="font-mono font-bold text-brand-700 px-2 py-0.5 rounded bg-brand-50 border border-brand-200">
-                  {allowedDomain}
-                </span>
-              </div>
-              <p className="text-[11px] text-ink-muted leading-relaxed">
-                You will be prompted with Google's account chooser (<code className="font-mono text-ink-primary font-semibold">prompt=select_account</code>) to select your official college account.
-              </p>
-            </div>
           </div>
-        </div>
-
-        {/* Security & Confidentiality Footer */}
-        <div className="text-center text-[11px] text-ink-muted flex items-center justify-center gap-1.5">
-          <Lock className="w-3.5 h-3.5 text-ink-muted" />
-          <span>Institutional OAuth 2.0 • Row-Level Security • Verified Domain Protection</span>
         </div>
       </div>
     </div>
