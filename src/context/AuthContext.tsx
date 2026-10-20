@@ -89,16 +89,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         // Fallback local persistent engine
         const saved = localStorage.getItem(AUTH_STORAGE_KEY);
         if (saved) {
-          setUser(JSON.parse(saved));
-        } else {
-          // Default initial session: Student Arjun Patel
-          const profiles = MockStorage.getProfiles();
-          const student = profiles.find((p) => p.email.includes('arjun'));
-          if (student) {
-            const defaultSession: AuthUser = { ...student, role: 'student' };
-            setUser(defaultSession);
-            localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(defaultSession));
+          try {
+            setUser(JSON.parse(saved));
+          } catch {
+            setUser(null);
+            localStorage.removeItem(AUTH_STORAGE_KEY);
           }
+        } else {
+          setUser(null);
         }
       }
     } catch (e) {
