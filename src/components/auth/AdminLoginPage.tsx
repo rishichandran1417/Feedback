@@ -14,7 +14,7 @@ import {
 } from 'lucide-react';
 
 export const AdminLoginPage: React.FC = () => {
-  const { user, loginAsAdmin, loginWithGoogle, logout } = useAuth();
+  const { user, loginAsAdmin, loginWithGoogle, logout, syncSession } = useAuth();
   const navigate = useNavigate();
 
   const [email, setEmail] = useState('');
@@ -60,6 +60,22 @@ export const AdminLoginPage: React.FC = () => {
     }
   };
 
+  const [isRefreshingRole, setIsRefreshingRole] = useState(false);
+  const [roleCheckMessage, setRoleCheckMessage] = useState<string | null>(null);
+
+  const handleRecheckRole = async () => {
+    setIsRefreshingRole(true);
+    setRoleCheckMessage(null);
+    try {
+      await syncSession();
+      setRoleCheckMessage("Checked database: role is currently 'student'. If you were just granted administrator privileges in Supabase, wait a few seconds and try again.");
+    } catch {
+      setRoleCheckMessage("Unable to connect to database to verify role.");
+    } finally {
+      setIsRefreshingRole(false);
+    }
+  };
+
   // If currently authenticated as a student, display clear Access Denied notice
   if (user && user.role === 'student') {
     return (
@@ -78,7 +94,22 @@ export const AdminLoginPage: React.FC = () => {
                 The institutional grievance administration panel is strictly restricted to authorized college officers, committee chairs, and faculty administrators. Student accounts cannot access this portal.
               </p>
             </div>
+
+            {roleCheckMessage && (
+              <div className="p-3 rounded-lg bg-amber-50 border border-amber-200 text-xs text-amber-800 text-left">
+                {roleCheckMessage}
+              </div>
+            )}
+
             <div className="pt-2 space-y-2.5">
+              <Button
+                variant="secondary"
+                onClick={handleRecheckRole}
+                isLoading={isRefreshingRole}
+                className="w-full text-xs border-brand-300 text-brand-800 hover:bg-brand-50"
+              >
+                Re-check Administrator Role
+              </Button>
               <Button
                 variant="primary"
                 onClick={() => navigate('/')}
@@ -98,6 +129,10 @@ export const AdminLoginPage: React.FC = () => {
                 <LogOut className="w-4 h-4 mr-2" />
                 Sign Out
               </Button>
+            </div>
+
+            <div className="border-t border-slate-100 pt-3 text-[11px] text-slate-400 leading-normal">
+              Project owners: run <code className="bg-slate-100 px-1 py-0.5 rounded text-slate-700 font-mono text-[10px]">SELECT public.grant_admin_role('{user.email}');</code> in Supabase SQL Editor, then click Re-check.
             </div>
           </div>
         </div>

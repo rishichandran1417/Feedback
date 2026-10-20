@@ -12,12 +12,14 @@ import {
   FileText,
   AlertCircle,
   RefreshCw,
+  UserCheck,
 } from 'lucide-react';
 
 export const UserManagement: React.FC = () => {
   const { user: currentAdmin } = useAuth();
   const { submissions } = useSystem();
   const [profiles, setProfiles] = useState<Profile[]>([]);
+  const [userRoles, setUserRoles] = useState<Record<string, string>>({});
   const [searchTerm, setSearchTerm] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
@@ -26,12 +28,22 @@ export const UserManagement: React.FC = () => {
     setIsLoading(true);
     try {
       if (isUsingRealSupabase && supabase) {
-        const { data, error } = await supabase
-          .from('profiles')
-          .select('*')
-          .order('created_at', { ascending: false });
-        if (!error && data) {
-          setProfiles(data);
+        const [{ data: profs, error: profsError }, { data: roles, error: rolesError }] =
+          await Promise.all([
+            supabase.from('profiles').select('*').order('created_at', { ascending: false }),
+            supabase.from('user_roles').select('user_id, role'),
+          ]);
+
+        if (roles && !rolesError) {
+          const rMap: Record<string, string> = {};
+          roles.forEach((r) => {
+            rMap[r.user_id] = r.role;
+          });
+          setUserRoles(rMap);
+        }
+
+        if (profs && !profsError) {
+          setProfiles(profs);
           return;
         }
       }
@@ -60,12 +72,54 @@ export const UserManagement: React.FC = () => {
     return submissions.filter((s) => s.student_id === userId).length;
   };
 
-  const isUserAdmin = (email: string) => {
-    return email.includes('dean') || email.includes('admin') || email.includes('grievance');
+  const getUserRole = (userId: string, email: string) => {
+    if (userRoles[userId]) return userRoles[userId];
+    if (email.includes('dean') || email.includes('admin')) return 'administrator';
+    return 'student';
+  };
+
+  const handleToggleRole = async (p: Profile) => {
+    const currentRole = getUserRole(p.id, p.email);
+    const newRole = currentRole === 'administrator' ? 'student' : 'administrator';
+
+    if (p.id === currentAdmin?.id && newRole === 'student') {
+      setFeedback({ type: 'error', text: 'You cannot revoke your own active administrator role.' });
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      if (isUsingRealSupabase && supabase) {
+        const { error } = await supabase
+          .from('user_roles')
+          .upsert({ user_id: p.id, role: newRole }, { onConflict: 'user_id' });
+
+        if (error) {
+          setFeedback({ type: 'error', text: `Failed to update role in database: ${error.message}` });
+          return;
+        }
+
+        await supabase
+          .from('profiles')
+          .update({
+            department: newRole === 'administrator' ? 'Central Grievance Redressal Cell' : 'General Studies',
+            course_programme: newRole === 'administrator' ? 'Administration' : 'Undergraduate',
+          })
+          .eq('id', p.id);
+      }
+
+      setUserRoles((prev) => ({ ...prev, [p.id]: newRole }));
+      setFeedback({
+        type: 'success',
+        text: `Role for ${p.email} successfully updated to ${newRole === 'administrator' ? 'Faculty Administrator' : 'Student'}.`,
+      });
+      await loadProfiles();
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleToggleActive = async (p: Profile) => {
-    // Prevent deactivating own account
     if (p.id === currentAdmin?.id) {
       setFeedback({ type: 'error', text: 'You cannot deactivate your own active administrator account.' });
       return;
@@ -98,7 +152,7 @@ export const UserManagement: React.FC = () => {
               : 'bg-rose-50 text-rose-800 border border-rose-200'
           }`}
         >
-          <AlertCircle className="w-4 h-4 shrink-0" />
+          <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
           <span>{feedback.text}</span>
         </div>
       )}
@@ -107,9 +161,9 @@ export const UserManagement: React.FC = () => {
       <div className="bg-white border border-border rounded-xl p-5 space-y-4">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
-            <h3 className="text-base font-semibold text-ink-primary">College User Registry</h3>
+            <h3 className="text-base font-semibold text-ink-primary">College User Registry & Roles</h3>
             <p className="text-xs text-ink-secondary mt-0.5">
-              Verified college accounts, role assignments, and student participation.
+              Verified college accounts, authoritative database roles from <code className="font-mono text-brand-700">user_roles</code>, and activity status.
             </p>
           </div>
 
@@ -149,7 +203,7 @@ export const UserManagement: React.FC = () => {
             <p className="text-xs text-ink-secondary max-w-md mx-auto leading-relaxed">
               {searchTerm
                 ? 'No registered users match your search query.'
-                : 'All mock dummy users have been removed. When students and faculty sign in via Google Workspace / College Mail in the top right, their official records will appear here automatically.'}
+                : 'When students and faculty sign in via Google Workspace (@cet.ac.in), their official records will appear here automatically.'}
             </p>
           </div>
         ) : (
@@ -158,16 +212,17 @@ export const UserManagement: React.FC = () => {
               <thead className="bg-surface border-b border-border text-ink-secondary uppercase tracking-wider font-semibold">
                 <tr>
                   <th className="py-3 px-4">User Details</th>
-                  <th className="py-3 px-4">Official Email</th>
-                  <th className="py-3 px-4">Role</th>
+                  <th className="py-3 px-4">Official College Email</th>
+                  <th className="py-3 px-4">Database Role</th>
                   <th className="py-3 px-4">Submissions</th>
                   <th className="py-3 px-4">Account Status</th>
-                  <th className="py-3 px-4 text-right">Actions</th>
+                  <th className="py-3 px-4 text-right">Administrative Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
                 {filtered.map((p) => {
-                  const adminRole = isUserAdmin(p.email);
+                  const role = getUserRole(p.id, p.email);
+                  const isAdmin = role === 'administrator';
                   const subCount = getSubmissionsCount(p.id);
 
                   return (
@@ -189,10 +244,10 @@ export const UserManagement: React.FC = () => {
                       <td className="py-3.5 px-4 font-mono text-ink-secondary">{p.email}</td>
 
                       <td className="py-3.5 px-4 whitespace-nowrap">
-                        {adminRole ? (
+                        {isAdmin ? (
                           <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-brand-50 text-brand-700 border border-brand-200">
                             <Shield className="w-3 h-3 text-brand-700" />
-                            Faculty Admin
+                            Administrator
                           </span>
                         ) : (
                           <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-surface text-ink-secondary border border-border">
@@ -218,12 +273,25 @@ export const UserManagement: React.FC = () => {
                         </span>
                       </td>
 
-                      <td className="py-3.5 px-4 text-right whitespace-nowrap">
+                      <td className="py-3.5 px-4 text-right whitespace-nowrap space-x-1.5">
+                        <Button
+                          size="sm"
+                          variant="secondary"
+                          onClick={() => handleToggleRole(p)}
+                          disabled={isLoading || p.id === currentAdmin?.id}
+                          className="text-[11px] py-1 px-2.5"
+                          title={isAdmin ? 'Demote to Student role' : 'Promote to Administrator role'}
+                        >
+                          <UserCheck className="w-3 h-3 mr-1" />
+                          {isAdmin ? 'Demote to Student' : 'Grant Admin Role'}
+                        </Button>
+
                         <Button
                           size="sm"
                           variant="secondary"
                           onClick={() => handleToggleActive(p)}
-                          disabled={p.id === currentAdmin?.id}
+                          disabled={isLoading || p.id === currentAdmin?.id}
+                          className="text-[11px] py-1 px-2.5"
                         >
                           {p.is_active ? 'Suspend' : 'Reactivate'}
                         </Button>
