@@ -3,7 +3,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useSystem } from '../../context/SystemContext';
 import { Modal } from '../common/Modal';
 import { Button } from '../common/Button';
-import { Mail, AlertCircle, ShieldCheck, CheckCircle2 } from 'lucide-react';
+import { AlertCircle, ShieldCheck } from 'lucide-react';
 
 interface CollegeLoginModalProps {
   isOpen: boolean;
@@ -11,11 +11,9 @@ interface CollegeLoginModalProps {
 }
 
 export const CollegeLoginModal: React.FC<CollegeLoginModalProps> = ({ isOpen, onClose }) => {
-  const { loginWithGoogle, loginAsStudent, loginAsAdmin } = useAuth();
+  const { loginWithGoogle } = useAuth();
   const { settings } = useSystem();
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
@@ -25,43 +23,11 @@ export const CollegeLoginModal: React.FC<CollegeLoginModalProps> = ({ isOpen, on
     setErrorMsg(null);
     setIsLoading(true);
     try {
-      const res = await loginWithGoogle(email || undefined);
+      const res = await loginWithGoogle();
       if (res.success) {
         onClose();
       } else {
         setErrorMsg(res.error || 'Failed to authenticate via Google.');
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleDirectSignIn = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setErrorMsg(null);
-
-    const cleanEmail = email.trim().toLowerCase();
-    if (!cleanEmail) {
-      setErrorMsg('Please enter your college email address.');
-      return;
-    }
-
-    if (!cleanEmail.endsWith(allowedDomain) && !cleanEmail.endsWith('@gmail.com') && !cleanEmail.includes('college')) {
-      setErrorMsg(`Please sign in with your official college mail domain (${allowedDomain}).`);
-      return;
-    }
-
-    setIsLoading(true);
-    try {
-      const isAdmin = cleanEmail.includes('dean') || cleanEmail.includes('admin');
-      const res = isAdmin
-        ? await loginAsAdmin(cleanEmail, password || 'adminSecureKey2026')
-        : await loginAsStudent(cleanEmail, password || 'collegePassword123');
-
-      if (res.success) {
-        onClose();
-      } else {
-        setErrorMsg(res.error || 'Authentication failed. Please verify credentials.');
       }
     } finally {
       setIsLoading(false);
@@ -73,7 +39,7 @@ export const CollegeLoginModal: React.FC<CollegeLoginModalProps> = ({ isOpen, on
       isOpen={isOpen}
       onClose={onClose}
       title="Login with College Mail"
-      description={`Sign in with your official college account (${allowedDomain} or Google workspace).`}
+      description={`Sign in with your official college account (${allowedDomain} or Google Workspace).`}
     >
       <div className="space-y-5 py-2">
         {errorMsg && (
@@ -89,9 +55,9 @@ export const CollegeLoginModal: React.FC<CollegeLoginModalProps> = ({ isOpen, on
             type="button"
             onClick={handleGoogleSignIn}
             disabled={isLoading}
-            className="w-full flex items-center justify-center gap-3 py-2.5 px-4 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-ink-primary font-medium text-xs shadow-xs transition-all hover:border-slate-400 disabled:opacity-50"
+            className="w-full flex items-center justify-center gap-3 py-3 px-4 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-ink-primary font-semibold text-sm shadow-xs transition-all hover:border-slate-400 disabled:opacity-50 cursor-pointer"
           >
-            <svg className="w-4 h-4" viewBox="0 0 24 24">
+            <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24">
               <path
                 fill="#4285F4"
                 d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -109,57 +75,25 @@ export const CollegeLoginModal: React.FC<CollegeLoginModalProps> = ({ isOpen, on
                 d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
               />
             </svg>
-            <span>Continue with Google Workspace (Gmail)</span>
+            <span>{isLoading ? 'Connecting to Google Workspace...' : 'Continue with Google Workspace (Gmail)'}</span>
           </button>
         </div>
 
-        <div className="relative flex items-center justify-center">
-          <div className="border-t border-border w-full" />
-          <span className="bg-white px-3 text-[11px] text-ink-muted uppercase tracking-wider font-semibold">
-            Or sign in with email
-          </span>
+        <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-ink-secondary space-y-1.5">
+          <div className="flex items-center gap-2 font-semibold text-ink-primary">
+            <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
+            <span>Secure Student Authentication</span>
+          </div>
+          <p className="text-[11px] text-ink-muted leading-relaxed">
+            Use your college-issued Google email or registered personal Gmail. Grievances and real-time status updates will be delivered directly to your authenticated mailbox.
+          </p>
         </div>
 
-        <form onSubmit={handleDirectSignIn} className="space-y-3.5 text-xs">
-          <div>
-            <label className="block font-semibold text-ink-primary mb-1">
-              Official College Email Address *
-            </label>
-            <div className="relative">
-              <Mail className="w-4 h-4 text-ink-muted absolute left-3 top-2.5" />
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder={`yourname${allowedDomain}`}
-                className="w-full pl-9 pr-3 py-2 rounded-lg border border-border focus:outline-none focus:ring-2 focus:ring-brand-500 font-mono text-xs"
-                required
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="block font-semibold text-ink-primary mb-1">
-              Password / Access Key <span className="font-normal text-ink-muted">(Optional for first-time login)</span>
-            </label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-              className="w-full px-3 py-2 rounded-lg border border-border focus:outline-none focus:ring-2 focus:ring-brand-500 text-xs"
-            />
-          </div>
-
-          <div className="pt-2 flex justify-end gap-2">
-            <Button type="button" variant="secondary" size="sm" onClick={onClose}>
-              Cancel
-            </Button>
-            <Button type="submit" variant="primary" size="sm" isLoading={isLoading}>
-              Sign In to Portal
-            </Button>
-          </div>
-        </form>
+        <div className="pt-2 flex justify-end">
+          <Button type="button" variant="secondary" size="sm" onClick={onClose}>
+            Close
+          </Button>
+        </div>
       </div>
     </Modal>
   );
