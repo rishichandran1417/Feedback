@@ -15,7 +15,7 @@ export const StudentNotificationsView: React.FC<StudentNotificationsViewProps> =
 
   return (
     <div className="max-w-3xl space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
         <div>
           <h3 className="text-base font-semibold text-ink-primary">Your Notification Feed</h3>
           <p className="text-xs text-ink-secondary mt-0.5">
@@ -29,6 +29,7 @@ export const StudentNotificationsView: React.FC<StudentNotificationsViewProps> =
             size="sm"
             leftIcon={<CheckCircle2 className="w-3.5 h-3.5" />}
             onClick={markAllNotificationsRead}
+            className="self-start sm:self-auto shrink-0"
           >
             Mark all read
           </Button>
@@ -49,11 +50,11 @@ export const StudentNotificationsView: React.FC<StudentNotificationsViewProps> =
                 markNotificationRead(notif.id);
                 if (notif.submission_id) onSelectSubmission(notif.submission_id);
               }}
-              className={`p-4 sm:p-5 flex items-start justify-between gap-4 cursor-pointer transition-colors hover:bg-surface/60 ${
+              className={`p-3.5 sm:p-5 flex items-start justify-between gap-3 sm:gap-4 cursor-pointer transition-colors hover:bg-surface/60 ${
                 !notif.is_read ? 'bg-brand-50/30' : ''
               }`}
             >
-              <div className="flex items-start gap-3.5">
+              <div className="flex items-start gap-3 sm:gap-3.5 min-w-0 flex-1">
                 <div
                   className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 mt-0.5 ${
                     notif.type === 'warning'
@@ -72,14 +73,14 @@ export const StudentNotificationsView: React.FC<StudentNotificationsViewProps> =
                   )}
                 </div>
 
-                <div className="space-y-1">
+                <div className="space-y-1 min-w-0 flex-1">
                   <div className="flex items-center gap-2">
-                    <h4 className="text-sm font-semibold text-ink-primary">{notif.title}</h4>
+                    <h4 className="text-sm font-semibold text-ink-primary break-words">{notif.title}</h4>
                     {!notif.is_read && (
-                      <span className="w-2 h-2 rounded-full bg-brand-700 inline-block" />
+                      <span className="w-2 h-2 rounded-full bg-brand-700 inline-block shrink-0" />
                     )}
                   </div>
-                  <p className="text-xs text-ink-secondary leading-relaxed">{notif.message}</p>
+                  <p className="text-xs text-ink-secondary leading-relaxed break-words">{notif.message}</p>
                   <p className="text-[11px] text-ink-muted pt-0.5">
                     {new Date(notif.created_at).toLocaleString([], {
                       dateStyle: 'medium',

@@ -51,7 +51,7 @@ export const DepartmentManagement: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
         <div>
           <h3 className="text-base font-semibold text-ink-primary">College Departments</h3>
           <p className="text-xs text-ink-secondary mt-0.5">
@@ -59,12 +59,12 @@ export const DepartmentManagement: React.FC = () => {
           </p>
         </div>
 
-        <Button size="sm" leftIcon={<Plus className="w-4 h-4" />} onClick={handleOpenCreate}>
+        <Button size="sm" leftIcon={<Plus className="w-4 h-4" />} onClick={handleOpenCreate} className="self-start sm:self-auto shrink-0">
           New Department
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-4">
         {departments.map((dept) => (
           <div
             key={dept.id}
@@ -122,7 +122,7 @@ export const DepartmentManagement: React.FC = () => {
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label className="block text-xs font-semibold text-ink-primary mb-1">
                   Code *

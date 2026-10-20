@@ -70,7 +70,7 @@ export const SubmissionDetailModal: React.FC<SubmissionDetailModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
       {/* Backdrop */}
       <div
         className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs transition-opacity"
@@ -78,40 +78,40 @@ export const SubmissionDetailModal: React.FC<SubmissionDetailModalProps> = ({
       />
 
       {/* Modal Dialog */}
-      <div className="relative w-full max-w-3xl bg-white rounded-xl border border-border shadow-2xl z-10 my-8 overflow-hidden animate-in zoom-in-95 duration-200">
+      <div className="relative w-full max-w-3xl max-h-[calc(100dvh-2rem)] flex flex-col bg-white rounded-xl border border-border shadow-2xl z-10 my-auto overflow-hidden animate-in zoom-in-95 duration-200">
         {/* Header */}
-        <div className="p-6 border-b border-border flex items-start justify-between bg-surface/40">
-          <div className="space-y-1.5">
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="font-mono text-xs font-bold text-brand-700 bg-brand-50 px-2.5 py-0.5 rounded border border-brand-200">
+        <div className="p-4 sm:p-6 border-b border-border flex items-start justify-between bg-surface/40 shrink-0">
+          <div className="space-y-1.5 pr-2 min-w-0">
+            <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+              <span className="font-mono text-xs font-bold text-brand-700 bg-brand-50 px-2 py-0.5 rounded border border-brand-200">
                 {sub.reference_number}
               </span>
               <TypeBadge type={sub.submission_type} />
               <PriorityBadge priority={sub.priority} />
               <StatusBadge status={sub.status} />
             </div>
-            <h2 className="text-lg sm:text-xl font-semibold text-ink-primary tracking-tight">
+            <h2 className="text-base sm:text-xl font-semibold text-ink-primary tracking-tight break-words">
               {sub.subject}
             </h2>
           </div>
 
           <button
             onClick={onClose}
-            className="text-ink-secondary hover:text-ink-primary p-1.5 rounded-lg hover:bg-surface transition-colors"
+            className="text-ink-secondary hover:text-ink-primary p-1.5 rounded-lg hover:bg-surface transition-colors shrink-0"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Scrollable Content */}
-        <div className="p-6 space-y-8 max-h-[75vh] overflow-y-auto">
+        <div className="p-4 sm:p-6 space-y-6 sm:space-y-8 flex-1 overflow-y-auto">
           {/* Metadata Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-4 rounded-xl bg-surface border border-border text-xs">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-4 p-3.5 sm:p-4 rounded-xl bg-surface border border-border text-xs">
             <div>
-              <span className="text-ink-muted block text-[11px] uppercase tracking-wider font-semibold">
+              <span className="text-ink-muted block text-[10px] sm:text-[11px] uppercase tracking-wider font-semibold">
                 Submission Date
               </span>
-              <span className="font-medium text-ink-primary mt-0.5 block">
+              <span className="font-medium text-ink-primary mt-0.5 block truncate">
                 {new Date(sub.created_at).toLocaleDateString()}
               </span>
             </div>

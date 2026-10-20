@@ -234,8 +234,8 @@ export const SubmissionAdminDrawer: React.FC<SubmissionAdminDrawerProps> = ({
         {/* Drawer Window */}
         <div className="relative w-full max-w-2xl h-full bg-white border-l border-border shadow-2xl z-10 flex flex-col overflow-hidden animate-in slide-in-from-right duration-200">
           {/* Drawer Header */}
-          <div className="p-5 border-b border-border flex items-start justify-between bg-surface/50">
-            <div className="space-y-1">
+          <div className="p-4 sm:p-5 border-b border-border flex items-start justify-between gap-3 bg-surface/50">
+            <div className="space-y-1.5 min-w-0">
               <div className="flex flex-wrap items-center gap-2">
                 <span className="font-mono text-xs font-bold text-brand-700 bg-brand-50 px-2 py-0.5 rounded border border-brand-200">
                   {sub.reference_number}
@@ -244,19 +244,20 @@ export const SubmissionAdminDrawer: React.FC<SubmissionAdminDrawerProps> = ({
                 <PriorityBadge priority={sub.priority} />
                 <StatusBadge status={sub.status} />
               </div>
-              <h2 className="text-base font-semibold text-ink-primary">{sub.subject}</h2>
+              <h2 className="text-base sm:text-lg font-semibold text-ink-primary break-words">{sub.subject}</h2>
             </div>
 
             <button
               onClick={onClose}
-              className="text-ink-secondary hover:text-ink-primary p-1 rounded-lg hover:bg-surface transition-colors"
+              className="text-ink-secondary hover:text-ink-primary p-1 rounded-lg hover:bg-surface transition-colors shrink-0"
+              aria-label="Close drawer"
             >
               <X className="w-5 h-5" />
             </button>
           </div>
 
           {/* Drawer Body Scroll */}
-          <div className="flex-1 overflow-y-auto p-6 space-y-8 text-xs">
+          <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6 sm:space-y-8 text-xs">
             {feedbackMsg && (
               <div
                 className={`p-3 rounded-lg text-xs flex items-center gap-2 ${
@@ -271,20 +272,20 @@ export const SubmissionAdminDrawer: React.FC<SubmissionAdminDrawerProps> = ({
             )}
 
             {/* Student Identity Card */}
-            <div className="p-4 rounded-xl bg-surface border border-border space-y-2">
+            <div className="p-3.5 sm:p-4 rounded-xl bg-surface border border-border space-y-2">
               <div className="flex items-center justify-between">
                 <span className="font-semibold text-ink-primary uppercase tracking-wider text-[11px]">
                   Student Identity Details
                 </span>
               </div>
-              <div className="grid grid-cols-2 gap-3 text-ink-secondary pt-1">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3 text-ink-secondary pt-1">
                 <div>
                   <span className="text-ink-muted block text-[10px] uppercase">Student Name:</span>
                   <span className="font-medium text-ink-primary">{sub.student_name}</span>
                 </div>
                 <div>
                   <span className="text-ink-muted block text-[10px] uppercase">College Email:</span>
-                  <span className="font-medium text-ink-primary">{sub.student_email || 'Confidential'}</span>
+                  <span className="font-medium text-ink-primary break-all">{sub.student_email || 'Confidential'}</span>
                 </div>
               </div>
             </div>
@@ -466,16 +467,16 @@ export const SubmissionAdminDrawer: React.FC<SubmissionAdminDrawerProps> = ({
               </span>
               <div className="border border-border rounded-xl divide-y divide-border bg-white overflow-hidden">
                 {sub.status_history?.map((hist) => (
-                  <div key={hist.id} className="p-3 flex items-start justify-between gap-3">
-                    <div className="space-y-0.5">
-                      <div className="flex items-center gap-2">
+                  <div key={hist.id} className="p-3 flex flex-col sm:flex-row sm:items-start justify-between gap-1.5 sm:gap-3">
+                    <div className="space-y-0.5 min-w-0">
+                      <div className="flex flex-wrap items-center gap-2">
                         <StatusBadge status={hist.new_status} size="sm" />
                         <span className="text-[11px] text-ink-secondary">
                           by <strong>{hist.changed_by_name || 'Admin'}</strong>
                         </span>
                       </div>
                       {hist.remarks && (
-                        <p className="text-ink-primary font-medium pl-1 text-[11px]">{hist.remarks}</p>
+                        <p className="text-ink-primary font-medium pl-1 text-[11px] break-words">{hist.remarks}</p>
                       )}
                     </div>
                     <span className="text-[10px] text-ink-muted shrink-0">
@@ -501,7 +502,7 @@ export const SubmissionAdminDrawer: React.FC<SubmissionAdminDrawerProps> = ({
                   return (
                     <div
                       key={msg.id}
-                      className={`p-3.5 rounded-xl border space-y-1 ${
+                      className={`p-3.5 rounded-xl border space-y-1.5 ${
                         isInternal
                           ? 'bg-amber-50/60 border-amber-300'
                           : isStudent
@@ -509,19 +510,19 @@ export const SubmissionAdminDrawer: React.FC<SubmissionAdminDrawerProps> = ({
                           : 'bg-surface border-border'
                       }`}
                     >
-                      <div className="flex items-center justify-between text-[11px]">
-                        <span className="font-semibold text-ink-primary flex items-center gap-1.5">
-                          {isInternal && <Lock className="w-3 h-3 text-amber-700" />}
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-[11px]">
+                        <span className="font-semibold text-ink-primary flex items-center gap-1.5 flex-wrap">
+                          {isInternal && <Lock className="w-3 h-3 text-amber-700 shrink-0" />}
                           {msg.sender_name || 'User'}
                           <span className="text-ink-muted font-normal">
                             ({isInternal ? 'Private Staff Note' : isStudent ? 'Student Reply' : 'Admin Reply'})
                           </span>
                         </span>
-                        <span className="text-ink-muted">
+                        <span className="text-ink-muted text-[10px] sm:text-[11px]">
                           {new Date(msg.created_at).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })}
                         </span>
                       </div>
-                      <p className="text-ink-primary whitespace-pre-line">{msg.content}</p>
+                      <p className="text-ink-primary whitespace-pre-line break-words leading-relaxed">{msg.content}</p>
                     </div>
                   );
                 })}
@@ -529,8 +530,8 @@ export const SubmissionAdminDrawer: React.FC<SubmissionAdminDrawerProps> = ({
 
               {/* Admin Composer */}
               <form onSubmit={handleSendMessage} className="space-y-3 pt-2">
-                <div className="flex items-center gap-4 bg-surface p-2 rounded-lg border border-border">
-                  <label className="flex items-center gap-1.5 cursor-pointer">
+                <div className="flex flex-wrap items-center gap-2.5 sm:gap-4 bg-surface p-2.5 rounded-lg border border-border">
+                  <label className="flex items-center gap-1.5 cursor-pointer text-xs">
                     <input
                       type="radio"
                       name="msg_visibility"
@@ -541,7 +542,7 @@ export const SubmissionAdminDrawer: React.FC<SubmissionAdminDrawerProps> = ({
                     <span className="text-ink-primary font-medium">Student Visible Reply</span>
                   </label>
 
-                  <label className="flex items-center gap-1.5 cursor-pointer">
+                  <label className="flex items-center gap-1.5 cursor-pointer text-xs">
                     <input
                       type="radio"
                       name="msg_visibility"

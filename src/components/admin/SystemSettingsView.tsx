@@ -118,7 +118,7 @@ export const SystemSettingsView: React.FC = () => {
   return (
     <div className="max-w-3xl space-y-8">
       {/* Live Branding Reflection Banner */}
-      <div className="bg-brand-50/70 border border-brand-200 rounded-xl p-4 flex items-center justify-between gap-4">
+      <div className="bg-brand-50/70 border border-brand-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-lg bg-brand-700 text-white flex items-center justify-center font-bold">
             <Globe className="w-5 h-5" />

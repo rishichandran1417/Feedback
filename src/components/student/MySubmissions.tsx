@@ -233,8 +233,8 @@ export const MySubmissions: React.FC<MySubmissionsProps> = ({
                       {sub.description}
                     </p>
 
-                    <div className="flex flex-wrap items-center gap-4 text-xs text-ink-muted pt-1">
-                      <span className="flex items-center gap-1">
+                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] sm:text-xs text-ink-muted pt-1">
+                      <span className="flex items-center gap-1 shrink-0">
                         <Calendar className="w-3.5 h-3.5" />
                         {new Date(sub.created_at).toLocaleDateString()}
                       </span>

@@ -127,7 +127,7 @@ export const AdminLoginPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-900 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-slate-900 flex flex-col justify-center py-8 sm:py-12 px-3.5 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center space-y-3">
         <div className="w-12 h-12 rounded-xl bg-brand-600 text-white flex items-center justify-center mx-auto shadow-lg">
           <ShieldCheck className="w-7 h-7" />
@@ -141,7 +141,7 @@ export const AdminLoginPage: React.FC = () => {
       </div>
 
       <div className="mt-6 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-6 sm:px-8 rounded-xl shadow-xl space-y-6">
+        <div className="bg-white py-6 sm:py-8 px-4 sm:px-8 rounded-xl shadow-xl space-y-6">
           <div className="border-b border-border pb-3">
             <h3 className="text-base font-semibold text-ink-primary">Faculty Administrator Authentication</h3>
             <p className="text-xs text-ink-secondary mt-0.5">

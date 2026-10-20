@@ -46,7 +46,7 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
   return (
     <div className="space-y-8">
       {/* Welcome Banner */}
-      <div className="bg-surface border border-border rounded-xl p-6 sm:p-8 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+      <div className="bg-surface border border-border rounded-xl p-4 sm:p-6 lg:p-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4 sm:gap-6">
         <div>
           <span className="text-xs font-semibold uppercase tracking-wider text-brand-700">
             Student Redressal Portal
@@ -63,6 +63,7 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
           onClick={() => onNavigate('submit')}
           leftIcon={<PlusCircle className="w-4 h-4" />}
           size="md"
+          className="self-start md:self-auto shrink-0"
         >
           Submit Feedback
         </Button>
@@ -70,19 +71,21 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
 
       {/* Action Required Alert Banner if awaiting response */}
       {awaitingStudentCount > 0 && (
-        <div className="bg-amber-50/80 border border-amber-200 rounded-xl p-4 sm:p-5 flex items-start gap-3.5">
-          <AlertTriangle className="w-5 h-5 text-amber-700 shrink-0 mt-0.5" />
-          <div className="flex-1">
-            <h4 className="text-sm font-semibold text-amber-900">
-              Information Requested ({awaitingStudentCount})
-            </h4>
-            <p className="text-xs text-amber-800 mt-0.5">
-              An administrator has requested additional clarification or supporting documents for your open submission. Please provide a response to proceed.
-            </p>
+        <div className="bg-amber-50/80 border border-amber-200 rounded-xl p-3.5 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-start gap-3">
+            <AlertTriangle className="w-5 h-5 text-amber-700 shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <h4 className="text-sm font-semibold text-amber-900">
+                Information Requested ({awaitingStudentCount})
+              </h4>
+              <p className="text-xs text-amber-800 mt-0.5">
+                An administrator has requested additional clarification or supporting documents for your open submission. Please provide a response to proceed.
+              </p>
+            </div>
           </div>
           <button
             onClick={() => onNavigate('submissions')}
-            className="text-xs font-semibold text-amber-900 hover:underline shrink-0"
+            className="text-xs font-semibold text-amber-900 hover:underline shrink-0 self-start sm:self-auto pl-8 sm:pl-0"
           >
             Review Issues &rarr;
           </button>
@@ -90,9 +93,9 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
       )}
 
       {/* KPI Cards: Restrained, Whitespace-First */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-        <div className="bg-white border border-border rounded-xl p-5 sm:p-6 transition-all hover:border-slate-300">
-          <div className="flex items-center justify-between text-ink-secondary mb-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
+        <div className="bg-white border border-border rounded-xl p-4 sm:p-5 lg:p-6 transition-all hover:border-slate-300">
+          <div className="flex items-center justify-between text-ink-secondary mb-2.5 sm:mb-3">
             <span className="text-xs font-medium uppercase tracking-wider">Total Submissions</span>
             <FileText className="w-4 h-4 text-slate-400" />
           </div>
@@ -100,8 +103,8 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
           <span className="text-xs text-ink-muted mt-1 block">Lifetime student records</span>
         </div>
 
-        <div className="bg-white border border-border rounded-xl p-5 sm:p-6 transition-all hover:border-slate-300">
-          <div className="flex items-center justify-between text-ink-secondary mb-3">
+        <div className="bg-white border border-border rounded-xl p-4 sm:p-5 lg:p-6 transition-all hover:border-slate-300">
+          <div className="flex items-center justify-between text-ink-secondary mb-2.5 sm:mb-3">
             <span className="text-xs font-medium uppercase tracking-wider">Pending Review</span>
             <Clock className="w-4 h-4 text-amber-500" />
           </div>
@@ -109,8 +112,8 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
           <span className="text-xs text-ink-muted mt-1 block">Awaiting triage</span>
         </div>
 
-        <div className="bg-white border border-border rounded-xl p-5 sm:p-6 transition-all hover:border-slate-300">
-          <div className="flex items-center justify-between text-ink-secondary mb-3">
+        <div className="bg-white border border-border rounded-xl p-4 sm:p-5 lg:p-6 transition-all hover:border-slate-300">
+          <div className="flex items-center justify-between text-ink-secondary mb-2.5 sm:mb-3">
             <span className="text-xs font-medium uppercase tracking-wider">In Progress</span>
             <MessageSquare className="w-4 h-4 text-blue-500" />
           </div>
@@ -118,8 +121,8 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
           <span className="text-xs text-ink-muted mt-1 block">Under active investigation</span>
         </div>
 
-        <div className="bg-white border border-border rounded-xl p-5 sm:p-6 transition-all hover:border-slate-300">
-          <div className="flex items-center justify-between text-ink-secondary mb-3">
+        <div className="bg-white border border-border rounded-xl p-4 sm:p-5 lg:p-6 transition-all hover:border-slate-300">
+          <div className="flex items-center justify-between text-ink-secondary mb-2.5 sm:mb-3">
             <span className="text-xs font-medium uppercase tracking-wider">Resolved</span>
             <CheckCircle2 className="w-4 h-4 text-emerald-500" />
           </div>

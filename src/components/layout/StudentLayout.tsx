@@ -298,7 +298,7 @@ export const StudentLayout: React.FC<StudentLayoutProps> = ({
               className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs"
               onClick={() => setMobileSidebarOpen(false)}
             />
-            <div className="fixed inset-y-0 left-0 w-64 bg-white border-r border-border z-50 shadow-xl flex flex-col">
+            <div className="fixed inset-y-0 left-0 w-72 max-w-[85vw] bg-white border-r border-border z-50 shadow-xl flex flex-col">
               <div className="p-4 border-b border-border flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <div className="w-7 h-7 rounded-lg bg-brand-700 flex items-center justify-center text-white">
@@ -323,35 +323,53 @@ export const StudentLayout: React.FC<StudentLayoutProps> = ({
         )}
 
         {/* Main Content Workspace Container */}
-        <main className="flex-1 min-w-0 py-8 px-4 sm:px-8 lg:px-10 overflow-x-hidden">
-          {/* Mobile hamburger button */}
-          <div className="lg:hidden mb-6 flex items-center justify-between">
-            <button
-              onClick={() => setMobileSidebarOpen(true)}
-              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border border-border text-xs font-medium text-ink-secondary hover:text-ink-primary hover:bg-surface cursor-pointer"
-            >
-              <Menu className="w-4 h-4" />
-              Menu Navigation
-            </button>
-          </div>
-
+        <main className="flex-1 min-w-0 py-5 sm:py-8 px-3.5 sm:px-6 lg:px-8 pb-24 lg:pb-10 overflow-x-hidden">
           {pageTitle && (
-            <div className="mb-8 pb-6 border-b border-border/80 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="mb-6 sm:mb-8 pb-4 sm:pb-6 border-b border-border/80 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
               <div>
-                <h1 className="text-2xl sm:text-[28px] font-semibold text-ink-primary tracking-tight">
+                <h1 className="text-xl sm:text-2xl lg:text-[28px] font-semibold text-ink-primary tracking-tight">
                   {pageTitle}
                 </h1>
                 {pageDescription && (
-                  <p className="text-sm text-ink-secondary mt-1">{pageDescription}</p>
+                  <p className="text-xs sm:text-sm text-ink-secondary mt-1">{pageDescription}</p>
                 )}
               </div>
               {headerAction && <div className="shrink-0">{headerAction}</div>}
             </div>
           )}
 
-          <div className="w-full min-w-0 space-y-8">{children}</div>
+          <div className="w-full min-w-0 space-y-6 sm:space-y-8">{children}</div>
         </main>
       </div>
+
+      {/* Mobile Bottom Navigation Bar (Thumb-friendly on mobile screens) */}
+      <nav className="fixed bottom-0 inset-x-0 bg-white/95 backdrop-blur-md border-t border-border z-30 flex items-center justify-around py-1.5 px-2 lg:hidden shadow-lg">
+        {studentNavItems.map((item) => {
+          const Icon = item.icon;
+          const isActive = location.pathname === item.path;
+          return (
+            <Link
+              key={item.path}
+              to={item.path}
+              className={`flex flex-col items-center justify-center flex-1 py-1 rounded-lg transition-colors relative min-w-0 ${
+                isActive ? 'text-brand-700 font-semibold' : 'text-ink-muted hover:text-ink-primary'
+              }`}
+            >
+              <div className="relative">
+                <Icon className={`w-5 h-5 ${isActive ? 'text-brand-700 stroke-[2.2]' : 'text-ink-muted'}`} />
+                {item.badge ? (
+                  <span className="absolute -top-1 -right-2 text-[10px] font-bold px-1 py-0.2 min-w-[14px] text-center rounded-full bg-brand-700 text-white">
+                    {item.badge}
+                  </span>
+                ) : null}
+              </div>
+              <span className="text-[10px] mt-0.5 tracking-tight truncate max-w-[60px]">
+                {item.label.replace(' & Help', '')}
+              </span>
+            </Link>
+          );
+        })}
+      </nav>
     </div>
   );
 };

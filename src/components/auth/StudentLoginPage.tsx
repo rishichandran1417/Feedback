@@ -59,7 +59,7 @@ export const StudentLoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50/60 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-slate-50/60 flex flex-col justify-center py-8 sm:py-12 px-3.5 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center space-y-3">
         <div className="w-12 h-12 rounded-2xl bg-brand-700 text-white flex items-center justify-center mx-auto shadow-sm">
           <GraduationCap className="w-7 h-7" />
@@ -128,7 +128,7 @@ export const StudentLoginPage: React.FC = () => {
         )}
 
         {/* Main Sign-In Card: Requirement 1 & 4 (Google OAuth Only) */}
-        <div className="bg-white py-8 px-6 sm:px-8 border border-border rounded-2xl shadow-sm space-y-6">
+        <div className="bg-white py-6 sm:py-8 px-4 sm:px-8 border border-border rounded-2xl shadow-sm space-y-6">
           <div className="text-center space-y-1.5 border-b border-border pb-5">
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200">
               <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />

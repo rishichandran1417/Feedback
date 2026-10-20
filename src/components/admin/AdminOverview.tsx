@@ -73,7 +73,7 @@ export const AdminOverview: React.FC<{ onNavigate: (tab: string) => void }> = ({
     <div className="space-y-8">
       {/* Overdue Warning Alert Banner if overdue complaints exist */}
       {metrics.overdue > 0 && (
-        <div className="bg-rose-50 border border-rose-200 rounded-xl p-4 sm:p-5 flex items-center justify-between gap-4">
+        <div className="bg-rose-50 border border-rose-200 rounded-xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
           <div className="flex items-center gap-3">
             <AlertOctagon className="w-5 h-5 text-rose-600 shrink-0" />
             <div>

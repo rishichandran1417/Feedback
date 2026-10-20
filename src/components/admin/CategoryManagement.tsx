@@ -115,7 +115,7 @@ export const CategoryManagement: React.FC = () => {
       {/* Categories Table */}
       <div className="bg-white border border-border rounded-xl overflow-hidden shadow-xs">
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse text-xs">
+          <table className="w-full text-left border-collapse text-xs min-w-[620px]">
             <thead className="bg-surface border-b border-border text-ink-secondary uppercase tracking-wider font-semibold">
               <tr>
                 <th className="py-3 px-4">Category Name</th>

@@ -180,8 +180,8 @@ export const AuthCallback: React.FC = () => {
   }, [location, navigate, syncSession, allowedEmailDomain]);
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
-      <div className="w-full max-w-md bg-white border border-border rounded-2xl shadow-lg p-6 sm:p-8">
+    <div className="min-h-screen bg-background flex items-center justify-center p-3.5 sm:p-4">
+      <div className="w-full max-w-md bg-white border border-border rounded-2xl shadow-lg p-5 sm:p-8">
         {/* Processing State */}
         {status === 'processing' && (
           <div className="text-center space-y-4">
@@ -230,15 +230,15 @@ export const AuthCallback: React.FC = () => {
             </div>
 
             <div className="p-4 rounded-xl bg-surface border border-border text-xs space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-ink-muted text-[11px] font-semibold uppercase">Selected Account</span>
-                <span className="font-mono font-medium text-rose-600 truncate max-w-[200px]">
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-ink-muted text-[11px] font-semibold uppercase shrink-0">Selected Account</span>
+                <span className="font-mono font-medium text-rose-600 truncate max-w-[140px] sm:max-w-[200px]" title={ineligibleEmail}>
                   {ineligibleEmail}
                 </span>
               </div>
-              <div className="flex items-center justify-between border-t border-border pt-2">
-                <span className="text-ink-muted text-[11px] font-semibold uppercase">Required Domain</span>
-                <span className="font-mono font-semibold px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200">
+              <div className="flex items-center justify-between gap-2 border-t border-border pt-2">
+                <span className="text-ink-muted text-[11px] font-semibold uppercase shrink-0">Required Domain</span>
+                <span className="font-mono font-semibold px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200 shrink-0">
                   {allowedEmailDomain || '@cet.ac.in'}
                 </span>
               </div>

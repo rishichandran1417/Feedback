@@ -246,11 +246,16 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
               className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs"
               onClick={() => setMobileSidebarOpen(false)}
             />
-            <div className="fixed inset-y-0 left-0 w-64 bg-white border-r border-border z-50 shadow-xl flex flex-col">
+            <div className="fixed inset-y-0 left-0 w-72 max-w-[85vw] bg-white border-r border-border z-50 shadow-xl flex flex-col">
               <div className="p-4 border-b border-border flex items-center justify-between">
-                <span className="font-semibold text-xs uppercase tracking-wider text-ink-secondary">
-                  Admin Navigation
-                </span>
+                <div className="flex items-center gap-2">
+                  <div className="w-7 h-7 rounded-lg bg-brand-900 text-white flex items-center justify-center font-bold">
+                    <ShieldCheck className="w-4 h-4" />
+                  </div>
+                  <span className="font-semibold text-xs uppercase tracking-wider text-ink-secondary">
+                    Admin Navigation
+                  </span>
+                </div>
                 <button
                   onClick={() => setMobileSidebarOpen(false)}
                   className="p-1 rounded-lg text-ink-muted hover:text-ink-primary"
@@ -266,33 +271,22 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
         )}
 
         {/* Main Content Workspace Container */}
-        <main className="flex-1 min-w-0 py-8 px-4 sm:px-8 lg:px-10 overflow-x-hidden">
-          {/* Mobile hamburger button */}
-          <div className="lg:hidden mb-6 flex items-center justify-between">
-            <button
-              onClick={() => setMobileSidebarOpen(true)}
-              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border border-border text-xs font-medium text-ink-secondary hover:text-ink-primary hover:bg-surface"
-            >
-              <Menu className="w-4 h-4" />
-              Menu Navigation
-            </button>
-          </div>
-
+        <main className="flex-1 min-w-0 py-5 sm:py-8 px-3.5 sm:px-6 lg:px-8 overflow-x-hidden">
           {pageTitle && (
-            <div className="mb-8 pb-6 border-b border-border/80 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="mb-6 sm:mb-8 pb-4 sm:pb-6 border-b border-border/80 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
               <div>
-                <h1 className="text-2xl sm:text-[28px] font-semibold text-ink-primary tracking-tight">
+                <h1 className="text-xl sm:text-2xl lg:text-[28px] font-semibold text-ink-primary tracking-tight">
                   {pageTitle}
                 </h1>
                 {pageDescription && (
-                  <p className="text-sm text-ink-secondary mt-1">{pageDescription}</p>
+                  <p className="text-xs sm:text-sm text-ink-secondary mt-1">{pageDescription}</p>
                 )}
               </div>
               {headerAction && <div className="shrink-0">{headerAction}</div>}
             </div>
           )}
 
-          <div className="w-full min-w-0 space-y-8">{children}</div>
+          <div className="w-full min-w-0 space-y-6 sm:space-y-8">{children}</div>
         </main>
       </div>
     </div>

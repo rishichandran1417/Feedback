@@ -44,7 +44,7 @@ export const Modal: React.FC<ModalProps> = ({
   }[maxWidth];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
       {/* Backdrop */}
       <div
         className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs transition-opacity animate-in fade-in duration-200"
@@ -53,24 +53,24 @@ export const Modal: React.FC<ModalProps> = ({
 
       {/* Modal Dialog */}
       <div
-        className={`relative w-full ${widthClasses} bg-white rounded-xl border border-border shadow-xl z-10 my-8 overflow-hidden animate-in zoom-in-95 duration-200`}
+        className={`relative w-full ${widthClasses} max-h-[calc(100dvh-2rem)] flex flex-col bg-white rounded-xl border border-border shadow-xl z-10 my-auto overflow-hidden animate-in zoom-in-95 duration-200`}
         role="dialog"
         aria-modal="true"
       >
-        <div className="flex items-start justify-between p-6 pb-4 border-b border-border">
-          <div>
-            <h3 className="text-lg font-semibold text-ink-primary tracking-tight">{title}</h3>
-            {description && <p className="text-xs text-ink-secondary mt-1">{description}</p>}
+        <div className="flex items-start justify-between p-4 sm:p-6 pb-3 sm:pb-4 border-b border-border shrink-0">
+          <div className="pr-2 min-w-0">
+            <h3 className="text-base sm:text-lg font-semibold text-ink-primary tracking-tight truncate">{title}</h3>
+            {description && <p className="text-xs text-ink-secondary mt-0.5 sm:mt-1 line-clamp-2">{description}</p>}
           </div>
           <button
             onClick={onClose}
-            className="text-ink-secondary hover:text-ink-primary p-1.5 rounded-md hover:bg-surface transition-colors"
+            className="text-ink-secondary hover:text-ink-primary p-1.5 rounded-md hover:bg-surface transition-colors shrink-0"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        <div className="p-6">{children}</div>
+        <div className="p-4 sm:p-6 overflow-y-auto max-h-[calc(100dvh-8rem)]">{children}</div>
       </div>
     </div>
   );

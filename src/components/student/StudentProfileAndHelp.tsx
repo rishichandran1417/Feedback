@@ -17,18 +17,18 @@ export const StudentProfileAndHelp: React.FC = () => {
   const { settings, departments } = useSystem();
 
   return (
-    <div className="max-w-4xl space-y-8">
+    <div className="max-w-4xl space-y-6 sm:space-y-8">
       {/* Student Profile Overview */}
-      <div className="bg-white border border-border rounded-xl p-6 sm:p-8 space-y-6 shadow-xs">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-border">
-          <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-full bg-brand-50 text-brand-700 font-bold text-xl flex items-center justify-center border border-brand-200">
+      <div className="bg-white border border-border rounded-xl p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 shadow-xs">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 sm:pb-6 border-b border-border">
+          <div className="flex items-center gap-3.5 sm:gap-4 min-w-0">
+            <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-brand-50 text-brand-700 font-bold text-lg sm:text-xl flex items-center justify-center border border-brand-200 shrink-0">
               {user?.full_name?.charAt(0) || 'S'}
             </div>
-            <div>
-              <h2 className="text-lg font-semibold text-ink-primary">{user?.full_name}</h2>
-              <p className="text-xs text-ink-secondary">{user?.email}</p>
-              <div className="flex items-center gap-2 mt-1.5">
+            <div className="min-w-0 flex-1">
+              <h2 className="text-base sm:text-lg font-semibold text-ink-primary truncate">{user?.full_name}</h2>
+              <p className="text-xs text-ink-secondary truncate font-mono">{user?.email}</p>
+              <div className="flex flex-wrap items-center gap-2 mt-1.5">
                 <span className="text-[11px] font-mono font-medium px-2 py-0.5 rounded bg-surface border border-border text-brand-700">
                   {user?.student_id || 'ID Pending'}
                 </span>
@@ -42,16 +42,16 @@ export const StudentProfileAndHelp: React.FC = () => {
       </div>
 
       {/* College Grievance Policy & FAQs */}
-      <div className="bg-white border border-border rounded-xl p-6 sm:p-8 space-y-6 shadow-xs">
+      <div className="bg-white border border-border rounded-xl p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 shadow-xs">
         <div className="flex items-center gap-2.5">
-          <HelpCircle className="w-5 h-5 text-brand-700" />
+          <HelpCircle className="w-5 h-5 text-brand-700 shrink-0" />
           <h3 className="text-base font-semibold text-ink-primary">
             Student Grievance Guidelines & Resolution SLAs
           </h3>
         </div>
 
         <div className="space-y-4 text-xs text-ink-secondary leading-relaxed">
-          <div className="p-4 rounded-xl bg-surface border border-border">
+          <div className="p-3.5 sm:p-4 rounded-xl bg-surface border border-border">
             <h4 className="font-semibold text-ink-primary text-sm mb-1">
               How does the grievance review workflow operate?
             </h4>
@@ -60,7 +60,7 @@ export const StudentProfileAndHelp: React.FC = () => {
             </p>
           </div>
 
-          <div className="p-4 rounded-xl bg-surface border border-border">
+          <div className="p-3.5 sm:p-4 rounded-xl bg-surface border border-border">
             <h4 className="font-semibold text-ink-primary text-sm mb-1">
               How is my student data and evidence protected?
             </h4>
@@ -69,7 +69,7 @@ export const StudentProfileAndHelp: React.FC = () => {
             </p>
           </div>
 
-          <div className="p-4 rounded-xl bg-surface border border-border">
+          <div className="p-3.5 sm:p-4 rounded-xl bg-surface border border-border">
             <h4 className="font-semibold text-ink-primary text-sm mb-1">
               What should I do if my grievance is not resolved on time?
             </h4>
@@ -84,7 +84,7 @@ export const StudentProfileAndHelp: React.FC = () => {
       </div>
 
       {/* Department Escalation Contacts */}
-      <div className="bg-white border border-border rounded-xl p-6 sm:p-8 space-y-4 shadow-xs">
+      <div className="bg-white border border-border rounded-xl p-4 sm:p-6 lg:p-8 space-y-4 shadow-xs">
         <h3 className="text-sm font-semibold text-ink-primary uppercase tracking-wider">
           Campus Redressal Officers Directory
         </h3>

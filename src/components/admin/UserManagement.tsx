@@ -208,7 +208,7 @@ export const UserManagement: React.FC = () => {
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse text-xs">
+            <table className="w-full text-left border-collapse text-xs min-w-[720px]">
               <thead className="bg-surface border-b border-border text-ink-secondary uppercase tracking-wider font-semibold">
                 <tr>
                   <th className="py-3 px-4">User Details</th>
