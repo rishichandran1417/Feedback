@@ -6,7 +6,6 @@ import {
   GraduationCap,
   Bell,
   User,
-  Shield,
   LogOut,
   ChevronDown,
   LayoutDashboard,
@@ -266,14 +265,6 @@ export const StudentLayout: React.FC<StudentLayoutProps> = ({
                         >
                           <User className="w-4 h-4 text-ink-secondary" />
                           Student Profile & Help
-                        </Link>
-                        <Link
-                          to="/admin"
-                          onClick={() => setShowUserMenu(false)}
-                          className="w-full px-4 py-2 text-xs text-brand-700 hover:bg-brand-50 flex items-center gap-2 text-left font-medium"
-                        >
-                          <Shield className="w-4 h-4 text-brand-600" />
-                          Administrator Portal (/admin)
                         </Link>
                       </div>
 
