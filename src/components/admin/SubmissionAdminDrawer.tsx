@@ -276,11 +276,6 @@ export const SubmissionAdminDrawer: React.FC<SubmissionAdminDrawerProps> = ({
                 <span className="font-semibold text-ink-primary uppercase tracking-wider text-[11px]">
                   Student Identity Details
                 </span>
-                {sub.is_anonymous && (
-                  <span className="text-[11px] px-2 py-0.5 rounded bg-amber-50 text-amber-800 font-semibold border border-amber-200">
-                    Anonymous to Departments
-                  </span>
-                )}
               </div>
               <div className="grid grid-cols-2 gap-3 text-ink-secondary pt-1">
                 <div>

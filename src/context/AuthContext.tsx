@@ -1,9 +1,9 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { Profile, AppRole } from '../types/database';
 import { MockStorage } from '../lib/mockStorage';
 import { isUsingRealSupabase, supabase } from '../lib/supabase';
 
-interface AuthUser extends Profile {
+export interface AuthUser extends Profile {
   role: AppRole;
 }
 
@@ -12,66 +12,184 @@ interface AuthContextType {
   loading: boolean;
   loginAsStudent: (email: string, password?: string) => Promise<{ success: boolean; error?: string }>;
   loginAsAdmin: (email: string, password?: string) => Promise<{ success: boolean; error?: string }>;
-  registerStudent: (data: { email: string; fullName: string; studentId: string; department: string }) => Promise<{ success: boolean; error?: string }>;
-  logout: () => void;
-  switchRole: (role: AppRole) => void;
+  registerStudent: (data: {
+    email: string;
+    password?: string;
+    fullName: string;
+    studentId: string;
+    department: string;
+    courseProgramme?: string;
+  }) => Promise<{ success: boolean; error?: string }>;
+  logout: () => Promise<void>;
+  checkAdminAccess: () => boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const AUTH_STORAGE_KEY = 'ait_auth_session_v1';
+const AUTH_STORAGE_KEY = 'ait_auth_session_v2';
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    // Restore session
+  // Sync session from Supabase or persistent local state
+  const syncSession = useCallback(async () => {
     try {
-      const saved = localStorage.getItem(AUTH_STORAGE_KEY);
-      if (saved) {
-        setUser(JSON.parse(saved));
+      if (isUsingRealSupabase && supabase) {
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        if (sessionError || !session?.user) {
+          setUser(null);
+          localStorage.removeItem(AUTH_STORAGE_KEY);
+          return;
+        }
+
+        const authUserId = session.user.id;
+
+        // Query profiles table
+        const { data: profileData, error: profileError } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', authUserId)
+          .single();
+
+        if (profileError || !profileData) {
+          console.warn('Profile not found for authenticated user, logging out.');
+          await supabase.auth.signOut();
+          setUser(null);
+          return;
+        }
+
+        // Query user_roles table for authorized role
+        const { data: roleData } = await supabase
+          .from('user_roles')
+          .select('role')
+          .eq('user_id', authUserId)
+          .single();
+
+        const assignedRole: AppRole = roleData?.role === 'administrator' ? 'administrator' : 'student';
+
+        const authSession: AuthUser = {
+          id: profileData.id,
+          email: profileData.email,
+          full_name: profileData.full_name,
+          student_id: profileData.student_id,
+          phone: profileData.phone,
+          department: profileData.department,
+          course_programme: profileData.course_programme,
+          avatar_url: profileData.avatar_url,
+          is_active: profileData.is_active,
+          created_at: profileData.created_at,
+          updated_at: profileData.updated_at,
+          role: assignedRole,
+        };
+
+        setUser(authSession);
+        localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(authSession));
       } else {
-        // Default demo session: Student Arjun Patel
-        const profiles = MockStorage.getProfiles();
-        const student = profiles.find((p) => p.email.includes('arjun'));
-        if (student) {
-          const defaultSession: AuthUser = { ...student, role: 'student' };
-          setUser(defaultSession);
-          localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(defaultSession));
+        // Fallback local persistent engine
+        const saved = localStorage.getItem(AUTH_STORAGE_KEY);
+        if (saved) {
+          setUser(JSON.parse(saved));
+        } else {
+          // Default initial session: Student Arjun Patel
+          const profiles = MockStorage.getProfiles();
+          const student = profiles.find((p) => p.email.includes('arjun'));
+          if (student) {
+            const defaultSession: AuthUser = { ...student, role: 'student' };
+            setUser(defaultSession);
+            localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(defaultSession));
+          }
         }
       }
     } catch (e) {
-      console.error('Session restore error:', e);
+      console.error('Session sync error:', e);
+      setUser(null);
     } finally {
       setLoading(false);
     }
   }, []);
 
-  const loginAsStudent = async (email: string): Promise<{ success: boolean; error?: string }> => {
+  useEffect(() => {
+    syncSession();
+
+    if (isUsingRealSupabase && supabase) {
+      const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+        if (!session) {
+          setUser(null);
+          localStorage.removeItem(AUTH_STORAGE_KEY);
+        } else {
+          await syncSession();
+        }
+      });
+
+      return () => {
+        subscription.unsubscribe();
+      };
+    }
+  }, [syncSession]);
+
+  const loginAsStudent = async (email: string, password = 'collegePassword123'): Promise<{ success: boolean; error?: string }> => {
     const settings = MockStorage.getSystemSettings();
     const allowedDomain = settings.auth_config.allowed_email_domain || '@college.edu';
-
-    // Domain validation
     const normalizedEmail = email.trim().toLowerCase();
+
+    // Enforce official college email domain
     if (!normalizedEmail.endsWith(allowedDomain)) {
       return {
         success: false,
-        error: `Registration and access restricted to official college email accounts ending with ${allowedDomain}`,
+        error: `Access restricted. Please use your official college email address ending with ${allowedDomain}`,
       };
     }
 
+    if (isUsingRealSupabase && supabase) {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: normalizedEmail,
+        password,
+      });
+
+      if (error) {
+        return { success: false, error: error.message };
+      }
+
+      // Check if user is student
+      const { data: roleRecord } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', data.user.id)
+        .single();
+
+      if (roleRecord?.role === 'administrator') {
+        // Administrator attempting to login through student portal
+        return {
+          success: false,
+          error: 'Administrator account detected. Please use the dedicated Administrator Portal at /admin',
+        };
+      }
+
+      await syncSession();
+      return { success: true };
+    }
+
+    // Local fallback engine
     const profiles = MockStorage.getProfiles();
     let profile = profiles.find((p) => p.email.toLowerCase() === normalizedEmail);
 
+    if (profile && (profile.email.includes('dean') || profile.email.includes('admin'))) {
+      return {
+        success: false,
+        error: 'Administrator account detected. Please use the dedicated Administrator Portal at /admin',
+      };
+    }
+
     if (!profile) {
-      // Auto register for seamless verification testing
+      // Auto-provision verified student profile
       const newProfile: Profile = {
         id: `u-${Date.now()}`,
         email: normalizedEmail,
         full_name: normalizedEmail.split('@')[0].replace('.', ' '),
         student_id: `AIT-2026-${Math.floor(100 + Math.random() * 900)}`,
-        department: 'General Sciences',
+        department: 'General Studies',
+        course_programme: 'B.Tech / Undergraduate',
         is_active: true,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
@@ -93,16 +211,47 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return { success: true };
   };
 
-  const loginAsAdmin = async (email: string): Promise<{ success: boolean; error?: string }> => {
+  const loginAsAdmin = async (email: string, password = 'adminSecureKey2026'): Promise<{ success: boolean; error?: string }> => {
     const normalizedEmail = email.trim().toLowerCase();
+
+    if (isUsingRealSupabase && supabase) {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: normalizedEmail,
+        password,
+      });
+
+      if (error) {
+        return { success: false, error: error.message };
+      }
+
+      // Verify administrator role in database
+      const { data: roleRecord } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', data.user.id)
+        .single();
+
+      if (roleRecord?.role !== 'administrator') {
+        await supabase.auth.signOut();
+        return {
+          success: false,
+          error: 'Access denied: You do not possess administrator authorization.',
+        };
+      }
+
+      await syncSession();
+      return { success: true };
+    }
+
+    // Local fallback engine
     const profiles = MockStorage.getProfiles();
     const profile = profiles.find((p) => p.email.toLowerCase() === normalizedEmail);
 
-    // Only allow verified admin profiles
-    if (!profile || !profile.email.includes('dean') && !profile.email.includes('admin')) {
+    // Strict role check: email must belong to an administrator profile
+    if (!profile || (!profile.email.includes('dean') && !profile.email.includes('admin'))) {
       return {
         success: false,
-        error: 'Unauthorized administrator credentials. Access to the administration portal is restricted.',
+        error: 'Access denied: Unauthorized administrator credentials.',
       };
     }
 
@@ -114,14 +263,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const registerStudent = async (data: {
     email: string;
+    password?: string;
     fullName: string;
     studentId: string;
     department: string;
+    courseProgramme?: string;
   }): Promise<{ success: boolean; error?: string }> => {
     const settings = MockStorage.getSystemSettings();
     const allowedDomain = settings.auth_config.allowed_email_domain || '@college.edu';
-
     const normalizedEmail = data.email.trim().toLowerCase();
+
     if (!normalizedEmail.endsWith(allowedDomain)) {
       return {
         success: false,
@@ -129,12 +280,53 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       };
     }
 
+    if (isUsingRealSupabase && supabase) {
+      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+        email: normalizedEmail,
+        password: data.password || 'collegePassword123',
+        options: {
+          data: {
+            full_name: data.fullName.trim(),
+            student_id: data.studentId.trim().toUpperCase(),
+            department: data.department,
+            course_programme: data.courseProgramme || 'Undergraduate',
+          },
+        },
+      });
+
+      if (signUpError) {
+        return { success: false, error: signUpError.message };
+      }
+
+      if (signUpData.user) {
+        // Insert into profiles
+        await supabase.from('profiles').upsert({
+          id: signUpData.user.id,
+          email: normalizedEmail,
+          full_name: data.fullName.trim(),
+          student_id: data.studentId.trim().toUpperCase(),
+          department: data.department,
+          course_programme: data.courseProgramme || 'Undergraduate',
+          is_active: true,
+        });
+
+        // Always assign 'student' role. Students can NEVER self-assign administrator!
+        await supabase.from('user_roles').upsert({
+          user_id: signUpData.user.id,
+          role: 'student',
+        });
+      }
+
+      await syncSession();
+      return { success: true };
+    }
+
+    // Local fallback engine
     const profiles = MockStorage.getProfiles();
-    const exists = profiles.some((p) => p.email.toLowerCase() === normalizedEmail);
-    if (exists) {
+    if (profiles.some((p) => p.email.toLowerCase() === normalizedEmail)) {
       return {
         success: false,
-        error: 'An account with this official college email already exists. Please log in.',
+        error: 'An account with this college email already exists. Please log in.',
       };
     }
 
@@ -144,6 +336,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       full_name: data.fullName.trim(),
       student_id: data.studentId.trim().toUpperCase(),
       department: data.department,
+      course_programme: data.courseProgramme || 'Undergraduate',
       is_active: true,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
@@ -156,27 +349,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return { success: true };
   };
 
-  const logout = () => {
+  const logout = async () => {
     setUser(null);
     localStorage.removeItem(AUTH_STORAGE_KEY);
     if (isUsingRealSupabase && supabase) {
-      supabase.auth.signOut();
+      await supabase.auth.signOut();
     }
   };
 
-  const switchRole = (newRole: AppRole) => {
-    const profiles = MockStorage.getProfiles();
-    if (newRole === 'student') {
-      const student = profiles.find((p) => p.email.includes('arjun')) || profiles[0];
-      const authSession: AuthUser = { ...student, role: 'student' };
-      setUser(authSession);
-      localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(authSession));
-    } else {
-      const admin = profiles.find((p) => p.email.includes('dean')) || profiles[2];
-      const authSession: AuthUser = { ...admin, role: 'administrator' };
-      setUser(authSession);
-      localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(authSession));
-    }
+  const checkAdminAccess = (): boolean => {
+    return user?.role === 'administrator';
   };
 
   return (
@@ -188,7 +370,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         loginAsAdmin,
         registerStudent,
         logout,
-        switchRole,
+        checkAdminAccess,
       }}
     >
       {children}

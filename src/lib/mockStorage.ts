@@ -121,7 +121,7 @@ export const MockStorage = {
       description: string;
       location?: string;
       priority: Submission['priority'];
-      is_anonymous: boolean;
+      is_anonymous?: boolean;
       attachments?: { file_name: string; file_size: number; file_type: string; storage_path: string }[];
     }
   ): Submission {
@@ -149,7 +149,7 @@ export const MockStorage = {
       new_status: 'submitted',
       remarks: 'Initial submission recorded via student portal.',
       changed_by: payload.student_id,
-      changed_by_name: payload.is_anonymous ? 'Anonymous' : payload.student_name,
+      changed_by_name: payload.student_name,
       created_at: nowIso,
     };
 
@@ -157,7 +157,7 @@ export const MockStorage = {
       id: newId,
       reference_number: ref,
       student_id: payload.student_id,
-      student_name: payload.is_anonymous ? 'Anonymous Student' : payload.student_name,
+      student_name: payload.student_name,
       student_email: payload.student_email,
       submission_type: payload.submission_type,
       category_id: payload.category_id,
@@ -168,7 +168,7 @@ export const MockStorage = {
       description: payload.description,
       location: payload.location,
       priority: payload.priority,
-      is_anonymous: payload.is_anonymous,
+      is_anonymous: payload.is_anonymous ?? false,
       status: 'submitted',
       due_date: dueDate,
       created_at: nowIso,

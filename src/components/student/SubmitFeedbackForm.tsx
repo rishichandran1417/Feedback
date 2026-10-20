@@ -10,10 +10,7 @@ import {
   X,
   CheckCircle,
   AlertCircle,
-  HelpCircle,
-  Shield,
   Send,
-  EyeOff,
 } from 'lucide-react';
 
 interface SubmitFeedbackFormProps {
@@ -33,7 +30,6 @@ export const SubmitFeedbackForm: React.FC<SubmitFeedbackFormProps> = ({
   const [description, setDescription] = useState('');
   const [location, setLocation] = useState('');
   const [priority, setPriority] = useState<SubmissionPriority>('medium');
-  const [isAnonymous, setIsAnonymous] = useState(false);
 
   // File uploads
   const [attachments, setAttachments] = useState<
@@ -76,7 +72,7 @@ export const SubmitFeedbackForm: React.FC<SubmitFeedbackFormProps> = ({
         file_name: file.name,
         file_size: file.size,
         file_type: file.type || 'application/octet-stream',
-        storage_path: `evidence/student/${Date.now()}_${file.name}`,
+        storage_path: `submission-evidence/${Date.now()}_${file.name}`,
       });
     }
 
@@ -113,11 +109,9 @@ export const SubmitFeedbackForm: React.FC<SubmitFeedbackFormProps> = ({
         description: description.trim(),
         location: location.trim() || undefined,
         priority,
-        is_anonymous: isAnonymous,
         attachments,
       });
 
-      // Trigger Confetti
       try {
         confetti({
           particleCount: 80,
@@ -138,7 +132,7 @@ export const SubmitFeedbackForm: React.FC<SubmitFeedbackFormProps> = ({
   };
 
   return (
-    <div className="max-w-3xl mx-auto space-y-8">
+    <div className="w-full max-w-3xl mx-auto space-y-8 min-w-0">
       {/* Success Modal */}
       {submittedRef && (
         <Modal
@@ -154,12 +148,12 @@ export const SubmitFeedbackForm: React.FC<SubmitFeedbackFormProps> = ({
 
             <div>
               <p className="text-xs text-ink-secondary uppercase tracking-wider font-semibold">
-                Your Reference Number
+                Your Official Reference Number
               </p>
               <p className="text-2xl font-mono font-bold text-brand-700 mt-1 select-all">
                 {submittedRef.ref}
               </p>
-              <p className="text-xs text-ink-secondary mt-2 max-w-sm mx-auto">
+              <p className="text-xs text-ink-secondary mt-2 max-w-sm mx-auto leading-relaxed">
                 An automated acknowledgement receipt has been queued to your registered college email. Please retain this reference code for future follow-ups.
               </p>
             </div>
@@ -177,7 +171,7 @@ export const SubmitFeedbackForm: React.FC<SubmitFeedbackFormProps> = ({
       )}
 
       {/* Form Container */}
-      <form onSubmit={handleSubmit} className="bg-white border border-border rounded-xl p-6 sm:p-8 space-y-8 shadow-xs">
+      <form onSubmit={handleSubmit} className="bg-white border border-border rounded-xl p-6 sm:p-8 space-y-8 shadow-xs min-w-0">
         {errorMsg && (
           <div className="p-4 rounded-lg bg-rose-50 border border-rose-200 text-xs text-rose-700 flex items-start gap-2.5">
             <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
@@ -190,7 +184,7 @@ export const SubmitFeedbackForm: React.FC<SubmitFeedbackFormProps> = ({
           <label className="text-xs font-semibold uppercase tracking-wider text-ink-secondary">
             1. Select Submission Type *
           </label>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 min-w-0">
             {[
               {
                 id: 'complaint',
@@ -214,29 +208,29 @@ export const SubmitFeedbackForm: React.FC<SubmitFeedbackFormProps> = ({
                   type="button"
                   key={t.id}
                   onClick={() => setSubmissionType(t.id as SubmissionType)}
-                  className={`p-4 rounded-xl border text-left transition-all ${
+                  className={`p-4 rounded-xl border text-left transition-all min-w-0 ${
                     isSelected
                       ? 'border-brand-600 bg-brand-50/50 ring-1 ring-brand-600'
                       : 'border-border hover:border-slate-300 bg-surface/30'
                   }`}
                 >
-                  <p className={`text-sm font-semibold ${isSelected ? 'text-brand-900' : 'text-ink-primary'}`}>
+                  <p className={`text-sm font-semibold truncate ${isSelected ? 'text-brand-900' : 'text-ink-primary'}`}>
                     {t.title}
                   </p>
-                  <p className="text-xs text-ink-secondary mt-1">{t.desc}</p>
+                  <p className="text-xs text-ink-secondary mt-1 line-clamp-2">{t.desc}</p>
                 </button>
               );
             })}
           </div>
         </div>
 
-        {/* Section 2: Category & Department */}
+        {/* Section 2: Category & Priority */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <label className="text-xs font-semibold uppercase tracking-wider text-ink-secondary">
-              2. Category & Department *
+              2. Category & Department Routing *
             </label>
-            <span className="text-xs text-ink-muted">Dynamically routed to responsible team</span>
+            <span className="text-xs text-ink-muted">Routed to designated department</span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -342,7 +336,7 @@ export const SubmitFeedbackForm: React.FC<SubmitFeedbackFormProps> = ({
               Click to select or drag and drop supporting photos or documentation
             </p>
             <p className="text-[11px] text-ink-muted mt-0.5">
-              Evidence is kept confidential and stored within secure, access-controlled storage.
+              Evidence is kept confidential and stored within the private 'submission-evidence' vault.
             </p>
             <input
               type="file"
@@ -391,30 +385,6 @@ export const SubmitFeedbackForm: React.FC<SubmitFeedbackFormProps> = ({
             </div>
           )}
         </div>
-
-        {/* Section 5: Anonymous Submission Toggle */}
-        {settings.workflow_rules.allow_anonymous && (
-          <div className="p-4 rounded-xl border border-border bg-surface/40 flex items-start justify-between gap-4">
-            <div className="flex items-start gap-3">
-              <EyeOff className="w-5 h-5 text-ink-secondary shrink-0 mt-0.5" />
-              <div>
-                <p className="text-sm font-medium text-ink-primary">Submit Anonymously</p>
-                <p className="text-xs text-ink-secondary mt-0.5">
-                  Your name and student identification will not be visible to department coordinators. You can still track status using your reference code.
-                </p>
-              </div>
-            </div>
-            <label className="relative inline-flex items-center cursor-pointer shrink-0 mt-1">
-              <input
-                type="checkbox"
-                checked={isAnonymous}
-                onChange={(e) => setIsAnonymous(e.target.checked)}
-                className="sr-only peer"
-              />
-              <div className="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brand-700"></div>
-            </label>
-          </div>
-        )}
 
         {/* Actions */}
         <div className="pt-4 border-t border-border flex items-center justify-between">

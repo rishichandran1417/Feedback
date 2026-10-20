@@ -40,6 +40,7 @@ export interface Profile {
   student_id?: string;
   phone?: string;
   department?: string;
+  course_programme?: string;
   avatar_url?: string;
   is_active: boolean;
   created_at: string;

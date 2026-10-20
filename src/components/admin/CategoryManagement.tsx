@@ -71,8 +71,8 @@ export const CategoryManagement: React.FC = () => {
     }
   };
 
-  const handleDelete = (cat: Category) => {
-    const res = deleteCategory(cat.id);
+  const handleDelete = async (cat: Category) => {
+    const res = await deleteCategory(cat.id);
     if (!res.success) {
       setErrorMsg(res.message || 'Cannot delete category.');
       setTimeout(() => setErrorMsg(null), 4000);

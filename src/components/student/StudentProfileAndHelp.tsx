@@ -82,10 +82,10 @@ export const StudentProfileAndHelp: React.FC = () => {
 
           <div className="p-4 rounded-xl bg-surface border border-border">
             <h4 className="font-semibold text-ink-primary text-sm mb-1">
-              Are anonymous submissions confidential?
+              How is my student data and evidence protected?
             </h4>
             <p>
-              Yes. If you toggle "Submit Anonymously", your student name and identification will not be disclosed to departmental staff. You can still track real-time resolution updates and reply to information requests through this portal.
+              Your submissions and evidence documents are stored securely with Row Level Security. Only the authorized departmental committee members assigned to your grievance have access to investigate your ticket.
             </p>
           </div>
 

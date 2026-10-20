@@ -152,20 +152,6 @@ export const SystemSettingsView: React.FC = () => {
               required
             />
           </div>
-
-          <div className="sm:col-span-2 pt-2">
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={allowAnon}
-                onChange={(e) => setAllowAnon(e.target.checked)}
-                className="rounded border-border text-brand-700 focus:ring-brand-500 h-4 w-4"
-              />
-              <span className="text-ink-primary font-medium">
-                Allow students to submit feedback anonymously to departments
-              </span>
-            </label>
-          </div>
         </div>
       </div>
 

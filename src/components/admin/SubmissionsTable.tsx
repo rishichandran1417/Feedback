@@ -10,14 +10,11 @@ import { exportSubmissionsToCsv, exportSubmissionsToExcel } from '../../lib/expo
 import {
   Search,
   Download,
-  Filter,
   ArrowUpDown,
   AlertTriangle,
   FileSpreadsheet,
-  FileText,
   ChevronLeft,
   ChevronRight,
-  Clock,
   Eye,
 } from 'lucide-react';
 
@@ -92,8 +89,8 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
 
   // Sort
   const sorted = [...filtered].sort((a, b) => {
-    let valA = a[sortField] || '';
-    let valB = b[sortField] || '';
+    const valA = a[sortField] || '';
+    const valB = b[sortField] || '';
     if (sortOrder === 'asc') return valA > valB ? 1 : -1;
     return valA < valB ? 1 : -1;
   });
@@ -112,12 +109,12 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="w-full max-w-full min-w-0 space-y-6">
       {/* Search & Export Toolbar */}
-      <div className="bg-white border border-border rounded-xl p-5 space-y-4">
-        <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+      <div className="bg-white border border-border rounded-xl p-4 sm:p-5 space-y-4 w-full min-w-0 shadow-xs">
+        <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 min-w-0">
           {/* Search Bar */}
-          <div className="relative flex-1">
+          <div className="relative flex-1 min-w-0">
             <Search className="w-4 h-4 text-ink-muted absolute left-3.5 top-3" />
             <input
               type="text"
@@ -132,7 +129,7 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
           </div>
 
           {/* Export Buttons */}
-          <div className="flex items-center gap-2 shrink-0">
+          <div className="flex flex-wrap items-center gap-2 shrink-0">
             <Button
               variant="secondary"
               size="sm"
@@ -155,9 +152,9 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
         </div>
 
         {/* Multi-Filters Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 pt-3 border-t border-border/60">
-          <div>
-            <label className="block text-[11px] font-semibold uppercase tracking-wider text-ink-muted mb-1">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 pt-3 border-t border-border/60 min-w-0">
+          <div className="min-w-0">
+            <label className="block text-[11px] font-semibold uppercase tracking-wider text-ink-muted mb-1 truncate">
               Status
             </label>
             <select
@@ -166,7 +163,7 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
                 setSelectedStatus(e.target.value);
                 setPage(1);
               }}
-              className="w-full px-2.5 py-1.5 rounded-lg border border-border text-xs text-ink-primary bg-white focus:outline-none focus:ring-1 focus:ring-brand-500"
+              className="w-full px-2 py-1.5 rounded-lg border border-border text-xs text-ink-primary bg-white focus:outline-none focus:ring-1 focus:ring-brand-500 truncate"
             >
               <option value="all">All Statuses</option>
               <option value="submitted">Submitted</option>
@@ -179,8 +176,8 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
             </select>
           </div>
 
-          <div>
-            <label className="block text-[11px] font-semibold uppercase tracking-wider text-ink-muted mb-1">
+          <div className="min-w-0">
+            <label className="block text-[11px] font-semibold uppercase tracking-wider text-ink-muted mb-1 truncate">
               Type
             </label>
             <select
@@ -189,7 +186,7 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
                 setSelectedType(e.target.value);
                 setPage(1);
               }}
-              className="w-full px-2.5 py-1.5 rounded-lg border border-border text-xs text-ink-primary bg-white focus:outline-none focus:ring-1 focus:ring-brand-500"
+              className="w-full px-2 py-1.5 rounded-lg border border-border text-xs text-ink-primary bg-white focus:outline-none focus:ring-1 focus:ring-brand-500 truncate"
             >
               <option value="all">All Types</option>
               <option value="complaint">Complaint</option>
@@ -198,8 +195,8 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
             </select>
           </div>
 
-          <div>
-            <label className="block text-[11px] font-semibold uppercase tracking-wider text-ink-muted mb-1">
+          <div className="min-w-0">
+            <label className="block text-[11px] font-semibold uppercase tracking-wider text-ink-muted mb-1 truncate">
               Category
             </label>
             <select
@@ -208,7 +205,7 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
                 setSelectedCategory(e.target.value);
                 setPage(1);
               }}
-              className="w-full px-2.5 py-1.5 rounded-lg border border-border text-xs text-ink-primary bg-white focus:outline-none focus:ring-1 focus:ring-brand-500"
+              className="w-full px-2 py-1.5 rounded-lg border border-border text-xs text-ink-primary bg-white focus:outline-none focus:ring-1 focus:ring-brand-500 truncate"
             >
               <option value="all">All Categories</option>
               {categories.map((c) => (
@@ -219,8 +216,8 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
             </select>
           </div>
 
-          <div>
-            <label className="block text-[11px] font-semibold uppercase tracking-wider text-ink-muted mb-1">
+          <div className="min-w-0">
+            <label className="block text-[11px] font-semibold uppercase tracking-wider text-ink-muted mb-1 truncate">
               Department
             </label>
             <select
@@ -229,7 +226,7 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
                 setSelectedDepartment(e.target.value);
                 setPage(1);
               }}
-              className="w-full px-2.5 py-1.5 rounded-lg border border-border text-xs text-ink-primary bg-white focus:outline-none focus:ring-1 focus:ring-brand-500"
+              className="w-full px-2 py-1.5 rounded-lg border border-border text-xs text-ink-primary bg-white focus:outline-none focus:ring-1 focus:ring-brand-500 truncate"
             >
               <option value="all">All Departments</option>
               {departments.map((d) => (
@@ -240,8 +237,8 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
             </select>
           </div>
 
-          <div>
-            <label className="block text-[11px] font-semibold uppercase tracking-wider text-ink-muted mb-1">
+          <div className="min-w-0">
+            <label className="block text-[11px] font-semibold uppercase tracking-wider text-ink-muted mb-1 truncate">
               Priority
             </label>
             <select
@@ -250,7 +247,7 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
                 setSelectedPriority(e.target.value);
                 setPage(1);
               }}
-              className="w-full px-2.5 py-1.5 rounded-lg border border-border text-xs text-ink-primary bg-white focus:outline-none focus:ring-1 focus:ring-brand-500"
+              className="w-full px-2 py-1.5 rounded-lg border border-border text-xs text-ink-primary bg-white focus:outline-none focus:ring-1 focus:ring-brand-500 truncate"
             >
               <option value="all">All Priorities</option>
               <option value="low">Low</option>
@@ -260,8 +257,8 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
             </select>
           </div>
 
-          <div className="flex items-center self-end pb-1">
-            <label className="flex items-center gap-2 cursor-pointer text-xs font-medium text-ink-primary select-none">
+          <div className="flex items-center self-end pb-1 min-w-0">
+            <label className="flex items-center gap-1.5 cursor-pointer text-xs font-medium text-ink-primary select-none truncate">
               <input
                 type="checkbox"
                 checked={overdueOnly}
@@ -269,30 +266,30 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
                   setOverdueOnly(e.target.checked);
                   setPage(1);
                 }}
-                className="rounded border-border text-rose-600 focus:ring-rose-500 h-4 w-4"
+                className="rounded border-border text-rose-600 focus:ring-rose-500 h-4 w-4 shrink-0"
               />
-              <span className="text-rose-700 font-semibold flex items-center gap-1">
-                <AlertTriangle className="w-3.5 h-3.5" /> Overdue Only
+              <span className="text-rose-700 font-semibold flex items-center gap-1 truncate">
+                <AlertTriangle className="w-3.5 h-3.5 shrink-0" /> Overdue Only
               </span>
             </label>
           </div>
         </div>
       </div>
 
-      {/* Table Container */}
+      {/* Table Container: strictly bounded width with clean internal scroll if needed */}
       {paginated.length === 0 ? (
         <EmptyState
           title="No grievances match the active criteria"
           description="Adjust your search keywords or reset filter dropdowns."
         />
       ) : (
-        <div className="bg-white border border-border rounded-xl shadow-xs overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse text-xs">
+        <div className="bg-white border border-border rounded-xl shadow-xs overflow-hidden w-full max-w-full min-w-0">
+          <div className="w-full overflow-x-auto min-w-0">
+            <table className="w-full text-left border-collapse text-xs min-w-[860px]">
               <thead className="bg-surface border-b border-border text-ink-secondary uppercase tracking-wider font-semibold">
                 <tr>
                   <th
-                    className="py-3.5 px-4 cursor-pointer hover:text-ink-primary"
+                    className="py-3 px-3 w-[110px] min-w-[100px] cursor-pointer hover:text-ink-primary whitespace-nowrap"
                     onClick={() => toggleSort('reference_number')}
                   >
                     <div className="flex items-center gap-1">
@@ -301,7 +298,7 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
                     </div>
                   </th>
                   <th
-                    className="py-3.5 px-4 cursor-pointer hover:text-ink-primary"
+                    className="py-3 px-3 w-[90px] min-w-[85px] cursor-pointer hover:text-ink-primary whitespace-nowrap"
                     onClick={() => toggleSort('created_at')}
                   >
                     <div className="flex items-center gap-1">
@@ -309,13 +306,13 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
                       <ArrowUpDown className="w-3 h-3" />
                     </div>
                   </th>
-                  <th className="py-3.5 px-4">Student</th>
-                  <th className="py-3.5 px-4">Subject & Category</th>
-                  <th className="py-3.5 px-4">Department</th>
-                  <th className="py-3.5 px-4">Priority</th>
-                  <th className="py-3.5 px-4">Status</th>
+                  <th className="py-3 px-3 w-[150px] min-w-[130px] max-w-[160px]">Student</th>
+                  <th className="py-3 px-3 min-w-[180px] max-w-[240px]">Subject & Category</th>
+                  <th className="py-3 px-3 w-[130px] min-w-[110px] max-w-[140px]">Department</th>
+                  <th className="py-3 px-3 w-[80px] min-w-[75px] whitespace-nowrap">Priority</th>
+                  <th className="py-3 px-3 w-[120px] min-w-[110px] whitespace-nowrap">Status</th>
                   <th
-                    className="py-3.5 px-4 cursor-pointer hover:text-ink-primary"
+                    className="py-3 px-3 w-[95px] min-w-[85px] cursor-pointer hover:text-ink-primary whitespace-nowrap"
                     onClick={() => toggleSort('due_date')}
                   >
                     <div className="flex items-center gap-1">
@@ -323,7 +320,7 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
                       <ArrowUpDown className="w-3 h-3" />
                     </div>
                   </th>
-                  <th className="py-3.5 px-4 text-right">Action</th>
+                  <th className="py-3 px-3 w-[55px] min-w-[50px] text-center whitespace-nowrap">Action</th>
                 </tr>
               </thead>
 
@@ -343,51 +340,55 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
                         isOverdue ? 'bg-rose-50/20' : ''
                       }`}
                     >
-                      <td className="py-3.5 px-4 font-mono font-semibold text-brand-700 whitespace-nowrap">
+                      <td className="py-3 px-3 font-mono font-semibold text-brand-700 whitespace-nowrap">
                         {sub.reference_number}
                       </td>
 
-                      <td className="py-3.5 px-4 text-ink-secondary whitespace-nowrap">
+                      <td className="py-3 px-3 text-ink-secondary whitespace-nowrap">
                         {new Date(sub.created_at).toLocaleDateString()}
                       </td>
 
-                      <td className="py-3.5 px-4 font-medium text-ink-primary whitespace-nowrap">
-                        {sub.is_anonymous ? (
-                          <span className="text-ink-muted italic">Anonymous</span>
-                        ) : (
-                          <div>
-                            <p className="leading-tight truncate max-w-[120px]">{sub.student_name}</p>
-                            <p className="text-[10px] text-ink-muted truncate max-w-[120px]">
-                              {sub.student_email}
-                            </p>
-                          </div>
-                        )}
-                      </td>
-
-                      <td className="py-3.5 px-4 max-w-xs">
-                        <p className="font-semibold text-ink-primary truncate">{sub.subject}</p>
-                        <div className="flex items-center gap-2 mt-0.5">
-                          <TypeBadge type={sub.submission_type} />
-                          <span className="text-ink-muted truncate text-[11px]">{sub.category_name}</span>
+                      <td className="py-3 px-3">
+                        <div className="max-w-[140px]">
+                          <p className="font-medium text-ink-primary truncate" title={sub.student_name}>
+                            {sub.student_name}
+                          </p>
+                          <p className="text-[10px] text-ink-muted truncate font-mono" title={sub.student_email}>
+                            {sub.student_email}
+                          </p>
                         </div>
                       </td>
 
-                      <td className="py-3.5 px-4 text-ink-secondary truncate max-w-[130px]">
-                        {sub.department_name || 'Unassigned'}
+                      <td className="py-3 px-3 max-w-[240px]">
+                        <p className="font-semibold text-ink-primary truncate" title={sub.subject}>
+                          {sub.subject}
+                        </p>
+                        <div className="flex items-center gap-1.5 mt-0.5">
+                          <TypeBadge type={sub.submission_type} />
+                          <span className="text-ink-muted truncate text-[11px]" title={sub.category_name}>
+                            {sub.category_name}
+                          </span>
+                        </div>
                       </td>
 
-                      <td className="py-3.5 px-4 whitespace-nowrap">
+                      <td className="py-3 px-3 max-w-[130px]">
+                        <p className="text-ink-secondary truncate" title={sub.department_name || 'Unassigned'}>
+                          {sub.department_name || 'Unassigned'}
+                        </p>
+                      </td>
+
+                      <td className="py-3 px-3 whitespace-nowrap">
                         <PriorityBadge priority={sub.priority} />
                       </td>
 
-                      <td className="py-3.5 px-4 whitespace-nowrap">
+                      <td className="py-3 px-3 whitespace-nowrap">
                         <StatusBadge status={sub.status} size="sm" />
                       </td>
 
-                      <td className="py-3.5 px-4 whitespace-nowrap">
+                      <td className="py-3 px-3 whitespace-nowrap">
                         {sub.due_date ? (
                           <div className={isOverdue ? 'text-rose-600 font-semibold flex items-center gap-1' : 'text-ink-secondary'}>
-                            {isOverdue && <AlertTriangle className="w-3 h-3 text-rose-600" />}
+                            {isOverdue && <AlertTriangle className="w-3 h-3 text-rose-600 shrink-0" />}
                             <span>{new Date(sub.due_date).toLocaleDateString()}</span>
                           </div>
                         ) : (
@@ -395,7 +396,7 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
                         )}
                       </td>
 
-                      <td className="py-3.5 px-4 text-right whitespace-nowrap">
+                      <td className="py-3 px-3 text-center whitespace-nowrap">
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
@@ -415,7 +416,7 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
           </div>
 
           {/* Pagination Controls */}
-          <div className="p-4 border-t border-border flex items-center justify-between text-xs text-ink-secondary bg-surface/30">
+          <div className="p-4 border-t border-border flex flex-wrap items-center justify-between gap-3 text-xs text-ink-secondary bg-surface/30">
             <div>
               Showing <strong className="text-ink-primary">{(page - 1) * pageSize + 1}</strong> to{' '}
               <strong className="text-ink-primary">{Math.min(page * pageSize, sorted.length)}</strong> of{' '}
