@@ -114,37 +114,41 @@ export const SystemProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         setDepartments(populatedDepts);
         setCategories(populatedCats);
 
-        // Fetch submissions
-        let query = supabase
-          .from('submissions')
-          .select(`
-            *,
-            attachments:submission_attachments(*),
-            messages:submission_messages(*),
-            status_history:submission_status_history(*)
-          `)
-          .order('created_at', { ascending: false });
+        // Fetch submissions with strict auth boundary
+        if (!user) {
+          setSubmissions([]);
+        } else {
+          let query = supabase
+            .from('submissions')
+            .select(`
+              *,
+              attachments:submission_attachments(*),
+              messages:submission_messages(*),
+              status_history:submission_status_history(*)
+            `)
+            .order('created_at', { ascending: false });
 
-        if (user && user.role === 'student') {
-          query = query.eq('student_id', user.id);
-        }
+          if (user.role === 'student') {
+            query = query.eq('student_id', user.id);
+          }
 
-        const { data: subData, error: subError } = await query;
-        if (!subError && subData) {
-          const mappedSubs: Submission[] = subData.map((s: any) => {
-            const cat = populatedCats.find((c) => c.id === s.category_id);
-            const dept = populatedDepts.find((d) => d.id === s.department_id);
-            const msgs = (s.messages || []).filter((m: any) =>
-              user?.role === 'administrator' ? true : !m.is_internal
-            );
-            return {
-              ...s,
-              category_name: cat?.name || 'General',
-              department_name: dept?.name || 'College Office',
-              messages: msgs,
-            };
-          });
-          setSubmissions(mappedSubs);
+          const { data: subData, error: subError } = await query;
+          if (!subError && subData) {
+            const mappedSubs: Submission[] = subData.map((s: any) => {
+              const cat = populatedCats.find((c) => c.id === s.category_id);
+              const dept = populatedDepts.find((d) => d.id === s.department_id);
+              const msgs = (s.messages || []).filter((m: any) =>
+                user?.role === 'administrator' ? true : !m.is_internal
+              );
+              return {
+                ...s,
+                category_name: cat?.name || 'General',
+                department_name: dept?.name || 'College Office',
+                messages: msgs,
+              };
+            });
+            setSubmissions(mappedSubs);
+          }
         }
 
         // Fetch notifications
@@ -159,12 +163,16 @@ export const SystemProvider: React.FC<{ children: React.ReactNode }> = ({ childr
           setNotifications([]);
         }
 
-        // Fetch email notifications outbox
-        const { data: emailData } = await supabase
-          .from('email_notifications')
-          .select('*')
-          .order('created_at', { ascending: false });
-        if (emailData) setEmailNotifications(emailData);
+        // Fetch email notifications outbox (admin only)
+        if (user?.role === 'administrator') {
+          const { data: emailData } = await supabase
+            .from('email_notifications')
+            .select('*')
+            .order('created_at', { ascending: false });
+          if (emailData) setEmailNotifications(emailData);
+        } else {
+          setEmailNotifications([]);
+        }
 
         return;
       } catch (err) {
@@ -172,15 +180,17 @@ export const SystemProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       }
     }
 
-    // Local fallback engine
-    const role = user ? user.role : 'administrator';
-    const userId = user ? user.id : '';
-    const subs = MockStorage.getSubmissions(role, userId);
-    setSubmissions(subs);
+    // Local fallback engine with strict auth boundary
+    if (!user) {
+      setSubmissions([]);
+    } else {
+      const subs = MockStorage.getSubmissions(user.role, user.id);
+      setSubmissions(subs);
+    }
     setCategories(MockStorage.getCategories());
     setDepartments(MockStorage.getDepartments());
-    setNotifications(userId ? MockStorage.getNotifications(userId) : []);
-    setEmailNotifications(MockStorage.getEmailNotifications());
+    setNotifications(user ? MockStorage.getNotifications(user.id) : []);
+    setEmailNotifications(user?.role === 'administrator' ? MockStorage.getEmailNotifications() : []);
     setSettings(MockStorage.getSystemSettings());
   }, [user]);
 
@@ -190,9 +200,7 @@ export const SystemProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   const unreadCount = notifications.filter((n) => !n.is_read).length;
 
-  const allSubmissionsForMetrics = user?.role === 'administrator'
-    ? submissions
-    : MockStorage.getSubmissions('administrator', '');
+  const allSubmissionsForMetrics = user?.role === 'administrator' ? submissions : [];
   const metrics = MockStorage.calculateMetrics(allSubmissionsForMetrics);
 
   const createSubmission = async (payload: {

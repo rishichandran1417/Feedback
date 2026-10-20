@@ -444,7 +444,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       email: normalizedEmail,
       full_name: formattedName,
       student_id: isAdmin ? 'ADMIN-01' : `STU-${Math.floor(1000 + Math.random() * 9000)}`,
-      department: isAdmin ? 'Office of the Dean' : 'Computer Science & Engineering',
+      department: isAdmin ? 'Office of the Dean' : 'General Studies',
       course_programme: isAdmin ? 'Administration' : 'B.Tech',
       is_active: true,
       created_at: new Date().toISOString(),

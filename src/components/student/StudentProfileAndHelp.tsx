@@ -39,26 +39,6 @@ export const StudentProfileAndHelp: React.FC = () => {
             </div>
           </div>
         </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-          <div className="p-3.5 rounded-lg bg-surface border border-border/80">
-            <span className="text-ink-muted text-[11px] uppercase tracking-wider block font-semibold mb-0.5">
-              Enrolled Department
-            </span>
-            <span className="font-semibold text-ink-primary text-sm">
-              {user?.department || 'Computer Science & Engineering'}
-            </span>
-          </div>
-
-          <div className="p-3.5 rounded-lg bg-surface border border-border/80">
-            <span className="text-ink-muted text-[11px] uppercase tracking-wider block font-semibold mb-0.5">
-              Email Security Domain
-            </span>
-            <span className="font-mono font-medium text-ink-primary text-sm">
-              {settings.auth_config.allowed_email_domain}
-            </span>
-          </div>
-        </div>
       </div>
 
       {/* College Grievance Policy & FAQs */}

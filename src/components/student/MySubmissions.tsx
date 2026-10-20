@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { useSystem } from '../../context/SystemContext';
+import { useAuth } from '../../context/AuthContext';
 import { StatusBadge } from '../common/StatusBadge';
 import { TypeBadge } from '../common/TypeBadge';
 import { PriorityBadge } from '../common/PriorityBadge';
 import { EmptyState } from '../common/EmptyState';
+import { CollegeLoginModal } from '../auth/CollegeLoginModal';
 import {
   Search,
   Filter,
@@ -12,6 +14,8 @@ import {
   Calendar,
   MessageSquare,
   FileCheck,
+  Lock,
+  Mail,
 } from 'lucide-react';
 
 interface MySubmissionsProps {
@@ -23,8 +27,10 @@ export const MySubmissions: React.FC<MySubmissionsProps> = ({
   onSelectSubmission,
   onNewSubmission,
 }) => {
+  const { user } = useAuth();
   const { submissions, categories } = useSystem();
 
+  const [showLoginModal, setShowLoginModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedType, setSelectedType] = useState<string>('all');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
@@ -59,6 +65,39 @@ export const MySubmissions: React.FC<MySubmissionsProps> = ({
     const timeB = new Date(b.created_at).getTime();
     return sortBy === 'newest' ? timeB - timeA : timeA - timeB;
   });
+
+  if (!user) {
+    return (
+      <div className="space-y-6">
+        <CollegeLoginModal
+          isOpen={showLoginModal}
+          onClose={() => setShowLoginModal(false)}
+        />
+        <div className="bg-white border border-border rounded-xl p-10 sm:p-14 text-center space-y-4 shadow-xs max-w-xl mx-auto">
+          <div className="w-14 h-14 rounded-full bg-brand-50 text-brand-700 flex items-center justify-center mx-auto border border-brand-200">
+            <Lock className="w-7 h-7" />
+          </div>
+          <div className="space-y-1.5">
+            <h3 className="text-lg font-semibold text-ink-primary">
+              Sign In to View Your Submissions
+            </h3>
+            <p className="text-xs text-ink-secondary max-w-md mx-auto leading-relaxed">
+              Your grievance submissions, investigation updates, and committee resolutions are confidential and securely linked to your official college mail.
+            </p>
+          </div>
+          <div className="pt-3">
+            <button
+              onClick={() => setShowLoginModal(true)}
+              className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl bg-brand-700 hover:bg-brand-800 text-white text-xs font-semibold shadow-xs transition-all cursor-pointer"
+            >
+              <Mail className="w-4 h-4" />
+              <span>Login with College Mail</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
