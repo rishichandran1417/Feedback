@@ -54,17 +54,36 @@ function setStored<T>(key: string, data: T): void {
 
 export const MockStorage = {
   init() {
-    if (!localStorage.getItem(STORAGE_KEYS.SUBMISSIONS)) {
-      setStored(STORAGE_KEYS.SUBMISSIONS, initialSubmissions);
-    }
+    // Purge legacy mock profiles and mock submissions if present in localStorage
+    const profiles = getStored<Profile[]>(STORAGE_KEYS.PROFILES, []);
+    const cleanProfiles = profiles.filter(
+      (p) =>
+        p &&
+        p.id !== 'u-student-01' &&
+        p.id !== 'u-student-02' &&
+        p.id !== 'u-admin-01' &&
+        !p.email?.includes('arjun.patel') &&
+        !p.email?.includes('priya.sharma') &&
+        !p.email?.includes('arthur.vance')
+    );
+    setStored(STORAGE_KEYS.PROFILES, cleanProfiles);
+
+    const subs = getStored<Submission[]>(STORAGE_KEYS.SUBMISSIONS, []);
+    const cleanSubs = subs.filter(
+      (s) =>
+        s &&
+        s.student_id !== 'u-student-01' &&
+        s.student_id !== 'u-student-02' &&
+        s.student_name !== 'Arjun Patel' &&
+        s.student_name !== 'Priya Sharma'
+    );
+    setStored(STORAGE_KEYS.SUBMISSIONS, cleanSubs);
+
     if (!localStorage.getItem(STORAGE_KEYS.CATEGORIES)) {
       setStored(STORAGE_KEYS.CATEGORIES, initialCategories);
     }
     if (!localStorage.getItem(STORAGE_KEYS.DEPARTMENTS)) {
       setStored(STORAGE_KEYS.DEPARTMENTS, initialDepartments);
-    }
-    if (!localStorage.getItem(STORAGE_KEYS.PROFILES)) {
-      setStored(STORAGE_KEYS.PROFILES, initialProfiles);
     }
     if (!localStorage.getItem(STORAGE_KEYS.NOTIFICATIONS)) {
       setStored(STORAGE_KEYS.NOTIFICATIONS, initialNotifications);
@@ -604,6 +623,22 @@ export const MockStorage = {
     emails.unshift(newEmail);
     setStored(STORAGE_KEYS.EMAIL_NOTIFS, emails);
     return newEmail;
+  },
+
+  recordEmailNotification(data: Partial<EmailNotification> & {
+    submission_id: string;
+    recipient_email: string;
+    event_type: EmailNotification['event_type'];
+    subject: string;
+  }): EmailNotification {
+    return this.enqueueEmail({
+      submission_id: data.submission_id,
+      submission_ref: data.submission_ref,
+      recipient_email: data.recipient_email,
+      event_type: data.event_type,
+      subject: data.subject,
+      body_text: data.body_text,
+    });
   },
 
   retryEmail(id: string): EmailNotification {

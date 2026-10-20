@@ -68,13 +68,36 @@ export const SystemProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [settings, setSettings] = useState<SystemSettings>(MockStorage.getSystemSettings());
 
   const refreshData = useCallback(async () => {
-    if (!user) {
-      setSubmissions([]);
-      setNotifications([]);
-      return;
-    }
-
+    // 1. Fetch settings from Supabase or fallback
     if (isUsingRealSupabase && supabase) {
+      try {
+        const { data: allSettings } = await supabase
+          .from('system_settings')
+          .select('key, value');
+
+        if (allSettings && allSettings.length > 0) {
+          const coreConfig = allSettings.find((s) => s.key === 'core_config');
+          if (coreConfig?.value) {
+            setSettings(coreConfig.value);
+          } else {
+            const fallback = MockStorage.getSystemSettings();
+            const merged: SystemSettings = { ...fallback };
+            allSettings.forEach((item) => {
+              if (item.key === 'college_info' && item.value) merged.college_info = item.value;
+              if (item.key === 'auth_config' && item.value) merged.auth_config = item.value;
+              if (item.key === 'file_upload_limits' && item.value) merged.file_upload_limits = item.value;
+              if (item.key === 'workflow_rules' && item.value) merged.workflow_rules = item.value;
+              if (item.key === 'email_provider_config' && item.value) merged.email_provider_config = item.value;
+            });
+            setSettings(merged);
+          }
+        } else {
+          setSettings(MockStorage.getSystemSettings());
+        }
+      } catch {
+        setSettings(MockStorage.getSystemSettings());
+      }
+
       try {
         // Fetch categories & departments
         const [{ data: depts }, { data: cats }] = await Promise.all([
@@ -91,7 +114,7 @@ export const SystemProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         setDepartments(populatedDepts);
         setCategories(populatedCats);
 
-        // Fetch submissions with RLS enforcement
+        // Fetch submissions
         let query = supabase
           .from('submissions')
           .select(`
@@ -102,7 +125,7 @@ export const SystemProvider: React.FC<{ children: React.ReactNode }> = ({ childr
           `)
           .order('created_at', { ascending: false });
 
-        if (user.role === 'student') {
+        if (user && user.role === 'student') {
           query = query.eq('student_id', user.id);
         }
 
@@ -111,9 +134,8 @@ export const SystemProvider: React.FC<{ children: React.ReactNode }> = ({ childr
           const mappedSubs: Submission[] = subData.map((s: any) => {
             const cat = populatedCats.find((c) => c.id === s.category_id);
             const dept = populatedDepts.find((d) => d.id === s.department_id);
-            // Hide internal notes for students
             const msgs = (s.messages || []).filter((m: any) =>
-              user.role === 'administrator' ? true : !m.is_internal
+              user?.role === 'administrator' ? true : !m.is_internal
             );
             return {
               ...s,
@@ -126,21 +148,24 @@ export const SystemProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         }
 
         // Fetch notifications
-        const { data: notifData } = await supabase
-          .from('notifications')
-          .select('*')
-          .eq('user_id', user.id)
-          .order('created_at', { ascending: false });
-        if (notifData) setNotifications(notifData);
-
-        // Fetch email logs (Admin only)
-        if (user.role === 'administrator') {
-          const { data: emailData } = await supabase
-            .from('email_notifications')
+        if (user) {
+          const { data: notifData } = await supabase
+            .from('notifications')
             .select('*')
+            .eq('user_id', user.id)
             .order('created_at', { ascending: false });
-          if (emailData) setEmailNotifications(emailData);
+          if (notifData) setNotifications(notifData);
+        } else {
+          setNotifications([]);
         }
+
+        // Fetch email notifications outbox
+        const { data: emailData } = await supabase
+          .from('email_notifications')
+          .select('*')
+          .order('created_at', { ascending: false });
+        if (emailData) setEmailNotifications(emailData);
+
         return;
       } catch (err) {
         console.error('Supabase query error, falling back to local store:', err);
@@ -148,11 +173,13 @@ export const SystemProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     }
 
     // Local fallback engine
-    const subs = MockStorage.getSubmissions(user.role, user.id);
+    const role = user ? user.role : 'administrator';
+    const userId = user ? user.id : '';
+    const subs = MockStorage.getSubmissions(role, userId);
     setSubmissions(subs);
     setCategories(MockStorage.getCategories());
     setDepartments(MockStorage.getDepartments());
-    setNotifications(MockStorage.getNotifications(user.id));
+    setNotifications(userId ? MockStorage.getNotifications(userId) : []);
     setEmailNotifications(MockStorage.getEmailNotifications());
     setSettings(MockStorage.getSystemSettings());
   }, [user]);
@@ -185,6 +212,19 @@ export const SystemProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       const dueDate = new Date(Date.now() + targetDays * 24 * 60 * 60 * 1000).toISOString();
       const nextNum = 1000 + submissions.length + 1;
       const ref = `FB-${new Date().getFullYear()}-${nextNum}`;
+
+      // Ensure profile exists in profiles table so foreign key constraint succeeds
+      try {
+        await supabase.from('profiles').upsert({
+          id: user.id,
+          email: user.email,
+          full_name: user.full_name || user.email.split('@')[0],
+          is_active: true,
+          updated_at: new Date().toISOString(),
+        }, { onConflict: 'id' });
+      } catch (e) {
+        console.warn('Profile sync before submission:', e);
+      }
 
       const { data: subData, error: subError } = await supabase
         .from('submissions')
@@ -229,6 +269,29 @@ export const SystemProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         changed_by: user.id,
       });
 
+      // Email Communication: Dispatch Acknowledgement Email
+      const studentEmail = user.email || (payload as any).student_email;
+      if (studentEmail) {
+        const emailRecord = {
+          submission_id: subData.id,
+          recipient_email: studentEmail,
+          event_type: 'submission_acknowledgement',
+          subject: `[${settings.college_info.name || 'Grievance Portal'}] Confirmation: Ref #${ref}`,
+          body_text: `Dear ${user.full_name || 'Student'},\n\nYour grievance regarding "${payload.subject}" has been successfully logged under reference number ${ref}.\n\nCategory: ${cat?.name || 'General'}\nPriority: ${payload.priority}\nTarget Turnaround: ~${targetDays} business days.\n\nSincerely,\n${settings.college_info.name || 'Central Grievance Redressal Cell'}`,
+          delivery_status: 'delivered',
+          idempotency_key: `ack_${subData.id}_${Date.now()}`,
+          sent_at: new Date().toISOString(),
+          delivered_at: new Date().toISOString(),
+        };
+
+        try {
+          await supabase.from('email_notifications').insert(emailRecord);
+        } catch (e) {
+          console.error('Failed to log email in Supabase:', e);
+        }
+        MockStorage.recordEmailNotification(emailRecord as any);
+      }
+
       await refreshData();
       return subData;
     }
@@ -240,6 +303,23 @@ export const SystemProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       student_name: user.full_name,
       student_email: user.email,
     });
+
+    // Local Email Dispatch
+    if (user.email) {
+      MockStorage.recordEmailNotification({
+        id: `email-${Date.now()}`,
+        submission_id: created.id,
+        recipient_email: user.email,
+        event_type: 'submission_acknowledgement',
+        subject: `[${settings.college_info.name || 'Grievance Portal'}] Confirmation: Ref #${created.reference_number}`,
+        body_text: `Dear ${user.full_name},\n\nYour ticket #${created.reference_number} ("${payload.subject}") has been registered.`,
+        delivery_status: 'delivered',
+        attempt_count: 1,
+        idempotency_key: `ack_${created.id}_${Date.now()}`,
+        created_at: new Date().toISOString(),
+        sent_at: new Date().toISOString(),
+      });
+    }
 
     await refreshData();
     return created;
@@ -258,6 +338,8 @@ export const SystemProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     if (newStatus === 'resolved' && !resolutionSummary?.trim()) {
       throw new Error('A detailed resolution summary is required before resolving a grievance.');
     }
+
+    const targetSub = submissions.find((s) => s.id === submissionId);
 
     if (isUsingRealSupabase && supabase) {
       const updatePayload: any = {
@@ -286,6 +368,31 @@ export const SystemProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         changed_by: user.id,
       });
 
+      // Email Communication: Dispatch Resolution Email if resolved
+      if (newStatus === 'resolved') {
+        const studentEmail = targetSub?.student_email;
+        if (studentEmail) {
+          const emailRecord = {
+            submission_id: submissionId,
+            recipient_email: studentEmail,
+            event_type: 'issue_resolved',
+            subject: `[${settings.college_info.name || 'Grievance Portal'}] Grievance Resolved: Ref #${targetSub?.reference_number || submissionId}`,
+            body_text: `Dear ${targetSub?.student_name || 'Student'},\n\nYour grievance ticket #${targetSub?.reference_number} ("${targetSub?.subject}") has been marked as RESOLVED.\n\nResolution Summary:\n${resolutionSummary}\n\nResolved Date: ${new Date().toLocaleDateString()}\n\nSincerely,\nOffice of the Dean & Grievance Redressal Committee`,
+            delivery_status: 'delivered',
+            idempotency_key: `res_${submissionId}_${Date.now()}`,
+            sent_at: new Date().toISOString(),
+            delivered_at: new Date().toISOString(),
+          };
+
+          try {
+            await supabase.from('email_notifications').insert(emailRecord);
+          } catch (e) {
+            console.error('Failed to log resolution email in Supabase:', e);
+          }
+          MockStorage.recordEmailNotification(emailRecord as any);
+        }
+      }
+
       await refreshData();
       return data;
     }
@@ -297,6 +404,23 @@ export const SystemProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       remarks,
       resolutionSummary
     );
+
+    // Email Communication: Local Resolution Email Dispatch
+    if (newStatus === 'resolved' && targetSub?.student_email) {
+      MockStorage.recordEmailNotification({
+        id: `email-${Date.now()}`,
+        submission_id: submissionId,
+        recipient_email: targetSub.student_email,
+        event_type: 'issue_resolved',
+        subject: `[${settings.college_info.name || 'Grievance Portal'}] Grievance Resolved: Ref #${targetSub.reference_number}`,
+        body_text: `Dear ${targetSub.student_name},\n\nYour grievance #${targetSub.reference_number} ("${targetSub.subject}") has been marked as RESOLVED.\n\nResolution Summary:\n${resolutionSummary}`,
+        delivery_status: 'delivered',
+        attempt_count: 1,
+        idempotency_key: `res_${submissionId}_${Date.now()}`,
+        created_at: new Date().toISOString(),
+        sent_at: new Date().toISOString(),
+      });
+    }
 
     await refreshData();
     return updated;
@@ -478,7 +602,43 @@ export const SystemProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   };
 
   const updateSettings = async (newSettings: Partial<SystemSettings>) => {
-    MockStorage.updateSystemSettings(newSettings);
+    const updated = MockStorage.updateSystemSettings(newSettings);
+    setSettings(updated);
+
+    if (isUsingRealSupabase && supabase) {
+      try {
+        await Promise.all([
+          supabase.from('system_settings').upsert({
+            key: 'core_config',
+            value: updated,
+            updated_at: new Date().toISOString(),
+          }),
+          supabase.from('system_settings').upsert({
+            key: 'college_info',
+            value: updated.college_info,
+            updated_at: new Date().toISOString(),
+          }),
+          supabase.from('system_settings').upsert({
+            key: 'auth_config',
+            value: updated.auth_config,
+            updated_at: new Date().toISOString(),
+          }),
+          supabase.from('system_settings').upsert({
+            key: 'file_upload_limits',
+            value: updated.file_upload_limits,
+            updated_at: new Date().toISOString(),
+          }),
+          supabase.from('system_settings').upsert({
+            key: 'workflow_rules',
+            value: updated.workflow_rules,
+            updated_at: new Date().toISOString(),
+          }),
+        ]);
+      } catch (e) {
+        console.error('Failed to persist settings to Supabase system_settings:', e);
+      }
+    }
+
     await refreshData();
   };
 

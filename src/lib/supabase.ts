@@ -1,18 +1,42 @@
 import { createClient } from '@supabase/supabase-js';
+export function getSupabaseCredentials() {
+  const envUrl = (import.meta.env.VITE_SUPABASE_URL || '').trim();
+  const envKey = (
+    import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY ||
+    import.meta.env.VITE_SUPABASE_ANON_KEY ||
+    ''
+  ).trim();
 
-const supabaseUrl = (import.meta.env.VITE_SUPABASE_URL || '').trim();
-const supabasePublishableKey = (
-  import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY ||
-  import.meta.env.VITE_SUPABASE_ANON_KEY ||
-  ''
-).trim();
+  let localUrl = '';
+  let localKey = '';
+  if (typeof window !== 'undefined') {
+    localUrl = (localStorage.getItem('VITE_SUPABASE_URL') || '').trim();
+    localKey = (
+      localStorage.getItem('VITE_SUPABASE_PUBLISHABLE_KEY') ||
+      localStorage.getItem('VITE_SUPABASE_ANON_KEY') ||
+      ''
+    ).trim();
+  }
 
-export const isUsingRealSupabase = Boolean(
-  supabaseUrl &&
-  supabasePublishableKey &&
-  supabaseUrl !== 'https://your-project.supabase.co' &&
-  !supabaseUrl.includes('placeholder')
-);
+  const url = localUrl || envUrl;
+  const key = localKey || envKey;
+
+  const isValid = Boolean(
+    url &&
+    key &&
+    url.startsWith('https://') &&
+    url.includes('.supabase.co') &&
+    !url.includes('your-project') &&
+    !url.includes('placeholder')
+  );
+
+  return { url, key, isValid };
+}
+
+const creds = getSupabaseCredentials();
+export const supabaseUrl = creds.url;
+export const supabasePublishableKey = creds.key;
+export const isUsingRealSupabase = creds.isValid;
 
 export const supabase = isUsingRealSupabase
   ? createClient(supabaseUrl, supabasePublishableKey, {
@@ -23,6 +47,23 @@ export const supabase = isUsingRealSupabase
       },
     })
   : null;
+
+export function saveSupabaseCredentials(url: string, key: string) {
+  if (typeof window !== 'undefined') {
+    localStorage.setItem('VITE_SUPABASE_URL', url.trim());
+    localStorage.setItem('VITE_SUPABASE_ANON_KEY', key.trim());
+    window.location.reload();
+  }
+}
+
+export function clearSupabaseCredentials() {
+  if (typeof window !== 'undefined') {
+    localStorage.removeItem('VITE_SUPABASE_URL');
+    localStorage.removeItem('VITE_SUPABASE_ANON_KEY');
+    localStorage.removeItem('VITE_SUPABASE_PUBLISHABLE_KEY');
+    window.location.reload();
+  }
+}
 
 /**
  * Storage Helpers for private 'submission-evidence' bucket

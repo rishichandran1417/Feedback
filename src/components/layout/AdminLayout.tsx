@@ -21,6 +21,8 @@ import {
   Menu,
 } from 'lucide-react';
 
+import { CollegeLoginModal } from '../auth/CollegeLoginModal';
+
 interface AdminLayoutProps {
   children: React.ReactNode;
   pageTitle?: string;
@@ -35,12 +37,13 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
   headerAction,
 }) => {
   const { user, logout } = useAuth();
-  const { metrics } = useSystem();
+  const { metrics, settings } = useSystem();
   const location = useLocation();
   const navigate = useNavigate();
 
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
   const adminNavItems = [
     { path: '/admin/dashboard', label: 'Overview', icon: LayoutDashboard },
@@ -57,11 +60,17 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
 
   const handleLogout = async () => {
     await logout();
-    navigate('/admin');
+    setShowUserMenu(false);
   };
 
   return (
     <div className="min-h-screen bg-background text-ink-primary flex flex-col antialiased">
+      {/* College Login Modal */}
+      <CollegeLoginModal
+        isOpen={showLoginModal}
+        onClose={() => setShowLoginModal(false)}
+      />
+
       {/* Administrator Top Bar */}
       <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-xs border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
@@ -73,7 +82,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
             <div>
               <div className="flex items-center gap-2">
                 <span className="font-semibold text-ink-primary tracking-tight text-base sm:text-lg">
-                  Apex Institute
+                  {settings.college_info.name || 'College of Engineering Trivandrum'}
                 </span>
                 <span className="text-xs px-2 py-0.5 rounded-full font-semibold bg-brand-50 text-brand-800 border border-brand-200">
                   Administration Portal
@@ -85,54 +94,69 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
             </div>
           </Link>
 
-          {/* Right Area: Admin Profile & Logout */}
+          {/* Right Area: Admin Profile & Logout or Login Button */}
           <div className="flex items-center gap-3">
-            <div className="relative">
+            {!user ? (
               <button
-                onClick={() => setShowUserMenu(!showUserMenu)}
-                className="flex items-center gap-2 p-1.5 rounded-lg hover:bg-surface transition-colors text-left"
+                onClick={() => setShowLoginModal(true)}
+                className="flex items-center gap-2 px-3.5 py-2 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-ink-primary text-xs font-semibold shadow-xs hover:border-slate-400 transition-all cursor-pointer"
               >
-                <div className="w-8 h-8 rounded-full bg-brand-800 text-white font-semibold text-xs flex items-center justify-center">
-                  {user?.full_name?.charAt(0) || 'A'}
-                </div>
-                <div className="hidden sm:block">
-                  <p className="text-xs font-semibold text-ink-primary leading-tight">{user?.full_name}</p>
-                  <p className="text-[11px] text-brand-700 font-medium">Faculty Administrator</p>
-                </div>
-                <ChevronDown className="w-3.5 h-3.5 text-ink-secondary" />
+                <svg className="w-4 h-4" viewBox="0 0 24 24">
+                  <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                  <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                  <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+                  <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+                </svg>
+                <span>Login with College Mail</span>
               </button>
-
-              {showUserMenu && (
-                <div className="absolute right-0 mt-2 w-64 bg-white border border-border rounded-xl shadow-lg z-50 py-1 divide-y divide-border animate-in fade-in-50 duration-150">
-                  <div className="px-4 py-3">
-                    <p className="text-xs font-semibold text-ink-primary">{user?.full_name}</p>
-                    <p className="text-xs text-ink-secondary truncate">{user?.email}</p>
-                    <p className="text-[11px] text-ink-muted mt-1">{user?.department || 'Dean Office'}</p>
+            ) : (
+              <div className="relative">
+                <button
+                  onClick={() => setShowUserMenu(!showUserMenu)}
+                  className="flex items-center gap-2 p-1.5 rounded-lg hover:bg-surface transition-colors text-left"
+                >
+                  <div className="w-8 h-8 rounded-full bg-brand-800 text-white font-semibold text-xs flex items-center justify-center">
+                    {user?.full_name?.charAt(0) || user?.email?.charAt(0)?.toUpperCase() || 'U'}
                   </div>
-
-                  <div className="py-1">
-                    <Link
-                      to="/admin/settings"
-                      onClick={() => setShowUserMenu(false)}
-                      className="w-full px-4 py-2 text-xs text-ink-primary hover:bg-surface flex items-center gap-2 text-left"
-                    >
-                      <Settings className="w-4 h-4 text-ink-secondary" />
-                      Administrative Settings
-                    </Link>
+                  <div className="hidden sm:block">
+                    <p className="text-xs font-semibold text-ink-primary leading-tight">{user?.full_name}</p>
+                    <p className="text-[11px] text-brand-700 font-medium capitalize">{user?.role || 'Administrator'}</p>
                   </div>
+                  <ChevronDown className="w-3.5 h-3.5 text-ink-secondary" />
+                </button>
 
-                  <div className="py-1">
-                    <button
-                      onClick={handleLogout}
-                      className="w-full px-4 py-2 text-xs text-rose-600 hover:bg-rose-50 flex items-center gap-2 text-left"
-                    >
-                      <LogOut className="w-4 h-4" />
-                      Administrator Sign Out
-                    </button>
+                {showUserMenu && (
+                  <div className="absolute right-0 mt-2 w-64 bg-white border border-border rounded-xl shadow-lg z-50 py-1 divide-y divide-border animate-in fade-in-50 duration-150">
+                    <div className="px-4 py-3">
+                      <p className="text-xs font-semibold text-ink-primary">{user?.full_name}</p>
+                      <p className="text-xs text-ink-secondary truncate">{user?.email}</p>
+                      <p className="text-[11px] text-ink-muted mt-1">{user?.department || 'Department Staff'}</p>
+                    </div>
+
+                    <div className="py-1">
+                      <Link
+                        to="/admin/settings"
+                        onClick={() => setShowUserMenu(false)}
+                        className="w-full px-4 py-2 text-xs text-ink-primary hover:bg-surface flex items-center gap-2 text-left"
+                      >
+                        <Settings className="w-4 h-4 text-ink-secondary" />
+                        Administrative Settings
+                      </Link>
+                    </div>
+
+                    <div className="py-1">
+                      <button
+                        onClick={handleLogout}
+                        className="w-full px-4 py-2 text-xs text-rose-600 hover:bg-rose-50 flex items-center gap-2 text-left cursor-pointer"
+                      >
+                        <LogOut className="w-4 h-4" />
+                        Sign Out
+                      </button>
+                    </div>
                   </div>
-                </div>
-              )}
-            </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </header>

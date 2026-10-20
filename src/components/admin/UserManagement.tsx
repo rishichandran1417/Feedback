@@ -1,38 +1,56 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MockStorage } from '../../lib/mockStorage';
-import { Profile, AppRole } from '../../types/database';
+import { Profile } from '../../types/database';
 import { useSystem } from '../../context/SystemContext';
 import { useAuth } from '../../context/AuthContext';
+import { isUsingRealSupabase, supabase } from '../../lib/supabase';
 import { Button } from '../common/Button';
 import {
   Users,
   Search,
   Shield,
-  ShieldAlert,
-  UserCheck,
-  UserX,
   FileText,
   AlertCircle,
-  CheckCircle,
+  RefreshCw,
 } from 'lucide-react';
 
 export const UserManagement: React.FC = () => {
   const { user: currentAdmin } = useAuth();
   const { submissions } = useSystem();
-  const [profiles, setProfiles] = useState<Profile[]>(MockStorage.getProfiles());
+  const [profiles, setProfiles] = useState<Profile[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
-  const reloadProfiles = () => {
-    setProfiles(MockStorage.getProfiles());
+  const loadProfiles = async () => {
+    setIsLoading(true);
+    try {
+      if (isUsingRealSupabase && supabase) {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('*')
+          .order('created_at', { ascending: false });
+        if (!error && data) {
+          setProfiles(data);
+          return;
+        }
+      }
+      setProfiles(MockStorage.getProfiles());
+    } finally {
+      setIsLoading(false);
+    }
   };
+
+  useEffect(() => {
+    loadProfiles();
+  }, []);
 
   const filtered = profiles.filter((p) => {
     const term = searchTerm.toLowerCase();
     return (
       !term ||
-      p.full_name.toLowerCase().includes(term) ||
-      p.email.toLowerCase().includes(term) ||
+      p.full_name?.toLowerCase().includes(term) ||
+      p.email?.toLowerCase().includes(term) ||
       (p.student_id && p.student_id.toLowerCase().includes(term)) ||
       (p.department && p.department.toLowerCase().includes(term))
     );
@@ -43,10 +61,10 @@ export const UserManagement: React.FC = () => {
   };
 
   const isUserAdmin = (email: string) => {
-    return email.includes('dean') || email.includes('admin');
+    return email.includes('dean') || email.includes('admin') || email.includes('grievance');
   };
 
-  const handleToggleActive = (p: Profile) => {
+  const handleToggleActive = async (p: Profile) => {
     // Prevent deactivating own account
     if (p.id === currentAdmin?.id) {
       setFeedback({ type: 'error', text: 'You cannot deactivate your own active administrator account.' });
@@ -54,8 +72,16 @@ export const UserManagement: React.FC = () => {
     }
 
     const updated = { ...p, is_active: !p.is_active };
+    if (isUsingRealSupabase && supabase) {
+      try {
+        await supabase.from('profiles').update({ is_active: updated.is_active }).eq('id', p.id);
+      } catch (e) {
+        console.error('Supabase profile status update error:', e);
+      }
+    }
+
     MockStorage.saveProfile(updated);
-    reloadProfiles();
+    await loadProfiles();
     setFeedback({
       type: 'success',
       text: `Account ${p.email} has been ${updated.is_active ? 'reactivated' : 'temporarily suspended'}.`,
@@ -87,102 +113,128 @@ export const UserManagement: React.FC = () => {
             </p>
           </div>
 
-          <div className="relative w-full sm:w-72">
-            <Search className="w-4 h-4 text-ink-muted absolute left-3 top-2.5" />
-            <input
-              type="text"
-              placeholder="Search name, student ID, email..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-9 pr-3 py-1.5 rounded-lg border border-border text-xs focus:outline-none focus:ring-1 focus:ring-brand-500"
-            />
+          <div className="flex items-center gap-2 w-full sm:w-auto">
+            <div className="relative w-full sm:w-72">
+              <Search className="w-4 h-4 text-ink-muted absolute left-3 top-2.5" />
+              <input
+                type="text"
+                placeholder="Search name, student ID, email..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-9 pr-3 py-1.5 rounded-lg border border-border text-xs focus:outline-none focus:ring-1 focus:ring-brand-500"
+              />
+            </div>
+
+            <Button
+              size="sm"
+              variant="secondary"
+              onClick={loadProfiles}
+              isLoading={isLoading}
+              title="Refresh User Registry"
+            >
+              <RefreshCw className="w-3.5 h-3.5" />
+            </Button>
           </div>
         </div>
       </div>
 
-      {/* Users Table */}
+      {/* Users Table or Clean Empty State */}
       <div className="bg-white border border-border rounded-xl overflow-hidden shadow-xs">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse text-xs">
-            <thead className="bg-surface border-b border-border text-ink-secondary uppercase tracking-wider font-semibold">
-              <tr>
-                <th className="py-3 px-4">User Details</th>
-                <th className="py-3 px-4">Official Email</th>
-                <th className="py-3 px-4">Role</th>
-                <th className="py-3 px-4">Submissions</th>
-                <th className="py-3 px-4">Account Status</th>
-                <th className="py-3 px-4 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border">
-              {filtered.map((p) => {
-                const adminRole = isUserAdmin(p.email);
-                const subCount = getSubmissionsCount(p.id);
+        {filtered.length === 0 ? (
+          <div className="py-16 px-4 text-center space-y-3">
+            <div className="w-12 h-12 rounded-full bg-brand-50 text-brand-700 flex items-center justify-center mx-auto">
+              <Users className="w-6 h-6" />
+            </div>
+            <p className="text-sm font-semibold text-ink-primary">No User Accounts Found</p>
+            <p className="text-xs text-ink-secondary max-w-md mx-auto leading-relaxed">
+              {searchTerm
+                ? 'No registered users match your search query.'
+                : 'All mock dummy users have been removed. When students and faculty sign in via Google Workspace / College Mail in the top right, their official records will appear here automatically.'}
+            </p>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse text-xs">
+              <thead className="bg-surface border-b border-border text-ink-secondary uppercase tracking-wider font-semibold">
+                <tr>
+                  <th className="py-3 px-4">User Details</th>
+                  <th className="py-3 px-4">Official Email</th>
+                  <th className="py-3 px-4">Role</th>
+                  <th className="py-3 px-4">Submissions</th>
+                  <th className="py-3 px-4">Account Status</th>
+                  <th className="py-3 px-4 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border">
+                {filtered.map((p) => {
+                  const adminRole = isUserAdmin(p.email);
+                  const subCount = getSubmissionsCount(p.id);
 
-                return (
-                  <tr key={p.id} className="hover:bg-surface/50 transition-colors">
-                    <td className="py-3.5 px-4">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-brand-50 text-brand-700 font-bold flex items-center justify-center shrink-0 border border-brand-200">
-                          {p.full_name.charAt(0)}
+                  return (
+                    <tr key={p.id} className="hover:bg-surface/50 transition-colors">
+                      <td className="py-3.5 px-4">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-full bg-brand-50 text-brand-700 font-bold flex items-center justify-center shrink-0 border border-brand-200">
+                            {p.full_name?.charAt(0) || p.email?.charAt(0)?.toUpperCase() || 'U'}
+                          </div>
+                          <div>
+                            <p className="font-semibold text-ink-primary">{p.full_name || 'College User'}</p>
+                            <p className="text-[11px] text-ink-muted font-mono">
+                              {p.student_id || p.department || 'Official Account'}
+                            </p>
+                          </div>
                         </div>
-                        <div>
-                          <p className="font-semibold text-ink-primary">{p.full_name}</p>
-                          <p className="text-[11px] text-ink-muted font-mono">
-                            {p.student_id || p.department || 'Staff Profile'}
-                          </p>
-                        </div>
-                      </div>
-                    </td>
+                      </td>
 
-                    <td className="py-3.5 px-4 font-mono text-ink-secondary">{p.email}</td>
+                      <td className="py-3.5 px-4 font-mono text-ink-secondary">{p.email}</td>
 
-                    <td className="py-3.5 px-4 whitespace-nowrap">
-                      {adminRole ? (
-                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-brand-50 text-brand-700 border border-brand-200">
-                          <Shield className="w-3 h-3 text-brand-700" />
-                          Faculty Admin
+                      <td className="py-3.5 px-4 whitespace-nowrap">
+                        {adminRole ? (
+                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-brand-50 text-brand-700 border border-brand-200">
+                            <Shield className="w-3 h-3 text-brand-700" />
+                            Faculty Admin
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-surface text-ink-secondary border border-border">
+                            Student
+                          </span>
+                        )}
+                      </td>
+
+                      <td className="py-3.5 px-4 font-medium text-ink-primary whitespace-nowrap">
+                        <span className="inline-flex items-center gap-1">
+                          <FileText className="w-3.5 h-3.5 text-slate-400" />
+                          {subCount} record{subCount === 1 ? '' : 's'}
                         </span>
-                      ) : (
-                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-surface text-ink-secondary border border-border">
-                          Student
+                      </td>
+
+                      <td className="py-3.5 px-4 whitespace-nowrap">
+                        <span
+                          className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium ${
+                            p.is_active ? 'text-emerald-700 bg-emerald-50' : 'text-rose-700 bg-rose-50'
+                          }`}
+                        >
+                          {p.is_active ? 'Active' : 'Suspended'}
                         </span>
-                      )}
-                    </td>
+                      </td>
 
-                    <td className="py-3.5 px-4 font-medium text-ink-primary whitespace-nowrap">
-                      <span className="inline-flex items-center gap-1">
-                        <FileText className="w-3.5 h-3.5 text-slate-400" />
-                        {subCount} record{subCount === 1 ? '' : 's'}
-                      </span>
-                    </td>
-
-                    <td className="py-3.5 px-4 whitespace-nowrap">
-                      <span
-                        className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium ${
-                          p.is_active ? 'text-emerald-700 bg-emerald-50' : 'text-rose-700 bg-rose-50'
-                        }`}
-                      >
-                        {p.is_active ? 'Active' : 'Suspended'}
-                      </span>
-                    </td>
-
-                    <td className="py-3.5 px-4 text-right whitespace-nowrap">
-                      <Button
-                        size="sm"
-                        variant="secondary"
-                        onClick={() => handleToggleActive(p)}
-                        disabled={p.id === currentAdmin?.id}
-                      >
-                        {p.is_active ? 'Suspend' : 'Reactivate'}
-                      </Button>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+                      <td className="py-3.5 px-4 text-right whitespace-nowrap">
+                        <Button
+                          size="sm"
+                          variant="secondary"
+                          onClick={() => handleToggleActive(p)}
+                          disabled={p.id === currentAdmin?.id}
+                        >
+                          {p.is_active ? 'Suspend' : 'Reactivate'}
+                        </Button>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
     </div>
   );

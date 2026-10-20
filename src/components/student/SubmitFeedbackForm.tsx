@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { useSystem } from '../../context/SystemContext';
+import { useAuth } from '../../context/AuthContext';
 import { SubmissionType, SubmissionPriority } from '../../types/database';
 import { Button } from '../common/Button';
 import { Modal } from '../common/Modal';
+import { CollegeLoginModal } from '../auth/CollegeLoginModal';
 import confetti from 'canvas-confetti';
 import {
   Upload,
@@ -23,7 +25,9 @@ export const SubmitFeedbackForm: React.FC<SubmitFeedbackFormProps> = ({
   onCancel,
 }) => {
   const { categories, settings, createSubmission } = useSystem();
+  const { user } = useAuth();
 
+  const [showLoginModal, setShowLoginModal] = useState(false);
   const [submissionType, setSubmissionType] = useState<SubmissionType>('complaint');
   const [categoryId, setCategoryId] = useState<string>('');
   const [subject, setSubject] = useState('');
@@ -87,6 +91,12 @@ export const SubmitFeedbackForm: React.FC<SubmitFeedbackFormProps> = ({
     e.preventDefault();
     setErrorMsg(null);
 
+    if (!user) {
+      setShowLoginModal(true);
+      setErrorMsg('Please log in with your official college mail (Gmail) to register feedback.');
+      return;
+    }
+
     if (!categoryId) {
       setErrorMsg('Please select a relevant category.');
       return;
@@ -133,6 +143,12 @@ export const SubmitFeedbackForm: React.FC<SubmitFeedbackFormProps> = ({
 
   return (
     <div className="w-full max-w-3xl mx-auto space-y-8 min-w-0">
+      {/* College Login Modal */}
+      <CollegeLoginModal
+        isOpen={showLoginModal}
+        onClose={() => setShowLoginModal(false)}
+      />
+
       {/* Success Modal */}
       {submittedRef && (
         <Modal
@@ -172,6 +188,31 @@ export const SubmitFeedbackForm: React.FC<SubmitFeedbackFormProps> = ({
 
       {/* Form Container */}
       <form onSubmit={handleSubmit} className="bg-white border border-border rounded-xl p-6 sm:p-8 space-y-8 shadow-xs min-w-0">
+        {/* Unauthenticated / Authenticated Student Status Banner */}
+        {!user ? (
+          <div className="p-4 rounded-xl bg-amber-50 border border-amber-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-amber-900">
+            <div className="flex items-center gap-2.5">
+              <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
+              <span>You are currently not signed in. Sign in with your official college mail (Gmail) to submit grievances and receive automated email communication.</span>
+            </div>
+            <button
+              type="button"
+              onClick={() => setShowLoginModal(true)}
+              className="px-3.5 py-1.5 rounded-lg bg-white border border-amber-300 font-semibold text-amber-900 hover:bg-amber-100 shrink-0 cursor-pointer text-xs shadow-xs"
+            >
+              Sign In with College Mail
+            </button>
+          </div>
+        ) : (
+          <div className="p-3.5 rounded-xl bg-brand-50/50 border border-brand-200 text-xs text-brand-900 flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-emerald-500" />
+              <span>Submitting as: <strong className="font-semibold">{user.full_name}</strong> ({user.email})</span>
+            </div>
+            <span className="text-[11px] text-ink-muted">Official receipts will be sent to this email</span>
+          </div>
+        )}
+
         {errorMsg && (
           <div className="p-4 rounded-lg bg-rose-50 border border-rose-200 text-xs text-rose-700 flex items-start gap-2.5">
             <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
