@@ -65,9 +65,9 @@ export const AdminLoginPage: React.FC = () => {
   // If currently authenticated as a student, display clear Access Denied notice
   if (user && user.role === 'student') {
     return (
-      <div className="min-h-screen bg-slate-900 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen bg-white flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
-          <div className="bg-white py-8 px-6 sm:px-8 rounded-xl shadow-xl space-y-6 text-center">
+          <div className="bg-white py-8 px-6 sm:px-8 rounded-xl border border-border shadow-lg space-y-6 text-center">
             <div className="w-14 h-14 rounded-full bg-rose-50 text-rose-600 flex items-center justify-center mx-auto border border-rose-200">
               <ShieldAlert className="w-8 h-8" />
             </div>
@@ -127,21 +127,21 @@ export const AdminLoginPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-900 flex flex-col justify-center py-8 sm:py-12 px-3.5 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-white flex flex-col justify-center py-8 sm:py-12 px-3.5 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center space-y-3">
-        <div className="w-12 h-12 rounded-xl bg-brand-600 text-white flex items-center justify-center mx-auto shadow-lg">
+        <div className="w-12 h-12 rounded-xl bg-brand-700 text-white flex items-center justify-center mx-auto shadow-md">
           <ShieldCheck className="w-7 h-7" />
         </div>
-        <h2 className="text-3xl font-extrabold tracking-tight text-white">
+        <h2 className="text-3xl font-extrabold tracking-tight text-ink-primary">
           voIcE
         </h2>
-        <p className="text-xs text-slate-400">
+        <p className="text-xs text-ink-secondary">
           College of Engineering Trivandrum • Administrator Portal
         </p>
       </div>
 
       <div className="mt-6 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-6 sm:py-8 px-4 sm:px-8 rounded-xl shadow-xl space-y-6">
+        <div className="bg-white py-6 sm:py-8 px-4 sm:px-8 rounded-xl border border-border shadow-lg space-y-6">
           <div className="border-b border-border pb-3">
             <h3 className="text-base font-semibold text-ink-primary">Faculty Administrator Authentication</h3>
             <p className="text-xs text-ink-secondary mt-0.5">
