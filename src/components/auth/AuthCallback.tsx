@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth, isAllowedCollegeEmail } from '../../context/AuthContext';
 import { isUsingRealSupabase, supabase } from '../../lib/supabase';
 import {
   ShieldAlert,
@@ -48,10 +48,8 @@ export const AuthCallback: React.FC = () => {
       }
 
       if (!isUsingRealSupabase || !supabase) {
-        // Fallback local mode
-        await syncSession();
-        setStatus('success');
-        setTimeout(() => navigate('/', { replace: true }), 400);
+        setStatus('error');
+        setErrorMessage('Authentication configuration error: Supabase service is not reachable.');
         return;
       }
 
@@ -77,29 +75,63 @@ export const AuthCallback: React.FC = () => {
         const authUser = session.user;
         const userEmail = (authUser.email || '').toLowerCase().trim();
 
-        // 3. Query trusted database role first (Administrators may have distinct domain)
-        const { data: roleData } = await supabase
+        // 3. Query trusted database role first (with retry for newly created trigger accounts)
+        let { data: roleData } = await supabase
           .from('user_roles')
           .select('role')
           .eq('user_id', authUser.id)
           .maybeSingle();
 
+        if (!roleData?.role) {
+          // Retry briefly in case the database trigger on_auth_user_created is still finishing
+          for (let i = 0; i < 4; i++) {
+            await new Promise((resolve) => setTimeout(resolve, 400));
+            const retryRes = await supabase
+              .from('user_roles')
+              .select('role')
+              .eq('user_id', authUser.id)
+              .maybeSingle();
+            if (retryRes.data?.role) {
+              roleData = retryRes.data;
+              break;
+            }
+          }
+        }
+
         const isAdmin = roleData?.role === 'administrator';
 
-        // 4. Enforce college email eligibility
-        const configuredDomain = (allowedEmailDomain || '@college.edu').toLowerCase().trim();
-        const isEligible = isAdmin || userEmail.endsWith(configuredDomain);
+        const isEmailVerified = Boolean(
+          authUser.user_metadata?.email_verified === true ||
+          authUser.user_metadata?.email_verified === 'true' ||
+          authUser.email_confirmed_at
+        );
+
+        // 4. Enforce college email eligibility & verified status (Requirement 6)
+        const configuredDomain = (allowedEmailDomain || '@cet.ac.in').toLowerCase().trim();
+        const isCollegeEmail = isAllowedCollegeEmail(userEmail, configuredDomain);
+        const isEligible = isAdmin || (isEmailVerified && isCollegeEmail);
 
         if (!isEligible) {
-          // Ineligible email account: sign out immediately and do NOT create student profile
+          // Ineligible or unverified email: sign out immediately and purge all session tokens
           await supabase.auth.signOut();
           localStorage.removeItem('ait_auth_session_v2');
-          setIneligibleEmail(userEmail);
-          setStatus('ineligible');
+          localStorage.removeItem('ait_auth_session');
+
+          navigate('/login?error=domain', { replace: true });
           return;
         }
 
-        // 5. Eligible user: ensure profile exists
+        // 5. Requirement 7: Missing or invalid profile/role: does NOT default to Student
+        if (!roleData?.role) {
+          console.warn(`User ${userEmail} has no valid role assigned in database.`);
+          await supabase.auth.signOut();
+          localStorage.removeItem('ait_auth_session_v2');
+          localStorage.removeItem('ait_auth_session');
+          navigate('/login?error=no_role', { replace: true });
+          return;
+        }
+
+        // 6. Ensure profile exists for eligible user
         const { data: profileData } = await supabase
           .from('profiles')
           .select('*')
@@ -112,37 +144,26 @@ export const AuthCallback: React.FC = () => {
           const avatarUrl = rawMeta.avatar_url || rawMeta.picture || '';
           const studentId = `STU-${Math.floor(1000 + Math.random() * 9000)}`;
 
-          // Create initial profile
+          // Create initial profile record matching verified database role
           await supabase.from('profiles').upsert({
             id: authUser.id,
             email: userEmail,
             full_name: fullName,
             student_id: studentId,
-            department: 'General Studies',
-            course_programme: 'Undergraduate',
+            department: roleData.role === 'administrator' ? 'Central Grievance Redressal Cell' : 'General Studies',
+            course_programme: roleData.role === 'administrator' ? 'Administration' : 'Undergraduate',
             avatar_url: avatarUrl,
             is_active: true,
           });
-
-          // Create student role if no role entry
-          if (!roleData) {
-            await supabase.from('user_roles').upsert(
-              {
-                user_id: authUser.id,
-                role: 'student',
-              },
-              { onConflict: 'user_id' }
-            );
-          }
         }
 
-        // 6. Refresh AuthContext state
+        // 7. Refresh AuthContext state
         await syncSession();
         setStatus('success');
 
-        // 7. Redirect authorized administrator to /admin/dashboard, student to dashboard
+        // 8. Redirect authorized administrator to /admin/dashboard, student to dashboard
         setTimeout(() => {
-          if (isAdmin) {
+          if (roleData?.role === 'administrator') {
             navigate('/admin/dashboard', { replace: true });
           } else {
             navigate('/', { replace: true });
@@ -218,7 +239,7 @@ export const AuthCallback: React.FC = () => {
               <div className="flex items-center justify-between border-t border-border pt-2">
                 <span className="text-ink-muted text-[11px] font-semibold uppercase">Required Domain</span>
                 <span className="font-mono font-semibold px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200">
-                  {allowedEmailDomain || '@college.edu'}
+                  {allowedEmailDomain || '@cet.ac.in'}
                 </span>
               </div>
             </div>

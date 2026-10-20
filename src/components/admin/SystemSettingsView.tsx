@@ -134,9 +134,8 @@ export const SystemSettingsView: React.FC = () => {
 
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 rounded-xl bg-surface border border-border">
           <div className="flex items-center gap-3">
-            <div className={`w-8 h-8 rounded-lg flex items-center justify-center font-bold ${
-              isUsingRealSupabase ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-200 text-slate-700'
-            }`}>
+            <div className={`w-8 h-8 rounded-lg flex items-center justify-center font-bold ${isUsingRealSupabase ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-200 text-slate-700'
+              }`}>
               <Server className="w-4 h-4" />
             </div>
             <div>
@@ -282,7 +281,7 @@ export const SystemSettingsView: React.FC = () => {
                 type="text"
                 value={emailDomain}
                 onChange={(e) => setEmailDomain(e.target.value)}
-                placeholder="@college.edu"
+                placeholder="@cet.ac.in"
                 className="w-full max-w-sm px-3 py-2 rounded-lg border border-border font-mono focus:outline-none focus:ring-1 focus:ring-brand-500"
                 required
               />

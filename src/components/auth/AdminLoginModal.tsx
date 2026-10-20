@@ -3,7 +3,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useSystem } from '../../context/SystemContext';
 import { Modal } from '../common/Modal';
 import { Button } from '../common/Button';
-import { ShieldCheck, Mail, Lock, AlertCircle, Key } from 'lucide-react';
+import { Mail, Lock, AlertCircle, Key } from 'lucide-react';
 
 interface AdminLoginModalProps {
   isOpen: boolean;
@@ -24,35 +24,18 @@ export const AdminLoginModal: React.FC<AdminLoginModalProps> = ({ isOpen, onClos
     setErrorMsg(null);
 
     const cleanEmail = email.trim().toLowerCase();
-    if (!cleanEmail) {
-      setErrorMsg('Please enter your administrator email address.');
+    if (!cleanEmail || !password) {
+      setErrorMsg('Please enter both your administrator email and password.');
       return;
     }
 
     setIsLoading(true);
     try {
-      const res = await loginAsAdmin(cleanEmail, password || 'adminSecureKey2026');
+      const res = await loginAsAdmin(cleanEmail, password);
       if (res.success) {
         onClose();
       } else {
         setErrorMsg(res.error || 'Administrator authentication failed.');
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleQuickLogin = async (adminEmail: string) => {
-    setEmail(adminEmail);
-    setPassword('adminSecureKey2026');
-    setErrorMsg(null);
-    setIsLoading(true);
-    try {
-      const res = await loginAsAdmin(adminEmail, 'adminSecureKey2026');
-      if (res.success) {
-        onClose();
-      } else {
-        setErrorMsg(res.error || 'Administrator login failed.');
       }
     } finally {
       setIsLoading(false);
@@ -85,7 +68,7 @@ export const AdminLoginModal: React.FC<AdminLoginModalProps> = ({ isOpen, onClos
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="dean.academics@college.edu or admin@college.edu"
+                placeholder="dean.academics@cet.ac.in"
                 className="w-full pl-9 pr-3 py-2 rounded-lg border border-border focus:outline-none focus:ring-2 focus:ring-brand-500 font-mono text-xs"
                 required
               />
@@ -119,34 +102,6 @@ export const AdminLoginModal: React.FC<AdminLoginModalProps> = ({ isOpen, onClos
             Authenticate as Administrator
           </Button>
         </form>
-
-        {/* Quick Demo Access for Committee Reviewers */}
-        <div className="pt-3 border-t border-border space-y-2">
-          <p className="text-[11px] font-semibold text-ink-secondary uppercase tracking-wider">
-            Quick Faculty / Administrator Access:
-          </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-            <button
-              type="button"
-              disabled={isLoading}
-              onClick={() => handleQuickLogin('dean.academics@college.edu')}
-              className="p-2.5 rounded-lg border border-border hover:border-brand-300 hover:bg-surface text-left transition-all disabled:opacity-50"
-            >
-              <p className="font-semibold text-ink-primary text-xs">Dean of Academics</p>
-              <p className="text-[11px] text-ink-muted font-mono truncate">dean.academics@college.edu</p>
-            </button>
-
-            <button
-              type="button"
-              disabled={isLoading}
-              onClick={() => handleQuickLogin('admin@college.edu')}
-              className="p-2.5 rounded-lg border border-border hover:border-brand-300 hover:bg-surface text-left transition-all disabled:opacity-50"
-            >
-              <p className="font-semibold text-ink-primary text-xs">Central Grievance Officer</p>
-              <p className="text-[11px] text-ink-muted font-mono truncate">admin@college.edu</p>
-            </button>
-          </div>
-        </div>
       </div>
     </Modal>
   );

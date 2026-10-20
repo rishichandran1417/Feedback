@@ -27,7 +27,7 @@ export const StudentRegisterPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  const allowedDomain = allowedEmailDomain || settings.auth_config.allowed_email_domain || '@college.edu';
+  const allowedDomain = allowedEmailDomain || settings.auth_config.allowed_email_domain || '@cet.ac.in';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

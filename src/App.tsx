@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { SystemProvider } from './context/SystemContext';
 
@@ -42,13 +42,39 @@ const LoadingScreen = () => (
   </div>
 );
 
-// Student Route (Direct open access)
+// Protected Student Route (Requirement 7: redirect unauthenticated users to /login)
 const StudentRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { user, loading } = useAuth();
+  const location = useLocation();
+
+  if (loading) {
+    return <LoadingScreen />;
+  }
+
+  if (!user) {
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+
   return <>{children}</>;
 };
 
-// Administrator Route (Authentication bypassed for direct open access)
+// Protected Administrator Route (Requirement 7: redirect unauthenticated users to /login)
 const AdminRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { user, loading, checkAdminAccess } = useAuth();
+  const location = useLocation();
+
+  if (loading) {
+    return <LoadingScreen />;
+  }
+
+  if (!user) {
+    return <Navigate to="/admin/login" state={{ from: location }} replace />;
+  }
+
+  if (user.role !== 'administrator' && !checkAdminAccess()) {
+    return <Navigate to="/admin/login" replace />;
+  }
+
   return <>{children}</>;
 };
 
@@ -272,8 +298,15 @@ export default function App() {
             {/* OAuth Callback Route */}
             <Route path="/auth/callback" element={<AuthCallback />} />
 
-            {/* Unauthenticated Auth Routes */}
-            {/* Admin Routes - Direct access without login */}
+            {/* Public Auth Routes */}
+            <Route path="/login" element={<StudentLoginPage />} />
+            <Route path="/register" element={<Navigate to="/login" replace />} />
+            <Route path="/auth/callback" element={<AuthCallback />} />
+
+            {/* Administrator Auth Route */}
+            <Route path="/admin/login" element={<AdminLoginPage />} />
+
+            {/* Admin Base Route */}
             <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
 
             {/* Protected Student Routes */}

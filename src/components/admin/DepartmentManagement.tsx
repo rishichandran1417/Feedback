@@ -145,7 +145,7 @@ export const DepartmentManagement: React.FC = () => {
                   type="email"
                   value={contactEmail}
                   onChange={(e) => setContactEmail(e.target.value)}
-                  placeholder="dept@college.edu"
+                  placeholder="dept@cet.ac.in"
                   className="w-full px-3 py-2 rounded-lg border border-border text-xs text-ink-primary focus:outline-none focus:ring-2 focus:ring-brand-500"
                   required
                 />

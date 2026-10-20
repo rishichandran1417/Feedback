@@ -3,11 +3,11 @@
 -- 1. Insert Initial System Settings
 INSERT INTO public.system_settings (key, value, description)
 VALUES 
-  ('college_info', '{"name": "Apex Institute of Technology", "code": "AIT", "support_email": "grievance@college.edu", "portal_url": "https://feedback.college.edu"}'::jsonb, 'College metadata and portal configuration'),
+  ('college_info', '{"name": "CET", "code": "AIT", "support_email": "grievance@college.edu", "portal_url": "https://feedback.college.edu"}'::jsonb, 'College metadata and portal configuration'),
   ('auth_config', '{"allowed_email_domain": "@college.edu", "require_email_verification": true}'::jsonb, 'Configurable student college email domain validation'),
   ('file_upload_limits', '{"max_file_size_mb": 10, "allowed_extensions": [".jpg", ".jpeg", ".png", ".pdf", ".docx"]}'::jsonb, 'Attachment upload security limits'),
   ('workflow_rules', '{"allow_anonymous": true, "enable_reopening": true, "reopen_window_days": 14}'::jsonb, 'Grievance lifecycle configuration'),
-  ('email_provider_config', '{"provider": "resend", "sender_name": "Apex College Grievance Cell", "sender_email": "notifications@college.edu", "enabled_events": ["submission_acknowledgement", "status_update", "issue_resolved", "issue_reopened", "admin_reply", "info_request"]}'::jsonb, 'Transactional email dispatch rules')
+  ('email_provider_config', '{"provider": "resend", "sender_name": "CET Grievance Cell", "sender_email": "notifications@college.edu", "enabled_events": ["submission_acknowledgement", "status_update", "issue_resolved", "issue_reopened", "admin_reply", "info_request"]}'::jsonb, 'Transactional email dispatch rules')
 ON CONFLICT (key) DO NOTHING;
 
 -- 2. Insert Core Academic & Campus Departments

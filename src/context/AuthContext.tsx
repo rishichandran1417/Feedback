@@ -3,9 +3,47 @@ import { Profile, AppRole } from '../types/database';
 import { MockStorage } from '../lib/mockStorage';
 import { isUsingRealSupabase, supabase } from '../lib/supabase';
 
-export const ALLOWED_EMAIL_DOMAIN = (
-  import.meta.env.VITE_ALLOWED_EMAIL_DOMAIN || '@college.edu'
-).toLowerCase().trim();
+/**
+ * Resolves the configured college email domain.
+ * Supports VITE_COLLEGE_EMAIL_DOMAIN, VITE_ALLOWED_EMAIL_DOMAIN, and ALLOWED_EMAIL_DOMAIN.
+ * Defaults to 'cet.ac.in'.
+ */
+export function getCollegeDomainConfig() {
+  const rawDomain = (
+    (typeof import.meta !== 'undefined' && (
+      import.meta.env.VITE_COLLEGE_EMAIL_DOMAIN ||
+      import.meta.env.VITE_ALLOWED_EMAIL_DOMAIN ||
+      import.meta.env.ALLOWED_EMAIL_DOMAIN
+    )) ||
+    'cet.ac.in'
+  ).toLowerCase().trim();
+
+  const cleanDomain = rawDomain.replace(/^@/, '');
+  const domainWithAt = `@${cleanDomain}`;
+
+  return { cleanDomain, domainWithAt };
+}
+
+export const { cleanDomain: COLLEGE_DOMAIN, domainWithAt: ALLOWED_EMAIL_DOMAIN } = getCollegeDomainConfig();
+
+/**
+ * Validates whether an email belongs to the institutional domain.
+ * - Trims whitespace
+ * - Case-insensitive
+ * - Validates the full domain part (e.g. student@cet.ac.in or student@dept.cet.ac.in)
+ * - Rejects partial substring matches like fakecet.ac.in
+ */
+export function isAllowedCollegeEmail(email: string | null | undefined, domain: string = COLLEGE_DOMAIN): boolean {
+  if (!email) return false;
+  const normalized = email.trim().toLowerCase();
+  const atIndex = normalized.lastIndexOf('@');
+  if (atIndex === -1 || atIndex === 0 || atIndex === normalized.length - 1) return false;
+
+  const emailDomain = normalized.slice(atIndex + 1);
+  const targetDomain = domain.replace(/^@/, '').toLowerCase().trim();
+
+  return emailDomain === targetDomain || emailDomain.endsWith(`.${targetDomain}`);
+}
 
 export interface AuthUser extends Profile {
   role: AppRole;
@@ -26,7 +64,7 @@ interface AuthContextType {
   }) => Promise<{ success: boolean; error?: string }>;
   logout: () => Promise<void>;
   checkAdminAccess: () => boolean;
-  loginWithGoogle: (collegeEmail?: string) => Promise<{ success: boolean; error?: string }>;
+  loginWithGoogle: () => Promise<{ success: boolean; error?: string }>;
   syncSession: () => Promise<void>;
   allowedEmailDomain: string;
 }
@@ -39,142 +77,124 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Sync session from Supabase or persistent local state
+  // Sync session strictly from real Supabase database
   const syncSession = useCallback(async () => {
     try {
-      if (isUsingRealSupabase && supabase) {
-        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-        if (sessionError || !session?.user) {
-          setUser(null);
-          localStorage.removeItem(AUTH_STORAGE_KEY);
-          return;
-        }
-
-        const authUserId = session.user.id;
-        const userEmail = (session.user.email || '').toLowerCase().trim();
-
-        // 1. Query user_roles table for authorized role (trusted database source of truth)
-        const { data: roleData } = await supabase
-          .from('user_roles')
-          .select('role')
-          .eq('user_id', authUserId)
-          .maybeSingle();
-
-        const isAdmin = roleData?.role === 'administrator';
-
-        // When actively resolving on /auth/callback, don't execute premature logout
-        if (typeof window !== 'undefined' && window.location.pathname === '/auth/callback') {
-          return;
-        }
-
-        // Domain eligibility check for non-administrators
-        const isEligible = isAdmin || userEmail.endsWith(ALLOWED_EMAIL_DOMAIN);
-        if (!isEligible) {
-          console.warn(`User ${userEmail} does not match allowed domain ${ALLOWED_EMAIL_DOMAIN}`);
-          await supabase.auth.signOut();
-          setUser(null);
-          localStorage.removeItem(AUTH_STORAGE_KEY);
-          return;
-        }
-
-        // 2. Query profiles table
-        let { data: profileData } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', authUserId)
-          .maybeSingle();
-
-        if (!profileData) {
-          // Initialize profile for eligible verified user
-          const rawMeta = session.user.user_metadata || {};
-          const fullName = rawMeta.full_name || rawMeta.name || userEmail.split('@')[0];
-          const avatarUrl = rawMeta.avatar_url || rawMeta.picture || '';
-          const studentId = `STU-${Math.floor(1000 + Math.random() * 9000)}`;
-
-          const { data: newProfile } = await supabase
-            .from('profiles')
-            .upsert({
-              id: authUserId,
-              email: userEmail,
-              full_name: fullName,
-              student_id: studentId,
-              department: 'General Studies',
-              course_programme: 'Undergraduate',
-              avatar_url: avatarUrl,
-              is_active: true,
-            })
-            .select()
-            .maybeSingle();
-
-          profileData = newProfile;
-
-          if (!roleData) {
-            await supabase
-              .from('user_roles')
-              .upsert(
-                {
-                  user_id: authUserId,
-                  role: 'student',
-                },
-                { onConflict: 'user_id' }
-              );
-          }
-        }
-
-        const assignedRole: AppRole = isAdmin ? 'administrator' : 'student';
-
-        const authSession: AuthUser = {
-          id: profileData?.id || authUserId,
-          email: profileData?.email || userEmail,
-          full_name: profileData?.full_name || userEmail.split('@')[0],
-          student_id: profileData?.student_id || 'STU-VERIFIED',
-          phone: profileData?.phone,
-          department: profileData?.department || 'General Studies',
-          course_programme: profileData?.course_programme || 'Undergraduate',
-          avatar_url: profileData?.avatar_url,
-          is_active: profileData?.is_active ?? true,
-          created_at: profileData?.created_at || new Date().toISOString(),
-          updated_at: profileData?.updated_at || new Date().toISOString(),
-          role: assignedRole,
-        };
-
-        setUser(authSession);
-        localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(authSession));
-      } else {
-        // Fallback local persistent engine
-        const saved = localStorage.getItem(AUTH_STORAGE_KEY);
-        if (saved) {
-          try {
-            const parsed = JSON.parse(saved);
-            const isMockUser =
-              !parsed ||
-              parsed.email === 'arthur.vance@college.edu' ||
-              parsed.email === 'arjun.patel@college.edu' ||
-              parsed.email === 'priya.sharma@college.edu' ||
-              parsed.id === 'u-admin-01' ||
-              parsed.id === 'u-student-01' ||
-              parsed.id === 'u-student-02' ||
-              parsed.full_name?.includes('Arthur Vance') ||
-              parsed.full_name?.includes('Arjun Patel');
-
-            if (isMockUser) {
-              setUser(null);
-              localStorage.removeItem(AUTH_STORAGE_KEY);
-              localStorage.removeItem('ait_auth_session');
-            } else {
-              setUser(parsed);
-            }
-          } catch {
-            setUser(null);
-            localStorage.removeItem(AUTH_STORAGE_KEY);
-          }
-        } else {
-          setUser(null);
-        }
+      if (!isUsingRealSupabase || !supabase) {
+        setUser(null);
+        localStorage.removeItem(AUTH_STORAGE_KEY);
+        return;
       }
+
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      if (sessionError || !session?.user) {
+        setUser(null);
+        localStorage.removeItem(AUTH_STORAGE_KEY);
+        return;
+      }
+
+      const authUserId = session.user.id;
+      const userEmail = (session.user.email || '').toLowerCase().trim();
+
+      // 1. Query user_roles table for authorized database role (trusted source of truth)
+      const { data: roleData } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', authUserId)
+        .maybeSingle();
+
+      const isAdmin = roleData?.role === 'administrator';
+
+      // When actively resolving on /auth/callback, don't execute premature logout
+      if (typeof window !== 'undefined' && window.location.pathname === '/auth/callback') {
+        return;
+      }
+
+      const isEmailVerified = Boolean(
+        session.user.user_metadata?.email_verified === true ||
+        session.user.user_metadata?.email_verified === 'true' ||
+        session.user.email_confirmed_at
+      );
+
+      // Domain eligibility check: only pre-registered administrators or verified @cet.ac.in emails
+      const isCollegeEmail = isAllowedCollegeEmail(userEmail, COLLEGE_DOMAIN);
+      const isEligible = isAdmin || (isEmailVerified && isCollegeEmail);
+      if (!isEligible) {
+        console.warn(`User ${userEmail} does not match allowed domain ${ALLOWED_EMAIL_DOMAIN} or email is unverified`);
+        await supabase.auth.signOut();
+        setUser(null);
+        localStorage.removeItem(AUTH_STORAGE_KEY);
+        return;
+      }
+
+      // Requirement 7: Load role strictly from database. Never assume every user is a Student.
+      // Testing case: Missing or invalid profile/role: does not default to Student.
+      const dbRole: AppRole | null = roleData?.role || null;
+      if (!dbRole) {
+        console.warn(`User ${userEmail} has no valid role assigned in database.`);
+        setUser(null);
+        localStorage.removeItem(AUTH_STORAGE_KEY);
+        return;
+      }
+
+      // 2. Query profiles table
+      let { data: profileData } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', authUserId)
+        .maybeSingle();
+
+      if (!profileData) {
+        const rawMeta = session.user.user_metadata || {};
+        const fullName = rawMeta.full_name || rawMeta.name || userEmail.split('@')[0];
+        const avatarUrl = rawMeta.avatar_url || rawMeta.picture || '';
+        const studentId = `STU-${Math.floor(1000 + Math.random() * 9000)}`;
+
+        const { data: newProfile } = await supabase
+          .from('profiles')
+          .upsert({
+            id: authUserId,
+            email: userEmail,
+            full_name: fullName,
+            student_id: studentId,
+            department: dbRole === 'administrator' ? 'Central Grievance Redressal Cell' : 'General Studies',
+            course_programme: dbRole === 'administrator' ? 'Administration' : 'Undergraduate',
+            avatar_url: avatarUrl,
+            is_active: true,
+          })
+          .select()
+          .maybeSingle();
+
+        profileData = newProfile;
+      }
+
+      if (!profileData || !profileData.is_active) {
+        setUser(null);
+        localStorage.removeItem(AUTH_STORAGE_KEY);
+        return;
+      }
+
+      const authSession: AuthUser = {
+        id: profileData.id,
+        email: profileData.email,
+        full_name: profileData.full_name,
+        student_id: profileData.student_id,
+        phone: profileData.phone,
+        department: profileData.department,
+        course_programme: profileData.course_programme,
+        avatar_url: profileData.avatar_url,
+        is_active: profileData.is_active ?? true,
+        created_at: profileData.created_at,
+        updated_at: profileData.updated_at,
+        role: dbRole,
+      };
+
+      setUser(authSession);
+      localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(authSession));
     } catch (e) {
       console.error('Session sync error:', e);
       setUser(null);
+      localStorage.removeItem(AUTH_STORAGE_KEY);
     } finally {
       setLoading(false);
     }
@@ -199,188 +219,99 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, [syncSession]);
 
-  const loginAsStudent = async (email: string, password = 'collegePassword123'): Promise<{ success: boolean; error?: string }> => {
-    const settings = MockStorage.getSystemSettings();
-    const allowedDomain = settings.auth_config.allowed_email_domain || '@college.edu';
+  const loginAsStudent = async (email: string, password = ''): Promise<{ success: boolean; error?: string }> => {
     const normalizedEmail = email.trim().toLowerCase();
-
-    // Enforce official college email domain or gmail
-    if (!normalizedEmail.endsWith(allowedDomain) && !normalizedEmail.endsWith('@gmail.com') && !normalizedEmail.includes('college')) {
+    if (!isAllowedCollegeEmail(normalizedEmail, COLLEGE_DOMAIN)) {
       return {
         success: false,
-        error: `Access restricted. Please use your official college email address (${allowedDomain})`,
+        error: `Access restricted. Please use your official college email address (${ALLOWED_EMAIL_DOMAIN})`,
       };
     }
 
-    if (isUsingRealSupabase && supabase) {
-      let { data, error } = await supabase.auth.signInWithPassword({
-        email: normalizedEmail,
-        password,
-      });
-
-      let authedUserId: string | undefined = data?.user?.id;
-
-      if (error && (error.message.includes('Invalid login credentials') || error.message.includes('User not found'))) {
-        const signUpRes = await supabase.auth.signUp({
-          email: normalizedEmail,
-          password,
-          options: {
-            data: {
-              full_name: normalizedEmail.split('@')[0].replace(/[._]/g, ' '),
-            },
-          },
-        });
-        if (signUpRes.error) {
-          return { success: false, error: signUpRes.error.message };
-        }
-        authedUserId = signUpRes.data.user?.id;
-      } else if (error) {
-        return { success: false, error: error.message };
-      }
-
-      if (authedUserId) {
-        await supabase.from('profiles').upsert({
-          id: authedUserId,
-          email: normalizedEmail,
-          full_name: normalizedEmail.split('@')[0].replace(/[._]/g, ' '),
-          is_active: true,
-          updated_at: new Date().toISOString(),
-        }, { onConflict: 'id' });
-
-        await supabase.from('user_roles').upsert({
-          user_id: authedUserId,
-          role: 'student',
-        }, { onConflict: 'user_id' });
-      }
-
-      await syncSession();
-      return { success: true };
-    }
-
-    // Local fallback engine
-    const profiles = MockStorage.getProfiles();
-    let profile = profiles.find((p) => p.email.toLowerCase() === normalizedEmail);
-
-    if (profile && (profile.email.includes('dean') || profile.email.includes('admin'))) {
+    if (!isUsingRealSupabase || !supabase) {
       return {
         success: false,
-        error: 'Administrator account detected. Please use the dedicated Administrator Portal at /admin',
+        error: 'Authentication service is unavailable. Please check Supabase configuration.',
       };
     }
 
-    if (!profile) {
-      // Auto-provision verified student profile
-      const newProfile: Profile = {
-        id: `u-${Date.now()}`,
-        email: normalizedEmail,
-        full_name: normalizedEmail.split('@')[0].replace('.', ' '),
-        student_id: `AIT-2026-${Math.floor(100 + Math.random() * 900)}`,
-        department: 'General Studies',
-        course_programme: 'B.Tech / Undergraduate',
-        is_active: true,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      };
-      MockStorage.saveProfile(newProfile);
-      profile = newProfile;
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: normalizedEmail,
+      password,
+    });
+
+    if (error) {
+      return { success: false, error: error.message };
     }
 
-    if (!profile.is_active) {
+    const authedUserId = data?.user?.id;
+    if (!authedUserId) {
+      return { success: false, error: 'Authentication failed.' };
+    }
+
+    // Verify role strictly from database
+    const { data: roleData } = await supabase
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', authedUserId)
+      .maybeSingle();
+
+    if (!roleData?.role) {
+      await supabase.auth.signOut();
       return {
         success: false,
-        error: 'Your student account has been temporarily suspended. Please contact the Registrar.',
+        error: 'Access denied: No role assigned to this account in the database.',
       };
     }
 
-    const authSession: AuthUser = { ...profile, role: 'student' };
-    setUser(authSession);
-    localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(authSession));
+    await syncSession();
     return { success: true };
   };
 
-  const loginAsAdmin = async (email: string, password = 'adminSecureKey2026'): Promise<{ success: boolean; error?: string }> => {
+  const loginAsAdmin = async (email: string, password = ''): Promise<{ success: boolean; error?: string }> => {
     const normalizedEmail = email.trim().toLowerCase();
 
-    if (isUsingRealSupabase && supabase) {
-      let { data, error } = await supabase.auth.signInWithPassword({
-        email: normalizedEmail,
-        password,
-      });
-
-      let authedUserId: string | undefined = data?.user?.id;
-
-      if (error && (error.message.includes('Invalid login credentials') || error.message.includes('User not found'))) {
-        const signUpRes = await supabase.auth.signUp({
-          email: normalizedEmail,
-          password,
-          options: {
-            data: {
-              full_name: normalizedEmail.split('@')[0].replace(/[._]/g, ' '),
-            },
-          },
-        });
-        if (signUpRes.error) {
-          return { success: false, error: signUpRes.error.message };
-        }
-        authedUserId = signUpRes.data.user?.id;
-      } else if (error) {
-        return { success: false, error: error.message };
-      }
-
-      if (authedUserId) {
-        await supabase.from('profiles').upsert({
-          id: authedUserId,
-          email: normalizedEmail,
-          full_name: normalizedEmail.split('@')[0].replace(/[._]/g, ' '),
-          is_active: true,
-          updated_at: new Date().toISOString(),
-        }, { onConflict: 'id' });
-
-        await supabase.from('user_roles').upsert({
-          user_id: authedUserId,
-          role: 'administrator',
-        }, { onConflict: 'user_id' });
-      }
-
-      await syncSession();
-      return { success: true };
-    }
-
-    // Local fallback engine
-    const profiles = MockStorage.getProfiles();
-    let profile = profiles.find((p) => p.email.toLowerCase() === normalizedEmail);
-
-    const isAdminEmail =
-      normalizedEmail.includes('dean') ||
-      normalizedEmail.includes('admin') ||
-      normalizedEmail.includes('grievance');
-
-    if (!isAdminEmail) {
+    if (!isUsingRealSupabase || !supabase) {
       return {
         success: false,
-        error: 'Access denied: Unauthorized administrator credentials.',
+        error: 'Authentication service is unavailable. Please check Supabase configuration.',
       };
     }
 
-    if (!profile) {
-      const newAdminProfile: Profile = {
-        id: `u-admin-${Date.now()}`,
-        email: normalizedEmail,
-        full_name: normalizedEmail.split('@')[0].replace(/[._]/g, ' '),
-        student_id: 'ADMIN-01',
-        department: 'Central Grievance Redressal Cell',
-        course_programme: 'Administration',
-        is_active: true,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      };
-      MockStorage.saveProfile(newAdminProfile);
-      profile = newAdminProfile;
+    if (!normalizedEmail || !password) {
+      return { success: false, error: 'Administrator email and password are required.' };
     }
 
-    const authSession: AuthUser = { ...profile, role: 'administrator' };
-    setUser(authSession);
-    localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(authSession));
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: normalizedEmail,
+      password,
+    });
+
+    if (error) {
+      return { success: false, error: error.message };
+    }
+
+    const authedUserId = data?.user?.id;
+    if (!authedUserId) {
+      return { success: false, error: 'Failed to authenticate user.' };
+    }
+
+    // Requirement 7: Load user role strictly from database; never grant admin privileges based on frontend
+    const { data: roleData } = await supabase
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', authedUserId)
+      .maybeSingle();
+
+    if (roleData?.role !== 'administrator') {
+      await supabase.auth.signOut();
+      return {
+        success: false,
+        error: 'Access denied: This account does not possess administrator privileges in the college database.',
+      };
+    }
+
+    await syncSession();
     return { success: true };
   };
 
@@ -392,136 +323,85 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     department: string;
     courseProgramme?: string;
   }): Promise<{ success: boolean; error?: string }> => {
-    const settings = MockStorage.getSystemSettings();
-    const allowedDomain = settings.auth_config.allowed_email_domain || '@college.edu';
     const normalizedEmail = data.email.trim().toLowerCase();
-
-    if (!normalizedEmail.endsWith(allowedDomain)) {
+    if (!isAllowedCollegeEmail(normalizedEmail, COLLEGE_DOMAIN)) {
       return {
         success: false,
-        error: `Invalid email domain. Please use your official college address ending in ${allowedDomain}`,
+        error: `Invalid email domain. Please use your official college address ending in ${ALLOWED_EMAIL_DOMAIN}`,
       };
     }
 
-    if (isUsingRealSupabase && supabase) {
-      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
-        email: normalizedEmail,
-        password: data.password || 'collegePassword123',
-        options: {
-          data: {
-            full_name: data.fullName.trim(),
-            student_id: data.studentId.trim().toUpperCase(),
-            department: data.department,
-            course_programme: data.courseProgramme || 'Undergraduate',
-          },
-        },
-      });
+    if (!isUsingRealSupabase || !supabase) {
+      return {
+        success: false,
+        error: 'Registration service is unavailable. Please check Supabase configuration.',
+      };
+    }
 
-      if (signUpError) {
-        return { success: false, error: signUpError.message };
-      }
-
-      if (signUpData.user) {
-        // Insert into profiles
-        await supabase.from('profiles').upsert({
-          id: signUpData.user.id,
-          email: normalizedEmail,
+    const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+      email: normalizedEmail,
+      password: data.password || 'collegePassword123',
+      options: {
+        data: {
           full_name: data.fullName.trim(),
           student_id: data.studentId.trim().toUpperCase(),
           department: data.department,
           course_programme: data.courseProgramme || 'Undergraduate',
-          is_active: true,
-        });
+        },
+      },
+    });
 
-        // Always assign 'student' role. Students can NEVER self-assign administrator!
-        await supabase.from('user_roles').upsert({
-          user_id: signUpData.user.id,
-          role: 'student',
-        });
-      }
-
-      await syncSession();
-      return { success: true };
+    if (signUpError) {
+      return { success: false, error: signUpError.message };
     }
 
-    // Local fallback engine
-    const profiles = MockStorage.getProfiles();
-    if (profiles.some((p) => p.email.toLowerCase() === normalizedEmail)) {
-      return {
-        success: false,
-        error: 'An account with this college email already exists. Please log in.',
-      };
+    if (signUpData.user) {
+      await supabase.from('profiles').upsert({
+        id: signUpData.user.id,
+        email: normalizedEmail,
+        full_name: data.fullName.trim(),
+        student_id: data.studentId.trim().toUpperCase(),
+        department: data.department,
+        course_programme: data.courseProgramme || 'Undergraduate',
+        is_active: true,
+      });
+
+      await supabase.from('user_roles').upsert({
+        user_id: signUpData.user.id,
+        role: 'student',
+      });
     }
 
-    const newProfile: Profile = {
-      id: `u-${Date.now()}`,
-      email: normalizedEmail,
-      full_name: data.fullName.trim(),
-      student_id: data.studentId.trim().toUpperCase(),
-      department: data.department,
-      course_programme: data.courseProgramme || 'Undergraduate',
-      is_active: true,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    };
-
-    MockStorage.saveProfile(newProfile);
-    const authSession: AuthUser = { ...newProfile, role: 'student' };
-    setUser(authSession);
-    localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(authSession));
+    await syncSession();
     return { success: true };
   };
 
-  const loginWithGoogle = async (collegeEmail?: string): Promise<{ success: boolean; error?: string }> => {
-    if (isUsingRealSupabase && supabase) {
-      const redirectUri = `${window.location.origin}/auth/callback`;
-      const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: redirectUri,
-          queryParams: {
-            prompt: 'select_account',
-            access_type: 'offline',
-          },
-        },
-      });
-      if (error) return { success: false, error: error.message };
-      return { success: true };
+  const loginWithGoogle = async (): Promise<{ success: boolean; error?: string }> => {
+    if (!isUsingRealSupabase || !supabase) {
+      return {
+        success: false,
+        error: 'Authentication service is unavailable. Please check Supabase configuration.',
+      };
     }
 
-    const emailToUse = collegeEmail || 'student@college.edu';
-    const normalizedEmail = emailToUse.trim().toLowerCase();
-    const isAdmin = normalizedEmail.includes('dean') || normalizedEmail.includes('admin');
-    const namePart = normalizedEmail.split('@')[0].replace(/[._]/g, ' ');
-    const formattedName = namePart.charAt(0).toUpperCase() + namePart.slice(1);
+    const cleanDomain = COLLEGE_DOMAIN;
+    const redirectUri = typeof window !== 'undefined' && window.location.origin
+      ? `${window.location.origin}/auth/callback`
+      : 'https://feedback.rishichandran17.workers.dev/auth/callback';
 
-    const googleUser: AuthUser = {
-      id: `usr-google-${Date.now()}`,
-      email: normalizedEmail,
-      full_name: formattedName,
-      student_id: isAdmin ? 'ADMIN-01' : `STU-${Math.floor(1000 + Math.random() * 9000)}`,
-      department: isAdmin ? 'Office of the Dean' : 'General Studies',
-      course_programme: isAdmin ? 'Administration' : 'B.Tech',
-      is_active: true,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-      role: isAdmin ? 'administrator' : 'student',
-    };
-
-    MockStorage.saveProfile({
-      id: googleUser.id,
-      email: googleUser.email,
-      full_name: googleUser.full_name,
-      student_id: googleUser.student_id,
-      department: googleUser.department,
-      course_programme: googleUser.course_programme,
-      is_active: googleUser.is_active,
-      created_at: googleUser.created_at,
-      updated_at: googleUser.updated_at,
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: redirectUri,
+        queryParams: {
+          prompt: 'select_account',
+          access_type: 'offline',
+          hd: cleanDomain,
+        },
+      },
     });
 
-    setUser(googleUser);
-    localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(googleUser));
+    if (error) return { success: false, error: error.message };
     return { success: true };
   };
 
@@ -529,6 +409,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setUser(null);
     localStorage.removeItem(AUTH_STORAGE_KEY);
     localStorage.removeItem('ait_auth_session');
+    localStorage.removeItem('ait_auth_session_v2');
     if (isUsingRealSupabase && supabase) {
       await supabase.auth.signOut();
     }

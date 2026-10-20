@@ -78,7 +78,7 @@ BEGIN
       NEW.id,
       v_recipient,
       'submission_acknowledgement',
-      '[Apex College Feedback] Submission Received – ' || NEW.reference_number,
+      '[CET] Submission Received – ' || NEW.reference_number,
       'queued',
       v_idempotency
     ) ON CONFLICT (idempotency_key) DO NOTHING;

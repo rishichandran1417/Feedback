@@ -17,13 +17,13 @@ const corsHeaders = {
 };
 
 interface RequestPayload {
-  eventType: 
-    | "submission_acknowledgement"
-    | "status_update"
-    | "issue_resolved"
-    | "issue_reopened"
-    | "admin_reply"
-    | "info_request";
+  eventType:
+  | "submission_acknowledgement"
+  | "status_update"
+  | "issue_resolved"
+  | "issue_reopened"
+  | "admin_reply"
+  | "info_request";
   recipientEmail: string;
   data: EmailTemplateData;
   idempotencyKey?: string;
@@ -37,10 +37,10 @@ serve(async (req: Request) => {
 
   try {
     const resendApiKey = Deno.env.get("RESEND_API_KEY");
-    const senderName = Deno.env.get("RESEND_SENDER_NAME") || "Apex College Grievance Cell";
-    const senderEmail = Deno.env.get("RESEND_SENDER_EMAIL") || "notifications@college.edu";
-    const collegeName = Deno.env.get("COLLEGE_NAME") || "Apex Institute of Technology";
-    const portalUrl = Deno.env.get("PORTAL_URL") || "https://feedback.college.edu";
+    const senderName = Deno.env.get("RESEND_SENDER_NAME") || "CET Grievance Redressal Cell";
+    const senderEmail = Deno.env.get("RESEND_SENDER_EMAIL") || "notifications@cet.ac.in";
+    const collegeName = Deno.env.get("COLLEGE_NAME") || "College of Engineering Trivandrum";
+    const portalUrl = Deno.env.get("PORTAL_URL") || "https://feedback.cet.ac.in";
 
     if (!resendApiKey) {
       return new Response(

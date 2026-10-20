@@ -215,7 +215,7 @@ export const MockStorage = {
       submission_ref: ref,
       recipient_email: payload.student_email,
       event_type: 'submission_acknowledgement',
-      subject: `[Apex Institute of Technology] Submission Received – ${ref}`,
+      subject: `[CET] Submission Received – ${ref}`,
       body_text: `Your ${payload.submission_type} (${ref}) has been received.`,
     });
 
@@ -283,14 +283,14 @@ export const MockStorage = {
 
     // Determine email notification event
     let eventType: EmailNotification['event_type'] = 'status_update';
-    let subject = `[Apex Institute of Technology] Status Updated – ${sub.reference_number}`;
+    let subject = `[CET] Status Updated – ${sub.reference_number}`;
 
     if (newStatus === 'resolved') {
       eventType = 'issue_resolved';
-      subject = `[Apex Institute of Technology] Your Issue Has Been Resolved – ${sub.reference_number}`;
+      subject = `[CET] Your Issue Has Been Resolved – ${sub.reference_number}`;
     } else if (newStatus === 'reopened') {
       eventType = 'issue_reopened';
-      subject = `[Apex Institute of Technology] Issue Reopened – ${sub.reference_number}`;
+      subject = `[CET] Issue Reopened – ${sub.reference_number}`;
     }
 
     if (sub.student_email) {
@@ -417,7 +417,7 @@ export const MockStorage = {
         submission_ref: sub.reference_number,
         recipient_email: sub.student_email,
         event_type: isInfoReq ? 'info_request' : 'admin_reply',
-        subject: `[Apex Institute of Technology] ${isInfoReq ? 'Information Requested' : 'Administrator Reply'} – ${sub.reference_number}`,
+        subject: `[CET] ${isInfoReq ? 'Information Requested' : 'Administrator Reply'} – ${sub.reference_number}`,
         body_text: content,
       });
 
@@ -517,7 +517,7 @@ export const MockStorage = {
       id: `d-${Date.now()}`,
       name: dept.name || 'New Department',
       code: (dept.code || 'DEPT').toUpperCase(),
-      contact_email: dept.contact_email || 'contact@college.edu',
+      contact_email: dept.contact_email || 'contact@cet.ac.in',
       head_of_department: dept.head_of_department || '',
       is_active: dept.is_active ?? true,
       created_at: new Date().toISOString(),

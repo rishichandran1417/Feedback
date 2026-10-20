@@ -5,6 +5,7 @@ import { useSystem } from '../../context/SystemContext';
 import {
   ShieldCheck,
   Shield,
+  GraduationCap,
   LogOut,
   ChevronDown,
   LayoutDashboard,
@@ -59,8 +60,9 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
   ];
 
   const handleLogout = async () => {
-    await logout();
     setShowUserMenu(false);
+    await logout();
+    navigate('/login', { replace: true });
   };
 
   const sidebarContent = (
@@ -202,6 +204,14 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
                       >
                         <Settings className="w-4 h-4 text-ink-secondary" />
                         Administrative Settings
+                      </Link>
+                      <Link
+                        to="/"
+                        onClick={() => setShowUserMenu(false)}
+                        className="w-full px-4 py-2 text-xs text-brand-700 hover:bg-brand-50 flex items-center gap-2 text-left cursor-pointer"
+                      >
+                        <GraduationCap className="w-4 h-4 text-brand-600" />
+                        View Student Portal
                       </Link>
                     </div>
 
