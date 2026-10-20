@@ -148,17 +148,15 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
               </div>
               <div className="min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="font-bold text-ink-primary tracking-tight text-base sm:text-lg truncate">
-                    {settings.college_info?.name && !settings.college_info.name.includes('Apex')
-                      ? settings.college_info.name
-                      : 'College of Engineering Trivandrum'}
+                  <span className="font-extrabold text-ink-primary tracking-tight text-lg sm:text-xl truncate">
+                    voIcE
                   </span>
                   <span className="text-xs px-2 py-0.5 rounded-full font-semibold bg-brand-50 text-brand-800 border border-brand-200 shrink-0">
-                    Administration Portal
+                    Admin Portal
                   </span>
                 </div>
                 <p className="hidden sm:block text-[11px] text-ink-muted -mt-0.5 truncate">
-                  Central Grievance Redressal & Administrative Console
+                  College of Engineering Trivandrum • Administrative Console
                 </p>
               </div>
             </Link>

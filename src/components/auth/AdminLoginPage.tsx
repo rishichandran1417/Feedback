@@ -132,11 +132,11 @@ export const AdminLoginPage: React.FC = () => {
         <div className="w-12 h-12 rounded-xl bg-brand-600 text-white flex items-center justify-center mx-auto shadow-lg">
           <ShieldCheck className="w-7 h-7" />
         </div>
-        <h2 className="text-2xl font-bold tracking-tight text-white">
-          Administrator Redressal Portal
+        <h2 className="text-3xl font-extrabold tracking-tight text-white">
+          voIcE
         </h2>
         <p className="text-xs text-slate-400">
-          College of Engineering Trivandrum • Institutional Grievance Redressal Committee
+          College of Engineering Trivandrum • Administrator Portal
         </p>
       </div>
 

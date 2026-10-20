@@ -65,11 +65,11 @@ export const StudentLoginPage: React.FC = () => {
           <GraduationCap className="w-7 h-7" />
         </div>
         <div>
-          <h2 className="text-2xl font-bold tracking-tight text-ink-primary">
-            {collegeName}
+          <h2 className="text-3xl font-extrabold tracking-tight text-ink-primary">
+            voIcE
           </h2>
           <p className="text-xs text-ink-secondary mt-1">
-            Student Feedback & Grievance Redressal Portal
+            College of Engineering Trivandrum • Student Grievance & Feedback Portal
           </p>
         </div>
       </div>
