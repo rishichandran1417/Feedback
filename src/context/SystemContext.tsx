@@ -115,10 +115,13 @@ export const SystemProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       }
 
       try {
-        // Fetch categories & departments
-        const [{ data: depts }, { data: cats }] = await Promise.all([
+        // Fetch categories, departments & student profiles (for admin view)
+        const [{ data: depts }, { data: cats }, profilesRes] = await Promise.all([
           supabase.from('departments').select('*').order('name'),
           supabase.from('categories').select('*').order('name'),
+          user?.role === 'administrator'
+            ? supabase.from('profiles').select('id, full_name, email, student_id')
+            : Promise.resolve({ data: [] }),
         ]);
 
         const populatedDepts: Department[] = depts || [];
@@ -126,6 +129,7 @@ export const SystemProvider: React.FC<{ children: React.ReactNode }> = ({ childr
           ...c,
           department: populatedDepts.find((d) => d.id === c.department_id),
         }));
+        const profilesList: any[] = (profilesRes as any)?.data || [];
 
         setDepartments(populatedDepts);
         setCategories(populatedCats);
@@ -153,11 +157,14 @@ export const SystemProvider: React.FC<{ children: React.ReactNode }> = ({ childr
             const mappedSubs: Submission[] = subData.map((s: any) => {
               const cat = populatedCats.find((c) => c.id === s.category_id);
               const dept = populatedDepts.find((d) => d.id === s.department_id);
+              const studentProfile = profilesList.find((p: any) => p.id === s.student_id);
               const msgs = (s.messages || []).filter((m: any) =>
                 user?.role === 'administrator' ? true : !m.is_internal
               );
               return {
                 ...s,
+                student_name: studentProfile?.full_name || s.student_name || 'Verified Student',
+                student_email: studentProfile?.email || s.student_email || 'Confidential',
                 category_name: cat?.name || 'General',
                 department_name: dept?.name || 'College Office',
                 messages: msgs,

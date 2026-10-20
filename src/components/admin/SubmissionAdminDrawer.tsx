@@ -162,67 +162,6 @@ export const SubmissionAdminDrawer: React.FC<SubmissionAdminDrawerProps> = ({
 
   return (
     <>
-      {/* Mandatory Resolution Summary Modal */}
-      {showResolveModal && (
-        <Modal
-          isOpen={true}
-          onClose={() => setShowResolveModal(false)}
-          title="Resolve Grievance & Record Remediation"
-          description={`Reference: ${sub.reference_number} — ${sub.subject}`}
-        >
-          <div className="space-y-4 py-2">
-            <div>
-              <label className="block text-xs font-semibold text-ink-primary mb-1.5">
-                Resolution Summary (Mandatory for Registry & Student Email) *
-              </label>
-              <textarea
-                rows={4}
-                value={resolutionSummary}
-                onChange={(e) => setResolutionSummary(e.target.value)}
-                placeholder="Explain the investigation findings, corrective actions taken, and college remediation..."
-                className="w-full px-3.5 py-2.5 rounded-lg border border-border text-xs text-ink-primary focus:outline-none focus:ring-2 focus:ring-emerald-500 placeholder:text-ink-muted resize-y"
-                required
-              />
-              <p className="text-[11px] text-ink-muted mt-1">
-                This official summary will be emailed directly to the student and archived permanently in audit records.
-              </p>
-            </div>
-
-            <div>
-              <label className="block text-xs font-semibold text-ink-primary mb-1.5">
-                Closing Remarks (Optional)
-              </label>
-              <input
-                type="text"
-                value={statusRemarks}
-                onChange={(e) => setStatusRemarks(e.target.value)}
-                placeholder="e.g. Approved by Dean of Academic Affairs"
-                className="w-full px-3.5 py-2 rounded-lg border border-border text-xs text-ink-primary focus:outline-none focus:ring-2 focus:ring-emerald-500"
-              />
-            </div>
-
-            <div className="pt-3 border-t border-border flex justify-end gap-2">
-              <Button
-                variant="secondary"
-                size="sm"
-                onClick={() => setShowResolveModal(false)}
-              >
-                Cancel
-              </Button>
-              <Button
-                variant="primary"
-                size="sm"
-                isLoading={isLoading}
-                onClick={handleConfirmResolve}
-                className="bg-emerald-600 hover:bg-emerald-700"
-              >
-                Confirm & Mark Resolved
-              </Button>
-            </div>
-          </div>
-        </Modal>
-      )}
-
       {/* Main Drawer Container */}
       <div className="fixed inset-0 z-50 flex items-center justify-end overflow-hidden">
         {/* Backdrop */}
@@ -281,7 +220,7 @@ export const SubmissionAdminDrawer: React.FC<SubmissionAdminDrawerProps> = ({
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3 text-ink-secondary pt-1">
                 <div>
                   <span className="text-ink-muted block text-[10px] uppercase">Student Name:</span>
-                  <span className="font-medium text-ink-primary">{sub.student_name}</span>
+                  <span className="font-medium text-ink-primary">{sub.student_name || 'Verified Student'}</span>
                 </div>
                 <div>
                   <span className="text-ink-muted block text-[10px] uppercase">College Email:</span>
@@ -615,6 +554,67 @@ export const SubmissionAdminDrawer: React.FC<SubmissionAdminDrawerProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Mandatory Resolution Summary Modal */}
+      {showResolveModal && (
+        <Modal
+          isOpen={true}
+          onClose={() => setShowResolveModal(false)}
+          title="Resolve Grievance & Record Remediation"
+          description={`Reference: ${sub.reference_number} — ${sub.subject}`}
+        >
+          <div className="space-y-4 py-2">
+            <div>
+              <label className="block text-xs font-semibold text-ink-primary mb-1.5">
+                Resolution Summary (Mandatory for Registry & Student Email) *
+              </label>
+              <textarea
+                rows={4}
+                value={resolutionSummary}
+                onChange={(e) => setResolutionSummary(e.target.value)}
+                placeholder="Explain the investigation findings, corrective actions taken, and college remediation..."
+                className="w-full px-3.5 py-2.5 rounded-lg border border-border text-xs text-ink-primary focus:outline-none focus:ring-2 focus:ring-emerald-500 placeholder:text-ink-muted resize-y"
+                required
+              />
+              <p className="text-[11px] text-ink-muted mt-1">
+                This official summary will be emailed directly to the student and archived permanently in audit records.
+              </p>
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-ink-primary mb-1.5">
+                Closing Remarks (Optional)
+              </label>
+              <input
+                type="text"
+                value={statusRemarks}
+                onChange={(e) => setStatusRemarks(e.target.value)}
+                placeholder="e.g. Approved by Dean of Academic Affairs"
+                className="w-full px-3.5 py-2 rounded-lg border border-border text-xs text-ink-primary focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              />
+            </div>
+
+            <div className="pt-3 border-t border-border flex justify-end gap-2">
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={() => setShowResolveModal(false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="primary"
+                size="sm"
+                isLoading={isLoading}
+                onClick={handleConfirmResolve}
+                className="bg-emerald-600 hover:bg-emerald-700"
+              >
+                Confirm & Mark Resolved
+              </Button>
+            </div>
+          </div>
+        </Modal>
+      )}
     </>
   );
 };
