@@ -66,16 +66,37 @@ interface AuthContextType {
   checkAdminAccess: () => boolean;
   loginWithGoogle: () => Promise<{ success: boolean; error?: string }>;
   syncSession: () => Promise<void>;
+  setAuthUser: (user: AuthUser | null) => void;
   allowedEmailDomain: string;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const AUTH_STORAGE_KEY = 'ait_auth_session_v2';
+export const AUTH_STORAGE_KEY = 'ait_auth_session_v2';
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<AuthUser | null>(null);
+  // Synchronously initialize user from localStorage for instant rendering
+  const [user, setUser] = useState<AuthUser | null>(() => {
+    try {
+      if (typeof window !== 'undefined') {
+        const cached = localStorage.getItem(AUTH_STORAGE_KEY);
+        if (cached) return JSON.parse(cached);
+      }
+    } catch {
+      // ignore JSON parse error
+    }
+    return null;
+  });
   const [loading, setLoading] = useState(true);
+
+  const setAuthUser = useCallback((newUser: AuthUser | null) => {
+    setUser(newUser);
+    if (newUser) {
+      localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(newUser));
+    } else {
+      localStorage.removeItem(AUTH_STORAGE_KEY);
+    }
+  }, []);
 
   // Sync session strictly from real Supabase database
   const syncSession = useCallback(async () => {
@@ -88,6 +109,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       const { data: { session }, error: sessionError } = await supabase.auth.getSession();
       if (sessionError || !session?.user) {
+        // If actively on callback page, wait for OAuth exchange without clearing existing session
+        if (typeof window !== 'undefined' && window.location.pathname === '/auth/callback') {
+          return;
+        }
         setUser(null);
         localStorage.removeItem(AUTH_STORAGE_KEY);
         return;
@@ -105,12 +130,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       const isAdmin = roleData?.role === 'administrator';
 
-      // When actively resolving on /auth/callback, don't execute premature logout
-      if (typeof window !== 'undefined' && window.location.pathname === '/auth/callback') {
-        return;
-      }
+      const isGoogleOAuth = Boolean(
+        session.user.app_metadata?.provider === 'google' ||
+        session.user.app_metadata?.providers?.includes('google') ||
+        session.user.identities?.some((id: any) => id.provider === 'google')
+      );
 
       const isEmailVerified = Boolean(
+        isGoogleOAuth ||
         session.user.user_metadata?.email_verified === true ||
         session.user.user_metadata?.email_verified === 'true' ||
         session.user.email_confirmed_at
@@ -453,6 +480,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         checkAdminAccess,
         loginWithGoogle,
         syncSession,
+        setAuthUser,
         allowedEmailDomain: ALLOWED_EMAIL_DOMAIN,
       }}
     >

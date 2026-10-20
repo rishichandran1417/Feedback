@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useAuth, isAllowedCollegeEmail } from '../../context/AuthContext';
+import { useAuth, isAllowedCollegeEmail, AuthUser } from '../../context/AuthContext';
 import { isUsingRealSupabase, supabase } from '../../lib/supabase';
 import { AppRole } from '../../types/database';
 import {
@@ -16,7 +16,7 @@ import {
 export const AuthCallback: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { syncSession, loginWithGoogle, allowedEmailDomain } = useAuth();
+  const { syncSession, loginWithGoogle, allowedEmailDomain, setAuthUser } = useAuth();
 
   const [status, setStatus] = useState<'processing' | 'ineligible' | 'error' | 'success'>('processing');
   const [errorMessage, setErrorMessage] = useState<string>('');
@@ -55,13 +55,34 @@ export const AuthCallback: React.FC = () => {
       }
 
       try {
-        // 2. Wait for Supabase to resolve the session
-        let session = (await supabase.auth.getSession()).data.session;
+        // 2. Instant PKCE code exchange or hash session establishment
+        const code = searchParams.get('code');
+        if (code) {
+          try {
+            await supabase.auth.exchangeCodeForSession(code);
+          } catch (codeErr) {
+            console.warn('PKCE exchange warning:', codeErr);
+          }
+        } else {
+          const accessToken = hashParams.get('access_token');
+          const refreshToken = hashParams.get('refresh_token');
+          if (accessToken && refreshToken) {
+            try {
+              await supabase.auth.setSession({
+                access_token: accessToken,
+                refresh_token: refreshToken,
+              });
+            } catch (hashErr) {
+              console.warn('Hash session set warning:', hashErr);
+            }
+          }
+        }
 
+        // 3. Resolve session
+        let session = (await supabase.auth.getSession()).data.session;
         if (!session) {
-          // Poll briefly for session token exchange
-          for (let i = 0; i < 10; i++) {
-            await new Promise((resolve) => setTimeout(resolve, 300));
+          for (let i = 0; i < 6; i++) {
+            await new Promise((resolve) => setTimeout(resolve, 100));
             session = (await supabase.auth.getSession()).data.session;
             if (session) break;
           }
@@ -76,107 +97,90 @@ export const AuthCallback: React.FC = () => {
         const authUser = session.user;
         const userEmail = (authUser.email || '').toLowerCase().trim();
 
-        // 3. Query trusted database role first (with retry for newly created trigger accounts)
-        let { data: roleData } = await supabase
+        // 4. Query role (fast check)
+        const { data: roleData } = await supabase
           .from('user_roles')
           .select('role')
           .eq('user_id', authUser.id)
           .maybeSingle();
 
-        if (!roleData?.role) {
-          // Retry briefly in case the database trigger on_auth_user_created is still finishing
-          for (let i = 0; i < 4; i++) {
-            await new Promise((resolve) => setTimeout(resolve, 400));
-            const retryRes = await supabase
-              .from('user_roles')
-              .select('role')
-              .eq('user_id', authUser.id)
-              .maybeSingle();
-            if (retryRes.data?.role) {
-              roleData = retryRes.data;
-              break;
-            }
-          }
-        }
-
         const isAdmin = roleData?.role === 'administrator';
 
+        const isGoogleOAuth = Boolean(
+          authUser.app_metadata?.provider === 'google' ||
+          authUser.app_metadata?.providers?.includes('google') ||
+          authUser.identities?.some((id: any) => id.provider === 'google')
+        );
+
         const isEmailVerified = Boolean(
+          isGoogleOAuth ||
           authUser.user_metadata?.email_verified === true ||
           authUser.user_metadata?.email_verified === 'true' ||
           authUser.email_confirmed_at
         );
 
-        // 4. Enforce college email eligibility & verified status (Requirement 6)
+        // 5. Enforce college email eligibility & verified status
         const configuredDomain = (allowedEmailDomain || '@cet.ac.in').toLowerCase().trim();
         const isCollegeEmail = isAllowedCollegeEmail(userEmail, configuredDomain);
         const isEligible = isAdmin || (isEmailVerified && isCollegeEmail);
 
         if (!isEligible) {
-          // Ineligible or unverified email: sign out immediately and purge all session tokens
+          setIneligibleEmail(userEmail);
+          setStatus('ineligible');
           await supabase.auth.signOut();
-          localStorage.removeItem('ait_auth_session_v2');
-          localStorage.removeItem('ait_auth_session');
-
-          navigate('/login?error=domain', { replace: true });
+          setAuthUser(null);
           return;
         }
 
-        // 5. Determine or provision role for verified eligible user
-        let assignedRole: AppRole = (roleData?.role as AppRole) || 'student';
-        if (!roleData?.role) {
-          try {
-            await supabase.from('user_roles').upsert({
-              user_id: authUser.id,
-              role: 'student',
-            });
-          } catch (roleErr) {
-            console.warn('Could not auto-insert student role:', roleErr);
-          }
-        }
+        // 6. Assign role (administrator if in DB, otherwise verified college student)
+        const assignedRole: AppRole = isAdmin ? 'administrator' : 'student';
 
-        // 6. Ensure profile exists for eligible user
-        const { data: profileData } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', authUser.id)
-          .maybeSingle();
+        // 7. Resolve profile metadata
+        const rawMeta = authUser.user_metadata || {};
+        const fullName = rawMeta.full_name || rawMeta.name || userEmail.split('@')[0];
+        const avatarUrl = rawMeta.avatar_url || rawMeta.picture || '';
+        const studentId = `STU-${Math.floor(1000 + Math.random() * 9000)}`;
 
-        if (!profileData) {
-          const rawMeta = authUser.user_metadata || {};
-          const fullName = rawMeta.full_name || rawMeta.name || userEmail.split('@')[0];
-          const avatarUrl = rawMeta.avatar_url || rawMeta.picture || '';
-          const studentId = `STU-${Math.floor(1000 + Math.random() * 9000)}`;
+        const authSession: AuthUser = {
+          id: authUser.id,
+          email: userEmail,
+          full_name: fullName,
+          student_id: studentId,
+          phone: undefined,
+          department: assignedRole === 'administrator' ? 'Central Grievance Redressal Cell' : 'General Studies',
+          course_programme: assignedRole === 'administrator' ? 'Administration' : 'Undergraduate',
+          avatar_url: avatarUrl,
+          is_active: true,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          role: assignedRole,
+        };
 
-          try {
-            // Create initial profile record matching verified database role
-            await supabase.from('profiles').upsert({
-              id: authUser.id,
-              email: userEmail,
-              full_name: fullName,
-              student_id: studentId,
-              department: assignedRole === 'administrator' ? 'Central Grievance Redressal Cell' : 'General Studies',
-              course_programme: assignedRole === 'administrator' ? 'Administration' : 'Undergraduate',
-              avatar_url: avatarUrl,
-              is_active: true,
-            });
-          } catch (profileErr) {
-            console.warn('Profile upsert warning in callback:', profileErr);
-          }
-        }
-
-        // 7. Refresh AuthContext state
-        await syncSession();
+        // 8. Commit to state and localStorage INSTANTLY
+        setAuthUser(authSession);
         setStatus('success');
 
-        // 8. Redirect authorized administrator to /admin/dashboard, student to dashboard
-        setTimeout(() => {
-          if (assignedRole === 'administrator') {
-            navigate('/admin/dashboard', { replace: true });
-          } else {
-            navigate('/', { replace: true });
-          }
-        }, 400);
+        // 9. Non-blocking background persistence to DB
+        if (!roleData?.role) {
+          Promise.resolve(supabase.from('user_roles').upsert({ user_id: authUser.id, role: 'student' })).catch(console.warn);
+        }
+        Promise.resolve(supabase.from('profiles').upsert({
+          id: authUser.id,
+          email: userEmail,
+          full_name: fullName,
+          student_id: studentId,
+          department: assignedRole === 'administrator' ? 'Central Grievance Redressal Cell' : 'General Studies',
+          course_programme: assignedRole === 'administrator' ? 'Administration' : 'Undergraduate',
+          avatar_url: avatarUrl,
+          is_active: true,
+        })).catch(console.warn);
+
+        // 10. Immediately navigate to destination
+        if (assignedRole === 'administrator') {
+          navigate('/admin/dashboard', { replace: true });
+        } else {
+          navigate('/', { replace: true });
+        }
       } catch (err: any) {
         console.error('OAuth callback handler error:', err);
         setStatus('error');
@@ -185,7 +189,7 @@ export const AuthCallback: React.FC = () => {
     };
 
     handleOAuthCallback();
-  }, [location, navigate, syncSession, allowedEmailDomain]);
+  }, [location, navigate, syncSession, allowedEmailDomain, setAuthUser]);
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-3.5 sm:p-4">
