@@ -41,39 +41,13 @@ const LoadingScreen = () => (
   </div>
 );
 
-// Protected Student Route
+// Student Route (Direct open access)
 const StudentRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { user, loading } = useAuth();
-
-  if (loading) return <LoadingScreen />;
-
-  if (!user) {
-    return <Navigate to="/login" replace />;
-  }
-
-  // If administrator tries to view student routes, redirect to admin dashboard
-  if (user.role === 'administrator') {
-    return <Navigate to="/admin/dashboard" replace />;
-  }
-
   return <>{children}</>;
 };
 
-// Protected Administrator Route
+// Administrator Route (Authentication bypassed for direct open access)
 const AdminRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { user, loading } = useAuth();
-
-  if (loading) return <LoadingScreen />;
-
-  if (!user) {
-    return <Navigate to="/admin" replace />;
-  }
-
-  // If a student tries to access /admin/..., deny access and redirect to student dashboard
-  if (user.role !== 'administrator') {
-    return <Navigate to="/" replace />;
-  }
-
   return <>{children}</>;
 };
 
@@ -295,9 +269,8 @@ export default function App() {
         <BrowserRouter>
           <Routes>
             {/* Unauthenticated Auth Routes */}
-            <Route path="/login" element={<StudentLoginPage />} />
-            <Route path="/register" element={<StudentRegisterPage />} />
-            <Route path="/admin" element={<AdminLoginPage />} />
+            {/* Admin Routes - Direct access without login */}
+            <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
 
             {/* Protected Student Routes */}
             <Route

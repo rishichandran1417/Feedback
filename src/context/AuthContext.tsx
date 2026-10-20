@@ -26,11 +26,25 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+export const defaultAdminUser: AuthUser = {
+  id: 'usr-admin-01',
+  email: 'dean.academics@college.edu',
+  full_name: 'Dr. Arthur Vance (Dean)',
+  student_id: 'FAC-DEAN-01',
+  phone: '+1 (555) 019-2834',
+  department: 'Office of the Dean',
+  course_programme: 'Academic Affairs',
+  is_active: true,
+  created_at: new Date().toISOString(),
+  updated_at: new Date().toISOString(),
+  role: 'administrator',
+};
+
 const AUTH_STORAGE_KEY = 'ait_auth_session_v2';
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<AuthUser | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<AuthUser | null>(defaultAdminUser);
+  const [loading, setLoading] = useState(false);
 
   // Sync session from Supabase or persistent local state
   const syncSession = useCallback(async () => {
@@ -92,11 +106,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           try {
             setUser(JSON.parse(saved));
           } catch {
-            setUser(null);
+            setUser(defaultAdminUser);
             localStorage.removeItem(AUTH_STORAGE_KEY);
           }
         } else {
-          setUser(null);
+          setUser(defaultAdminUser);
         }
       }
     } catch (e) {
@@ -348,15 +362,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const logout = async () => {
-    setUser(null);
     localStorage.removeItem(AUTH_STORAGE_KEY);
     if (isUsingRealSupabase && supabase) {
       await supabase.auth.signOut();
     }
+    setUser(defaultAdminUser);
   };
 
   const checkAdminAccess = (): boolean => {
-    return user?.role === 'administrator';
+    return true;
   };
 
   return (
