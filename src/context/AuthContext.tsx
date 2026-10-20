@@ -3,6 +3,10 @@ import { Profile, AppRole } from '../types/database';
 import { MockStorage } from '../lib/mockStorage';
 import { isUsingRealSupabase, supabase } from '../lib/supabase';
 
+export const ALLOWED_EMAIL_DOMAIN = (
+  import.meta.env.VITE_ALLOWED_EMAIL_DOMAIN || '@college.edu'
+).toLowerCase().trim();
+
 export interface AuthUser extends Profile {
   role: AppRole;
 }
@@ -23,6 +27,8 @@ interface AuthContextType {
   logout: () => Promise<void>;
   checkAdminAccess: () => boolean;
   loginWithGoogle: (collegeEmail?: string) => Promise<{ success: boolean; error?: string }>;
+  syncSession: () => Promise<void>;
+  allowedEmailDomain: string;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -45,42 +51,90 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
 
         const authUserId = session.user.id;
+        const userEmail = (session.user.email || '').toLowerCase().trim();
 
-        // Query profiles table
-        const { data: profileData, error: profileError } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', authUserId)
-          .single();
-
-        if (profileError || !profileData) {
-          console.warn('Profile not found for authenticated user, logging out.');
-          await supabase.auth.signOut();
-          setUser(null);
-          return;
-        }
-
-        // Query user_roles table for authorized role
+        // 1. Query user_roles table for authorized role (trusted database source of truth)
         const { data: roleData } = await supabase
           .from('user_roles')
           .select('role')
           .eq('user_id', authUserId)
-          .single();
+          .maybeSingle();
 
-        const assignedRole: AppRole = roleData?.role === 'administrator' ? 'administrator' : 'student';
+        const isAdmin = roleData?.role === 'administrator';
+
+        // When actively resolving on /auth/callback, don't execute premature logout
+        if (typeof window !== 'undefined' && window.location.pathname === '/auth/callback') {
+          return;
+        }
+
+        // Domain eligibility check for non-administrators
+        const isEligible = isAdmin || userEmail.endsWith(ALLOWED_EMAIL_DOMAIN);
+        if (!isEligible) {
+          console.warn(`User ${userEmail} does not match allowed domain ${ALLOWED_EMAIL_DOMAIN}`);
+          await supabase.auth.signOut();
+          setUser(null);
+          localStorage.removeItem(AUTH_STORAGE_KEY);
+          return;
+        }
+
+        // 2. Query profiles table
+        let { data: profileData } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', authUserId)
+          .maybeSingle();
+
+        if (!profileData) {
+          // Initialize profile for eligible verified user
+          const rawMeta = session.user.user_metadata || {};
+          const fullName = rawMeta.full_name || rawMeta.name || userEmail.split('@')[0];
+          const avatarUrl = rawMeta.avatar_url || rawMeta.picture || '';
+          const studentId = `STU-${Math.floor(1000 + Math.random() * 9000)}`;
+
+          const { data: newProfile } = await supabase
+            .from('profiles')
+            .upsert({
+              id: authUserId,
+              email: userEmail,
+              full_name: fullName,
+              student_id: studentId,
+              department: 'General Studies',
+              course_programme: 'Undergraduate',
+              avatar_url: avatarUrl,
+              is_active: true,
+            })
+            .select()
+            .maybeSingle();
+
+          profileData = newProfile;
+
+          if (!roleData) {
+            await supabase
+              .from('user_roles')
+              .upsert(
+                {
+                  user_id: authUserId,
+                  role: 'student',
+                },
+                { onConflict: 'user_id' }
+              );
+          }
+        }
+
+        const assignedRole: AppRole = isAdmin ? 'administrator' : 'student';
 
         const authSession: AuthUser = {
-          id: profileData.id,
-          email: profileData.email,
-          full_name: profileData.full_name,
-          student_id: profileData.student_id,
-          phone: profileData.phone,
-          department: profileData.department,
-          course_programme: profileData.course_programme,
-          avatar_url: profileData.avatar_url,
-          is_active: profileData.is_active,
-          created_at: profileData.created_at,
-          updated_at: profileData.updated_at,
+          id: profileData?.id || authUserId,
+          email: profileData?.email || userEmail,
+          full_name: profileData?.full_name || userEmail.split('@')[0],
+          student_id: profileData?.student_id || 'STU-VERIFIED',
+          phone: profileData?.phone,
+          department: profileData?.department || 'General Studies',
+          course_programme: profileData?.course_programme || 'Undergraduate',
+          avatar_url: profileData?.avatar_url,
+          is_active: profileData?.is_active ?? true,
+          created_at: profileData?.created_at || new Date().toISOString(),
+          updated_at: profileData?.updated_at || new Date().toISOString(),
           role: assignedRole,
         };
 
@@ -420,12 +474,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const loginWithGoogle = async (collegeEmail?: string): Promise<{ success: boolean; error?: string }> => {
     if (isUsingRealSupabase && supabase) {
+      const redirectUri = `${window.location.origin}/auth/callback`;
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: window.location.origin,
+          redirectTo: redirectUri,
           queryParams: {
             prompt: 'select_account',
+            access_type: 'offline',
           },
         },
       });
@@ -493,6 +549,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         logout,
         checkAdminAccess,
         loginWithGoogle,
+        syncSession,
+        allowedEmailDomain: ALLOWED_EMAIL_DOMAIN,
       }}
     >
       {children}

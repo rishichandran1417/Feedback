@@ -11,6 +11,7 @@ import { AdminLayout } from './components/layout/AdminLayout';
 import { StudentLoginPage } from './components/auth/StudentLoginPage';
 import { StudentRegisterPage } from './components/auth/StudentRegisterPage';
 import { AdminLoginPage } from './components/auth/AdminLoginPage';
+import { AuthCallback } from './components/auth/AuthCallback';
 
 // Student Pages
 import { StudentDashboard } from './components/student/StudentDashboard';
@@ -268,6 +269,9 @@ export default function App() {
       <SystemProvider>
         <BrowserRouter>
           <Routes>
+            {/* OAuth Callback Route */}
+            <Route path="/auth/callback" element={<AuthCallback />} />
+
             {/* Unauthenticated Auth Routes */}
             {/* Admin Routes - Direct access without login */}
             <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />

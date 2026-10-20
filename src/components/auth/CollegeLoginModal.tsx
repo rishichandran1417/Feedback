@@ -11,13 +11,13 @@ interface CollegeLoginModalProps {
 }
 
 export const CollegeLoginModal: React.FC<CollegeLoginModalProps> = ({ isOpen, onClose }) => {
-  const { loginWithGoogle } = useAuth();
+  const { loginWithGoogle, allowedEmailDomain } = useAuth();
   const { settings } = useSystem();
 
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  const allowedDomain = settings.auth_config.allowed_email_domain || '@college.edu';
+  const allowedDomain = allowedEmailDomain || settings.auth_config.allowed_email_domain || '@college.edu';
 
   const handleGoogleSignIn = async () => {
     setErrorMsg(null);

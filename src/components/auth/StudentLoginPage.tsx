@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 
 export const StudentLoginPage: React.FC = () => {
-  const { user, loginAsStudent } = useAuth();
+  const { user, loginAsStudent, allowedEmailDomain } = useAuth();
   const { settings } = useSystem();
   const navigate = useNavigate();
 
@@ -34,7 +34,7 @@ export const StudentLoginPage: React.FC = () => {
   const [resetSent, setResetSent] = useState(false);
   const [showForgot, setShowForgot] = useState(false);
 
-  const allowedDomain = settings.auth_config.allowed_email_domain || '@college.edu';
+  const allowedDomain = allowedEmailDomain || settings.auth_config.allowed_email_domain || '@college.edu';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
