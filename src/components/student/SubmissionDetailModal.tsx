@@ -1,0 +1,333 @@
+import React, { useState } from 'react';
+import { Submission, SubmissionStatus } from '../../types/database';
+import { useSystem } from '../../context/SystemContext';
+import { StatusBadge } from '../common/StatusBadge';
+import { TypeBadge } from '../common/TypeBadge';
+import { PriorityBadge } from '../common/PriorityBadge';
+import { Button } from '../common/Button';
+import {
+  X,
+  Calendar,
+  Clock,
+  Building,
+  User,
+  Paperclip,
+  Download,
+  Send,
+  CheckCircle2,
+  AlertTriangle,
+  History,
+  FileCheck,
+} from 'lucide-react';
+
+interface SubmissionDetailModalProps {
+  submissionId: string;
+  onClose: () => void;
+}
+
+export const SubmissionDetailModal: React.FC<SubmissionDetailModalProps> = ({
+  submissionId,
+  onClose,
+}) => {
+  const { submissions, addMessage } = useSystem();
+  const [replyText, setReplyText] = useState('');
+  const [isSending, setIsSending] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  const sub = submissions.find((s) => s.id === submissionId);
+
+  if (!sub) return null;
+
+  // Security: only non-internal messages visible to students
+  const visibleMessages = (sub.messages || []).filter((m) => !m.is_internal);
+
+  const handleSendReply = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!replyText.trim()) return;
+
+    try {
+      setIsSending(true);
+      setErrorMsg(null);
+      await addMessage(sub.id, replyText.trim(), 'student_reply', false);
+      setReplyText('');
+    } catch (err: any) {
+      setErrorMsg(err.message || 'Failed to submit response.');
+    } finally {
+      setIsSending(false);
+    }
+  };
+
+  const handleDownloadAttachment = (fileName: string) => {
+    // Generate a temporary downloadable dummy/file blob for simulation
+    const blob = new Blob([`Sample evidence data for ${fileName}`], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+      {/* Backdrop */}
+      <div
+        className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs transition-opacity"
+        onClick={onClose}
+      />
+
+      {/* Modal Dialog */}
+      <div className="relative w-full max-w-3xl bg-white rounded-xl border border-border shadow-2xl z-10 my-8 overflow-hidden animate-in zoom-in-95 duration-200">
+        {/* Header */}
+        <div className="p-6 border-b border-border flex items-start justify-between bg-surface/40">
+          <div className="space-y-1.5">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="font-mono text-xs font-bold text-brand-700 bg-brand-50 px-2.5 py-0.5 rounded border border-brand-200">
+                {sub.reference_number}
+              </span>
+              <TypeBadge type={sub.submission_type} />
+              <PriorityBadge priority={sub.priority} />
+              <StatusBadge status={sub.status} />
+            </div>
+            <h2 className="text-lg sm:text-xl font-semibold text-ink-primary tracking-tight">
+              {sub.subject}
+            </h2>
+          </div>
+
+          <button
+            onClick={onClose}
+            className="text-ink-secondary hover:text-ink-primary p-1.5 rounded-lg hover:bg-surface transition-colors"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        {/* Scrollable Content */}
+        <div className="p-6 space-y-8 max-h-[75vh] overflow-y-auto">
+          {/* Metadata Grid */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-4 rounded-xl bg-surface border border-border text-xs">
+            <div>
+              <span className="text-ink-muted block text-[11px] uppercase tracking-wider font-semibold">
+                Submission Date
+              </span>
+              <span className="font-medium text-ink-primary mt-0.5 block">
+                {new Date(sub.created_at).toLocaleDateString()}
+              </span>
+            </div>
+
+            <div>
+              <span className="text-ink-muted block text-[11px] uppercase tracking-wider font-semibold">
+                Department
+              </span>
+              <span className="font-medium text-ink-primary mt-0.5 block truncate">
+                {sub.department_name || 'General Admin'}
+              </span>
+            </div>
+
+            <div>
+              <span className="text-ink-muted block text-[11px] uppercase tracking-wider font-semibold">
+                Category
+              </span>
+              <span className="font-medium text-ink-primary mt-0.5 block truncate">
+                {sub.category_name}
+              </span>
+            </div>
+
+            <div>
+              <span className="text-ink-muted block text-[11px] uppercase tracking-wider font-semibold">
+                Resolution Target
+              </span>
+              <span className="font-medium text-ink-primary mt-0.5 block">
+                {sub.due_date ? new Date(sub.due_date).toLocaleDateString() : 'Under Review'}
+              </span>
+            </div>
+          </div>
+
+          {/* Description Section */}
+          <div className="space-y-2">
+            <h4 className="text-xs font-semibold uppercase tracking-wider text-ink-secondary">
+              Grievance Description
+            </h4>
+            <div className="p-4 rounded-xl bg-surface/30 border border-border/80 text-sm text-ink-primary leading-relaxed whitespace-pre-line">
+              {sub.description}
+            </div>
+            {sub.location && (
+              <p className="text-xs text-ink-secondary flex items-center gap-1.5 pt-1">
+                <span className="font-medium text-ink-primary">Location:</span> {sub.location}
+              </p>
+            )}
+          </div>
+
+          {/* Resolution Card if Resolved */}
+          {sub.resolution_summary && (
+            <div className="p-5 rounded-xl bg-emerald-50/70 border border-emerald-200 space-y-2">
+              <div className="flex items-center gap-2 text-emerald-800 font-semibold text-sm">
+                <FileCheck className="w-5 h-5 text-emerald-700" />
+                Administrative Resolution Summary
+              </div>
+              <p className="text-xs text-emerald-900 leading-relaxed pl-7">
+                {sub.resolution_summary}
+              </p>
+              {sub.resolution_date && (
+                <p className="text-[11px] text-emerald-700 pl-7 font-medium">
+                  Resolved on: {new Date(sub.resolution_date).toLocaleDateString()} at{' '}
+                  {new Date(sub.resolution_date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                </p>
+              )}
+            </div>
+          )}
+
+          {/* Attached Evidence */}
+          {sub.attachments && sub.attachments.length > 0 && (
+            <div className="space-y-3">
+              <h4 className="text-xs font-semibold uppercase tracking-wider text-ink-secondary flex items-center gap-1.5">
+                <Paperclip className="w-4 h-4" />
+                Supporting Evidence ({sub.attachments.length})
+              </h4>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {sub.attachments.map((att) => (
+                  <div
+                    key={att.id}
+                    className="p-3 rounded-lg border border-border bg-white flex items-center justify-between gap-3 text-xs"
+                  >
+                    <div className="truncate">
+                      <p className="font-medium text-ink-primary truncate">{att.file_name}</p>
+                      <p className="text-[11px] text-ink-muted">
+                        {Math.round(att.file_size / 1024)} KB • Confidential
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => handleDownloadAttachment(att.file_name)}
+                      className="p-1.5 text-brand-700 hover:bg-brand-50 rounded-md transition-colors shrink-0"
+                      title="Download file"
+                    >
+                      <Download className="w-4 h-4" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Status History Timeline */}
+          {sub.status_history && sub.status_history.length > 0 && (
+            <div className="space-y-3">
+              <h4 className="text-xs font-semibold uppercase tracking-wider text-ink-secondary flex items-center gap-1.5">
+                <History className="w-4 h-4" />
+                Official Status History
+              </h4>
+              <div className="border border-border rounded-xl divide-y divide-border bg-white overflow-hidden text-xs">
+                {sub.status_history.map((hist) => (
+                  <div key={hist.id} className="p-3.5 flex items-start justify-between gap-3">
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <StatusBadge status={hist.new_status} size="sm" />
+                        <span className="text-[11px] text-ink-secondary font-medium">
+                          by {hist.changed_by_name || 'Authority'}
+                        </span>
+                      </div>
+                      {hist.remarks && (
+                        <p className="text-xs text-ink-primary pl-1 font-medium">{hist.remarks}</p>
+                      )}
+                    </div>
+                    <span className="text-[11px] text-ink-muted shrink-0">
+                      {new Date(hist.created_at).toLocaleDateString()}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Official Communication & Replies */}
+          <div className="space-y-4">
+            <h4 className="text-xs font-semibold uppercase tracking-wider text-ink-secondary">
+              Official Communication Thread
+            </h4>
+
+            {visibleMessages.length === 0 ? (
+              <p className="text-xs text-ink-muted italic p-4 text-center border border-dashed border-border rounded-xl">
+                No replies posted yet. When an administrator responds or requests info, messages will appear here.
+              </p>
+            ) : (
+              <div className="space-y-3">
+                {visibleMessages.map((msg) => {
+                  const isStudent = msg.message_type === 'student_reply';
+                  const isInfoReq = msg.message_type === 'info_request';
+
+                  return (
+                    <div
+                      key={msg.id}
+                      className={`p-4 rounded-xl border text-xs space-y-1.5 ${
+                        isStudent
+                          ? 'bg-brand-50/50 border-brand-200 ml-4 sm:ml-8'
+                          : isInfoReq
+                          ? 'bg-amber-50/80 border-amber-200 mr-4 sm:mr-8'
+                          : 'bg-surface border-border mr-4 sm:mr-8'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between text-[11px]">
+                        <span className="font-semibold text-ink-primary flex items-center gap-1.5">
+                          {isInfoReq && <AlertTriangle className="w-3.5 h-3.5 text-amber-600" />}
+                          {msg.sender_name || (isStudent ? 'You' : 'Administrator')}
+                          <span className="text-ink-muted font-normal">
+                            ({isStudent ? 'Student' : isInfoReq ? 'Information Request' : 'Faculty Officer'})
+                          </span>
+                        </span>
+                        <span className="text-ink-muted">
+                          {new Date(msg.created_at).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })}
+                        </span>
+                      </div>
+                      <p className="text-ink-primary whitespace-pre-line leading-relaxed">
+                        {msg.content}
+                      </p>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* Student Reply Input Box */}
+            <form onSubmit={handleSendReply} className="space-y-3 pt-2">
+              {errorMsg && (
+                <p className="text-xs text-rose-600 font-medium">{errorMsg}</p>
+              )}
+              <div className="space-y-1.5">
+                <label className="block text-xs font-medium text-ink-primary">
+                  Reply to Administrative Officer
+                </label>
+                <textarea
+                  rows={3}
+                  value={replyText}
+                  onChange={(e) => setReplyText(e.target.value)}
+                  placeholder="Type your message or clarification here..."
+                  className="w-full px-3.5 py-2.5 rounded-lg border border-border text-xs text-ink-primary focus:outline-none focus:ring-2 focus:ring-brand-500 placeholder:text-ink-muted resize-y"
+                />
+              </div>
+
+              <div className="flex justify-end">
+                <Button
+                  type="submit"
+                  size="sm"
+                  isLoading={isSending}
+                  leftIcon={<Send className="w-3.5 h-3.5" />}
+                  disabled={!replyText.trim()}
+                >
+                  Post Reply
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        {/* Modal Footer */}
+        <div className="p-4 border-t border-border flex justify-end bg-surface/30">
+          <Button variant="secondary" size="sm" onClick={onClose}>
+            Close
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+};
