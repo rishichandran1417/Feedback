@@ -132,7 +132,9 @@ export const StudentLayout: React.FC<StudentLayoutProps> = ({
               <div className="min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
                   <span className="font-semibold text-ink-primary tracking-tight text-base sm:text-lg truncate">
-                    {settings.college_info.name || 'College of Engineering Trivandrum'}
+                    {settings.college_info?.name && !settings.college_info.name.includes('Apex')
+                      ? settings.college_info.name
+                      : 'College of Engineering Trivandrum'}
                   </span>
                   <span className="text-xs px-2 py-0.5 rounded-full font-medium bg-surface text-ink-secondary border border-border shrink-0">
                     Grievance Portal

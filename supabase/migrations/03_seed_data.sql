@@ -3,22 +3,22 @@
 -- 1. Insert Initial System Settings
 INSERT INTO public.system_settings (key, value, description)
 VALUES 
-  ('college_info', '{"name": "CET", "code": "AIT", "support_email": "grievance@college.edu", "portal_url": "https://feedback.college.edu"}'::jsonb, 'College metadata and portal configuration'),
-  ('auth_config', '{"allowed_email_domain": "@college.edu", "require_email_verification": true}'::jsonb, 'Configurable student college email domain validation'),
+  ('college_info', '{"name": "College of Engineering Trivandrum", "code": "CET", "support_email": "grievance@cet.ac.in", "portal_url": "https://feedback.rishichandran17.workers.dev"}'::jsonb, 'College metadata and portal configuration'),
+  ('auth_config', '{"allowed_email_domain": "@cet.ac.in", "require_email_verification": true}'::jsonb, 'Configurable student college email domain validation'),
   ('file_upload_limits', '{"max_file_size_mb": 10, "allowed_extensions": [".jpg", ".jpeg", ".png", ".pdf", ".docx"]}'::jsonb, 'Attachment upload security limits'),
   ('workflow_rules', '{"allow_anonymous": true, "enable_reopening": true, "reopen_window_days": 14}'::jsonb, 'Grievance lifecycle configuration'),
-  ('email_provider_config', '{"provider": "resend", "sender_name": "CET Grievance Cell", "sender_email": "notifications@college.edu", "enabled_events": ["submission_acknowledgement", "status_update", "issue_resolved", "issue_reopened", "admin_reply", "info_request"]}'::jsonb, 'Transactional email dispatch rules')
+  ('email_provider_config', '{"provider": "resend", "sender_name": "CET Grievance Redressal Cell", "sender_email": "notifications@cet.ac.in", "enabled_events": ["submission_acknowledgement", "status_update", "issue_resolved", "issue_reopened", "admin_reply", "info_request"]}'::jsonb, 'Transactional email dispatch rules')
 ON CONFLICT (key) DO NOTHING;
 
 -- 2. Insert Core Academic & Campus Departments
 INSERT INTO public.departments (id, name, code, contact_email, head_of_department, is_active)
 VALUES
-  ('d1111111-1111-1111-1111-111111111111', 'Academic Affairs', 'ACAD', 'dean.academics@college.edu', 'Dr. Alistair Vance', true),
-  ('d2222222-2222-2222-2222-222222222222', 'Facilities & Campus Infrastructure', 'FACIL', 'estate.manager@college.edu', 'Eng. Marcus Brody', true),
-  ('d3333333-3333-3333-3333-333333333333', 'IT Services & Campus Network', 'IT-SYS', 'helpdesk@college.edu', 'Sarah Lin, Chief IT Officer', true),
-  ('d4444444-4444-4444-4444-444444444444', 'Hostel & Residential Life', 'HOSTEL', 'warden.office@college.edu', 'Dr. Kavita Menon', true),
-  ('d5555555-5555-5555-5555-555555555555', 'Financial Aid & Student Accounts', 'FIN-AID', 'accounts@college.edu', 'Robert Sterling, Bursar', true),
-  ('d6666666-6666-6666-6666-666666666666', 'Examination & Records Cell', 'EXAM', 'coe@college.edu', 'Prof. Eleanor Wright', true)
+  ('d1111111-1111-1111-1111-111111111111', 'Academic Affairs', 'ACAD', 'dean.academics@cet.ac.in', 'Dr. Alistair Vance', true),
+  ('d2222222-2222-2222-2222-222222222222', 'Facilities & Campus Infrastructure', 'FACIL', 'estate.manager@cet.ac.in', 'Eng. Marcus Brody', true),
+  ('d3333333-3333-3333-3333-333333333333', 'IT Services & Campus Network', 'IT-SYS', 'helpdesk@cet.ac.in', 'Sarah Lin, Chief IT Officer', true),
+  ('d4444444-4444-4444-4444-444444444444', 'Hostel & Residential Life', 'HOSTEL', 'warden.office@cet.ac.in', 'Dr. Kavita Menon', true),
+  ('d5555555-5555-5555-5555-555555555555', 'Financial Aid & Student Accounts', 'FIN-AID', 'accounts@cet.ac.in', 'Robert Sterling, Bursar', true),
+  ('d6666666-6666-6666-6666-666666666666', 'Examination & Records Cell', 'EXAM', 'coe@cet.ac.in', 'Prof. Eleanor Wright', true)
 ON CONFLICT (code) DO NOTHING;
 
 -- 3. Insert Demonstration Categories with SLA Targets

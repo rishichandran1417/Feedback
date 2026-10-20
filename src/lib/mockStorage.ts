@@ -91,8 +91,18 @@ export const MockStorage = {
     if (!localStorage.getItem(STORAGE_KEYS.EMAIL_NOTIFS)) {
       setStored(STORAGE_KEYS.EMAIL_NOTIFS, initialEmailNotifications);
     }
-    if (!localStorage.getItem(STORAGE_KEYS.SETTINGS)) {
+    const currentSettings = getStored<SystemSettings | null>(STORAGE_KEYS.SETTINGS, null);
+    if (!currentSettings || currentSettings.college_info?.name?.includes('Apex') || currentSettings.college_info?.name === 'CET') {
       setStored(STORAGE_KEYS.SETTINGS, initialSystemSettings);
+    } else if (currentSettings.college_info && currentSettings.college_info.name !== 'College of Engineering Trivandrum') {
+      currentSettings.college_info.name = 'College of Engineering Trivandrum';
+      currentSettings.college_info.code = 'CET';
+      currentSettings.college_info.support_email = 'grievance@cet.ac.in';
+      currentSettings.college_info.portal_url = 'https://feedback.cet.ac.in';
+      if (currentSettings.auth_config) {
+        currentSettings.auth_config.allowed_email_domain = '@cet.ac.in';
+      }
+      setStored(STORAGE_KEYS.SETTINGS, currentSettings);
     }
   },
 

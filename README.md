@@ -1,4 +1,4 @@
-# Apex College — Student Feedback & Grievance Management System
+#  College — Student Feedback & Grievance Management System
 
 A secure, production-grade, full-stack web application designed for collegiate institutions to manage student complaints, academic suggestions, and infrastructure grievances from initial submission to administrative remediation.
 
@@ -196,13 +196,13 @@ The system includes quick 1-click evaluation access in the header navigation and
 
 ### Step 2: Configure Resend Transactional Emails
 1. Sign up at [resend.com](https://resend.com) and create an API key (`re_...`).
-2. Verify your sending domain (e.g. `notifications@college.edu`).
+2. Verify your sending domain (e.g. `notifications@cet.ac.in`).
 3. Deploy the Edge Function using the Supabase CLI:
    ```bash
    supabase functions deploy send-email
    supabase secrets set RESEND_API_KEY=re_your_api_key_here
-   supabase secrets set RESEND_SENDER_NAME="Apex College Grievance Cell"
-   supabase secrets set RESEND_SENDER_EMAIL="notifications@college.edu"
+   supabase secrets set RESEND_SENDER_NAME="College of Engineering Trivandrum Grievance Cell"
+   supabase secrets set RESEND_SENDER_EMAIL="notifications@cet.ac.in"
    ```
 
 ---

@@ -24,9 +24,21 @@ import {
 export const SystemSettingsView: React.FC = () => {
   const { settings, updateSettings } = useSystem();
 
-  const [collegeName, setCollegeName] = useState(settings.college_info.name);
-  const [supportEmail, setSupportEmail] = useState(settings.college_info.support_email);
-  const [emailDomain, setEmailDomain] = useState(settings.auth_config.allowed_email_domain);
+  const [collegeName, setCollegeName] = useState(
+    settings.college_info?.name && !settings.college_info.name.includes('Apex')
+      ? settings.college_info.name
+      : 'College of Engineering Trivandrum'
+  );
+  const [supportEmail, setSupportEmail] = useState(
+    settings.college_info?.support_email && !settings.college_info.support_email.includes('college.edu')
+      ? settings.college_info.support_email
+      : 'grievance@cet.ac.in'
+  );
+  const [emailDomain, setEmailDomain] = useState(
+    settings.auth_config?.allowed_email_domain && !settings.auth_config.allowed_email_domain.includes('college.edu')
+      ? settings.auth_config.allowed_email_domain
+      : '@cet.ac.in'
+  );
   const [maxFileMb, setMaxFileMb] = useState(settings.file_upload_limits.max_file_size_mb);
   const [allowAnon, setAllowAnon] = useState(settings.workflow_rules.allow_anonymous);
   const [reopenDays, setReopenDays] = useState(settings.workflow_rules.reopen_window_days);
@@ -42,9 +54,21 @@ export const SystemSettingsView: React.FC = () => {
 
   // Sync inputs with settings when settings changes
   useEffect(() => {
-    setCollegeName(settings.college_info.name);
-    setSupportEmail(settings.college_info.support_email);
-    setEmailDomain(settings.auth_config.allowed_email_domain);
+    setCollegeName(
+      settings.college_info?.name && !settings.college_info.name.includes('Apex')
+        ? settings.college_info.name
+        : 'College of Engineering Trivandrum'
+    );
+    setSupportEmail(
+      settings.college_info?.support_email && !settings.college_info.support_email.includes('college.edu')
+        ? settings.college_info.support_email
+        : 'grievance@cet.ac.in'
+    );
+    setEmailDomain(
+      settings.auth_config?.allowed_email_domain && !settings.auth_config.allowed_email_domain.includes('college.edu')
+        ? settings.auth_config.allowed_email_domain
+        : '@cet.ac.in'
+    );
     setMaxFileMb(settings.file_upload_limits.max_file_size_mb);
     setAllowAnon(settings.workflow_rules.allow_anonymous);
     setReopenDays(settings.workflow_rules.reopen_window_days);

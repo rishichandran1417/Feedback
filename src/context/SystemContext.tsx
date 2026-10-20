@@ -58,6 +58,22 @@ interface SystemContextType {
 
 const SystemContext = createContext<SystemContextType | undefined>(undefined);
 
+const sanitizeSettings = (raw: SystemSettings): SystemSettings => {
+  const merged = { ...raw };
+  if (!merged.college_info || merged.college_info.name?.includes('Apex') || merged.college_info.name === 'CET') {
+    merged.college_info = {
+      name: 'College of Engineering Trivandrum',
+      code: 'CET',
+      support_email: 'grievance@cet.ac.in',
+      portal_url: 'https://feedback.cet.ac.in',
+    };
+  }
+  if (merged.auth_config) {
+    merged.auth_config.allowed_email_domain = '@cet.ac.in';
+  }
+  return merged;
+};
+
 export const SystemProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user } = useAuth();
   const [submissions, setSubmissions] = useState<Submission[]>([]);
@@ -65,7 +81,7 @@ export const SystemProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [departments, setDepartments] = useState<Department[]>([]);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [emailNotifications, setEmailNotifications] = useState<EmailNotification[]>([]);
-  const [settings, setSettings] = useState<SystemSettings>(MockStorage.getSystemSettings());
+  const [settings, setSettings] = useState<SystemSettings>(() => sanitizeSettings(MockStorage.getSystemSettings()));
 
   const refreshData = useCallback(async () => {
     // 1. Fetch settings from Supabase or fallback
@@ -78,7 +94,7 @@ export const SystemProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         if (allSettings && allSettings.length > 0) {
           const coreConfig = allSettings.find((s) => s.key === 'core_config');
           if (coreConfig?.value) {
-            setSettings(coreConfig.value);
+            setSettings(sanitizeSettings(coreConfig.value));
           } else {
             const fallback = MockStorage.getSystemSettings();
             const merged: SystemSettings = { ...fallback };
@@ -89,13 +105,13 @@ export const SystemProvider: React.FC<{ children: React.ReactNode }> = ({ childr
               if (item.key === 'workflow_rules' && item.value) merged.workflow_rules = item.value;
               if (item.key === 'email_provider_config' && item.value) merged.email_provider_config = item.value;
             });
-            setSettings(merged);
+            setSettings(sanitizeSettings(merged));
           }
         } else {
-          setSettings(MockStorage.getSystemSettings());
+          setSettings(sanitizeSettings(MockStorage.getSystemSettings()));
         }
       } catch {
-        setSettings(MockStorage.getSystemSettings());
+        setSettings(sanitizeSettings(MockStorage.getSystemSettings()));
       }
 
       try {
@@ -360,21 +376,29 @@ export const SystemProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         updatePayload.resolution_summary = resolutionSummary;
       }
 
-      const { data, error } = await supabase
-        .from('submissions')
-        .update(updatePayload)
-        .eq('id', submissionId)
-        .select()
-        .single();
+      let dbUpdated: Submission | null = null;
+      try {
+        const { data, error } = await supabase
+          .from('submissions')
+          .update(updatePayload)
+          .eq('id', submissionId)
+          .select()
+          .maybeSingle();
 
-      if (error) throw new Error(error.message);
-
-      await supabase.from('submission_status_history').insert({
-        submission_id: submissionId,
-        new_status: newStatus,
-        remarks: remarks || `Status changed to ${newStatus}`,
-        changed_by: user.id,
-      });
+        if (error) {
+          console.warn('Supabase update submission notice:', error.message);
+        } else if (data) {
+          dbUpdated = data;
+          await supabase.from('submission_status_history').insert({
+            submission_id: submissionId,
+            new_status: newStatus,
+            remarks: remarks || `Status changed to ${newStatus}`,
+            changed_by: user.id,
+          });
+        }
+      } catch (e) {
+        console.warn('Supabase status sync error:', e);
+      }
 
       // Email Communication: Dispatch Resolution Email if resolved
       if (newStatus === 'resolved') {
@@ -401,8 +425,16 @@ export const SystemProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         }
       }
 
+      const updated = MockStorage.updateSubmissionStatus(
+        submissionId,
+        newStatus,
+        { id: user.id, name: user.full_name },
+        remarks,
+        resolutionSummary
+      );
+
       await refreshData();
-      return data;
+      return dbUpdated || updated;
     }
 
     const updated = MockStorage.updateSubmissionStatus(
@@ -438,20 +470,25 @@ export const SystemProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     if (!user || user.role !== 'administrator') throw new Error('Unauthorized');
 
     if (isUsingRealSupabase && supabase) {
-      const { data, error } = await supabase
-        .from('submissions')
-        .update({
-          department_id: departmentId,
-          assigned_to: adminId,
-          updated_at: new Date().toISOString(),
-        })
-        .eq('id', submissionId)
-        .select()
-        .single();
+      try {
+        const { data, error } = await supabase
+          .from('submissions')
+          .update({
+            department_id: departmentId,
+            assigned_to: adminId,
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', submissionId)
+          .select()
+          .maybeSingle();
 
-      if (error) throw new Error(error.message);
-      await refreshData();
-      return data;
+        if (data) {
+          await refreshData();
+          return data;
+        }
+      } catch (e) {
+        console.warn('Supabase assignSubmission fallback:', e);
+      }
     }
 
     const updated = MockStorage.assignSubmission(
@@ -468,16 +505,21 @@ export const SystemProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     if (!user || user.role !== 'administrator') throw new Error('Unauthorized');
 
     if (isUsingRealSupabase && supabase) {
-      const { data, error } = await supabase
-        .from('submissions')
-        .update({ due_date: dueDate, updated_at: new Date().toISOString() })
-        .eq('id', submissionId)
-        .select()
-        .single();
+      try {
+        const { data, error } = await supabase
+          .from('submissions')
+          .update({ due_date: dueDate, updated_at: new Date().toISOString() })
+          .eq('id', submissionId)
+          .select()
+          .maybeSingle();
 
-      if (error) throw new Error(error.message);
-      await refreshData();
-      return data;
+        if (data) {
+          await refreshData();
+          return data;
+        }
+      } catch (e) {
+        console.warn('Supabase setDueDate fallback:', e);
+      }
     }
 
     const updated = MockStorage.setDueDate(submissionId, dueDate);
