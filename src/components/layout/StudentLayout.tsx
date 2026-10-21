@@ -133,9 +133,6 @@ export const StudentLayout: React.FC<StudentLayoutProps> = ({
                   <span className="font-extrabold text-ink-primary tracking-tight text-lg sm:text-xl truncate">
                     voIcE
                   </span>
-                  <span className="text-xs px-2 py-0.5 rounded-full font-medium bg-surface text-ink-secondary border border-border shrink-0">
-                    Grievance Portal
-                  </span>
                 </div>
                 <p className="hidden sm:block text-[11px] text-ink-muted -mt-0.5 truncate">
                   College of Engineering Trivandrum • Student Feedback & Resolution
