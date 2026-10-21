@@ -428,20 +428,29 @@ export const SystemProvider: React.FC<{ children: React.ReactNode }> = ({ childr
           } catch (e) {
             console.error('Failed to log resolution email in Supabase:', e);
           }
-          MockStorage.recordEmailNotification(emailRecord as any);
+          try {
+            MockStorage.recordEmailNotification(emailRecord as any);
+          } catch {
+            // Ignore mock storage errors in live mode
+          }
         }
       }
 
-      const updated = MockStorage.updateSubmissionStatus(
-        submissionId,
-        newStatus,
-        { id: user.id, name: user.full_name },
-        remarks,
-        resolutionSummary
-      );
+      // Safely mirror to MockStorage if present in local cache
+      try {
+        MockStorage.updateSubmissionStatus(
+          submissionId,
+          newStatus,
+          { id: user.id, name: user.full_name },
+          remarks,
+          resolutionSummary
+        );
+      } catch {
+        // Safe to ignore for real database submissions
+      }
 
       await refreshData();
-      return dbUpdated || updated;
+      return dbUpdated || (targetSub as any);
     }
 
     const updated = MockStorage.updateSubmissionStatus(
