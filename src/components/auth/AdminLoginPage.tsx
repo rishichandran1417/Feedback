@@ -129,12 +129,11 @@ export const AdminLoginPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-white flex flex-col justify-center py-8 sm:py-12 px-3.5 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center space-y-3">
-        <div className="w-12 h-12 rounded-xl bg-brand-700 text-white flex items-center justify-center mx-auto shadow-md">
-          <ShieldCheck className="w-7 h-7" />
-        </div>
-        <h2 className="text-3xl font-extrabold tracking-tight text-ink-primary">
-          voIcE
-        </h2>
+        <img
+          src="/voice-logo.png"
+          alt="voIcE"
+          className="h-14 sm:h-16 w-auto object-contain mx-auto rounded-xl shadow-md"
+        />
         <p className="text-xs text-ink-secondary">
           College of Engineering Trivandrum • Administrator Portal
         </p>

@@ -125,16 +125,13 @@ export const StudentLayout: React.FC<StudentLayoutProps> = ({
             </button>
             {/* Brand Logo & College Identity */}
             <Link to="/" className="flex items-center gap-3 select-none shrink-0 min-w-0">
-              <div className="w-9 h-9 rounded-lg bg-brand-700 flex items-center justify-center text-white font-bold shadow-xs shrink-0">
-                <GraduationCap className="w-5 h-5" />
-              </div>
-              <div className="min-w-0">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span className="font-extrabold text-ink-primary tracking-tight text-lg sm:text-xl truncate">
-                    voIcE
-                  </span>
-                </div>
-                <p className="hidden sm:block text-[11px] text-ink-muted -mt-0.5 truncate">
+              <img
+                src="/voice-logo.png"
+                alt="voIcE"
+                className="h-8 sm:h-9 w-auto object-contain rounded-lg shadow-xs"
+              />
+              <div className="min-w-0 hidden md:block">
+                <p className="text-[11px] text-ink-muted truncate">
                   College of Engineering Trivandrum • Student Feedback & Resolution
                 </p>
               </div>
@@ -298,9 +295,11 @@ export const StudentLayout: React.FC<StudentLayoutProps> = ({
             <div className="fixed inset-y-0 left-0 w-72 max-w-[85vw] bg-white border-r border-border z-50 shadow-xl flex flex-col">
               <div className="p-4 border-b border-border flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 rounded-lg bg-brand-700 flex items-center justify-center text-white">
-                    <GraduationCap className="w-4 h-4" />
-                  </div>
+                  <img
+                    src="/voice-logo.png"
+                    alt="voIcE"
+                    className="h-6 w-auto object-contain rounded-md"
+                  />
                   <span className="font-semibold text-xs uppercase tracking-wider text-ink-secondary">
                     Student Navigation
                   </span>

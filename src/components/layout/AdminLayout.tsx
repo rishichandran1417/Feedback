@@ -143,14 +143,13 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
             </button>
             {/* Institutional Admin Branding */}
             <Link to="/admin/dashboard" className="flex items-center gap-3 select-none shrink-0 min-w-0">
-              <div className="w-9 h-9 rounded-lg bg-brand-900 text-white flex items-center justify-center font-bold shadow-xs shrink-0">
-                <ShieldCheck className="w-5 h-5" />
-              </div>
+              <img
+                src="/voice-logo.png"
+                alt="voIcE"
+                className="h-8 sm:h-9 w-auto object-contain rounded-lg shadow-xs"
+              />
               <div className="min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="font-extrabold text-ink-primary tracking-tight text-lg sm:text-xl truncate">
-                    voIcE
-                  </span>
                   <span className="text-xs px-2 py-0.5 rounded-full font-semibold bg-brand-50 text-brand-800 border border-brand-200 shrink-0">
                     Admin Portal
                   </span>
@@ -249,9 +248,11 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
             <div className="fixed inset-y-0 left-0 w-72 max-w-[85vw] bg-white border-r border-border z-50 shadow-xl flex flex-col">
               <div className="p-4 border-b border-border flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 rounded-lg bg-brand-900 text-white flex items-center justify-center font-bold">
-                    <ShieldCheck className="w-4 h-4" />
-                  </div>
+                  <img
+                    src="/voice-logo.png"
+                    alt="voIcE"
+                    className="h-6 w-auto object-contain rounded-md"
+                  />
                   <span className="font-semibold text-xs uppercase tracking-wider text-ink-secondary">
                     Admin Navigation
                   </span>
