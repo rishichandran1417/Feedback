@@ -251,7 +251,14 @@ export const MockStorage = {
     this.init();
     const subs = getStored<Submission[]>(STORAGE_KEYS.SUBMISSIONS, initialSubmissions);
     const subIndex = subs.findIndex((s) => s.id === submissionId);
-    if (subIndex === -1) throw new Error('Submission not found.');
+    if (subIndex === -1) {
+      return {
+        id: submissionId,
+        reference_number: `FB-${submissionId.slice(0, 8)}`,
+        status: newStatus,
+        updated_at: new Date().toISOString(),
+      } as any;
+    }
 
     const sub = subs[subIndex];
     const prevStatus = sub.status;
@@ -334,7 +341,13 @@ export const MockStorage = {
     this.init();
     const subs = getStored<Submission[]>(STORAGE_KEYS.SUBMISSIONS, initialSubmissions);
     const subIndex = subs.findIndex((s) => s.id === submissionId);
-    if (subIndex === -1) throw new Error('Submission not found.');
+    if (subIndex === -1) {
+      return {
+        id: submissionId,
+        department_id: departmentId,
+        assigned_to: assignedAdminId,
+      } as any;
+    }
 
     const sub = subs[subIndex];
     const departments = this.getDepartments();
@@ -358,7 +371,12 @@ export const MockStorage = {
     this.init();
     const subs = getStored<Submission[]>(STORAGE_KEYS.SUBMISSIONS, initialSubmissions);
     const subIndex = subs.findIndex((s) => s.id === submissionId);
-    if (subIndex === -1) throw new Error('Submission not found.');
+    if (subIndex === -1) {
+      return {
+        id: submissionId,
+        due_date: dueDateIso,
+      } as any;
+    }
 
     subs[subIndex].due_date = dueDateIso;
     subs[subIndex].updated_at = new Date().toISOString();
@@ -376,7 +394,19 @@ export const MockStorage = {
     this.init();
     const subs = getStored<Submission[]>(STORAGE_KEYS.SUBMISSIONS, initialSubmissions);
     const subIndex = subs.findIndex((s) => s.id === submissionId);
-    if (subIndex === -1) throw new Error('Submission not found.');
+    if (subIndex === -1) {
+      return {
+        id: `msg-${Date.now()}`,
+        submission_id: submissionId,
+        sender_id: user.id,
+        sender_name: user.name,
+        sender_role: user.role,
+        message_type: messageType,
+        content,
+        is_internal: isInternal,
+        created_at: new Date().toISOString(),
+      } as any;
+    }
 
     const sub = subs[subIndex];
 
