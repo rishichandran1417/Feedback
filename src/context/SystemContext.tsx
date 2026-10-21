@@ -25,7 +25,7 @@ interface SystemContextType {
   refreshData: () => Promise<void>;
   createSubmission: (payload: {
     submission_type: Submission['submission_type'];
-    category_id: string;
+    category_id?: string;
     subject: string;
     description: string;
     location?: string;
@@ -228,7 +228,7 @@ export const SystemProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   const createSubmission = async (payload: {
     submission_type: Submission['submission_type'];
-    category_id: string;
+    category_id?: string;
     subject: string;
     description: string;
     location?: string;
@@ -238,11 +238,14 @@ export const SystemProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     if (!user) throw new Error('Authentication required');
 
     if (isUsingRealSupabase && supabase) {
-      const cat = categories.find((c) => c.id === payload.category_id);
+      const chosenCat = payload.category_id ? categories.find((c) => c.id === payload.category_id) : null;
+      const cat = chosenCat || (categories.length > 0 ? categories[0] : null);
       const targetDays = cat?.target_resolution_days || 5;
       const dueDate = new Date(Date.now() + targetDays * 24 * 60 * 60 * 1000).toISOString();
       const nextNum = 1000 + submissions.length + 1;
       const ref = `FB-${new Date().getFullYear()}-${nextNum}`;
+      const categoryIdToUse = payload.category_id || cat?.id || null;
+      const departmentIdToUse = chosenCat?.department_id || cat?.department_id || null;
 
       // Ensure profile exists in profiles table so foreign key constraint succeeds
       try {
@@ -263,8 +266,8 @@ export const SystemProvider: React.FC<{ children: React.ReactNode }> = ({ childr
           reference_number: ref,
           student_id: user.id,
           submission_type: payload.submission_type,
-          category_id: payload.category_id,
-          department_id: cat?.department_id,
+          category_id: categoryIdToUse,
+          department_id: departmentIdToUse,
           subject: payload.subject,
           description: payload.description,
           location: payload.location,

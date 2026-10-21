@@ -97,10 +97,6 @@ export const SubmitFeedbackForm: React.FC<SubmitFeedbackFormProps> = ({
       return;
     }
 
-    if (!categoryId) {
-      setErrorMsg('Please select a relevant category.');
-      return;
-    }
     if (!subject.trim()) {
       setErrorMsg('Subject line is required.');
       return;
@@ -269,7 +265,7 @@ export const SubmitFeedbackForm: React.FC<SubmitFeedbackFormProps> = ({
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <label className="text-xs font-semibold uppercase tracking-wider text-ink-secondary">
-              2. Category & Department Routing *
+              2. Category & Department Routing (Optional)
             </label>
             <span className="text-xs text-ink-muted">Routed to designated department</span>
           </div>
@@ -277,15 +273,14 @@ export const SubmitFeedbackForm: React.FC<SubmitFeedbackFormProps> = ({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-medium text-ink-primary mb-1.5">
-                Issue Category *
+                Issue Category (Optional)
               </label>
               <select
                 value={categoryId}
                 onChange={(e) => setCategoryId(e.target.value)}
                 className="w-full px-3.5 py-2.5 rounded-lg border border-border bg-white text-sm text-ink-primary focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-colors"
-                required
               >
-                <option value="">-- Choose Category --</option>
+                <option value="">-- Choose Category (Optional) --</option>
                 {activeCategories.map((c) => (
                   <option key={c.id} value={c.id}>
                     {c.name} (SLA: ~{c.target_resolution_days} days)
@@ -324,7 +319,7 @@ export const SubmitFeedbackForm: React.FC<SubmitFeedbackFormProps> = ({
             </label>
             <input
               type="text"
-              placeholder="e.g., Projector malfunctioning in Ramanujan Hall 204"
+              placeholder="e.g., Projector malfunctioning in IE151"
               value={subject}
               onChange={(e) => setSubject(e.target.value)}
               className="w-full px-3.5 py-2.5 rounded-lg border border-border bg-white text-sm text-ink-primary focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent placeholder:text-ink-muted transition-colors"
@@ -352,7 +347,7 @@ export const SubmitFeedbackForm: React.FC<SubmitFeedbackFormProps> = ({
             </label>
             <input
               type="text"
-              placeholder="e.g., North Campus Hostel Block B, Room 312"
+              placeholder="e.g., IE151 or Main Building"
               value={location}
               onChange={(e) => setLocation(e.target.value)}
               className="w-full px-3.5 py-2.5 rounded-lg border border-border bg-white text-sm text-ink-primary focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent placeholder:text-ink-muted transition-colors"

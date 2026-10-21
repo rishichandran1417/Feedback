@@ -117,7 +117,7 @@ export interface Submission {
   student_name?: string;
   student_email?: string;
   submission_type: SubmissionType;
-  category_id: string;
+  category_id?: string;
   category_name?: string;
   department_id?: string;
   department_name?: string;

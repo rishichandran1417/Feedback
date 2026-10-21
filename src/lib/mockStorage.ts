@@ -145,7 +145,7 @@ export const MockStorage = {
       student_name: string;
       student_email: string;
       submission_type: Submission['submission_type'];
-      category_id: string;
+      category_id?: string;
       subject: string;
       description: string;
       location?: string;
@@ -159,7 +159,7 @@ export const MockStorage = {
     const categories = this.getCategories();
     const departments = this.getDepartments();
 
-    const cat = categories.find((c) => c.id === payload.category_id);
+    const cat = payload.category_id ? categories.find((c) => c.id === payload.category_id) : (categories[0] || null);
     const dept = departments.find((d) => d.id === cat?.department_id);
 
     // Generate unique reference number: FB-YYYY-XXXX
@@ -189,10 +189,10 @@ export const MockStorage = {
       student_name: payload.student_name,
       student_email: payload.student_email,
       submission_type: payload.submission_type,
-      category_id: payload.category_id,
+      category_id: payload.category_id || cat?.id || '',
       category_name: cat?.name || 'General Category',
       department_id: cat?.department_id,
-      department_name: dept?.name || 'College Administration',
+      department_name: dept?.name || 'College Office',
       subject: payload.subject,
       description: payload.description,
       location: payload.location,
