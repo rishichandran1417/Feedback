@@ -64,7 +64,7 @@ Adheres strictly to a **Clean, Minimal, Whitespace-First** design philosophy ins
    - Specific location tagging (campus block, hall, laboratory, or desk).
    - Priority grading (Low, Medium, High, Urgent).
    - **Confidential Evidence Upload:** Supports JPG, PNG, PDF, and DOCX up to configurable limit (default 10MB) stored in secure, private storage.
-   - **Anonymous Feedback Toggle:** Optional policy-governed anonymity hiding student identity from departmental staff while preserving ticket tracking.
+   - **Anonymous Feedback Toggle:** Optional policy-governed anonymity hiding student identity while preserving ticket tracking.
    - **Unique Reference Generation:** Issues an official registry code (e.g., `FB-2026-1001`).
 4. **Submissions Registry & Communication:**
    - Multi-criteria search and filtering by reference number, subject, type, category, and status.
@@ -94,7 +94,7 @@ Adheres strictly to a **Clean, Minimal, Whitespace-First** design philosophy ins
    7. `Reopened`
 4. **Mandatory Resolution Summary:**
    - Marking a ticket as `Resolved` enforces entry of an official remediation summary before saving, triggering a dedicated resolution email to the student.
-5. **Private Staff Notes vs. Student Remarks:**
+5. **Private Admin Notes vs. Student Remarks:**
    - Clearly distinguished message types. Private internal notes are protected by database RLS and never exposed to student views, notifications, or email dispatches.
 6. **Department & Category Master:**
    - Add/edit departments, contact emails, and heads of department.
@@ -218,7 +218,7 @@ The system includes quick 1-click evaluation access in the header navigation and
 | 5 | Evidence security & privacy | Validates size limits (<10MB), stored in private bucket, accessible only to authorized owner/admin | Verified |
 | 6 | Student submission tracking | Full status history, administrator replies, and resolution summaries viewable | Verified |
 | 7 | Isolation between student records | RLS prevents students from accessing other students' complaints by ID or direct URL | Verified |
-| 8 | Administrative note privacy | `is_internal = true` staff notes are strictly excluded from student queries and emails | Verified |
+| 8 | Administrative note privacy | `is_internal = true` admin notes are strictly excluded from student queries and emails | Verified |
 | 9 | 7-Stage status management | Submitted -> Pending Review -> In Progress -> Awaiting Student -> Resolved -> Closed -> Reopened | Verified |
 | 10 | Mandatory resolution summary | Enforces detailed resolution notes before transition to `Resolved` | Verified |
 | 11 | Immutable audit history | Automatically records every status change with timestamp, previous state, and actor | Verified |

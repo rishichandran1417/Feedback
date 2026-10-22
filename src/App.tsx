@@ -231,7 +231,7 @@ const AdminPortal: React.FC<{
       case 'users':
         return {
           title: 'User Accounts & Roles',
-          description: 'Student accounts and verified administration staff.',
+          description: 'Student accounts and administrator records.',
         };
       case 'reports':
         return {

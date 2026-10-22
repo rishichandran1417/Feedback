@@ -139,7 +139,7 @@ export const SubmissionAdminDrawer: React.FC<SubmissionAdminDrawerProps> = ({
       setFeedbackMsg({
         type: 'success',
         text: isInternalNote
-          ? 'Internal staff note recorded (private to administration).'
+          ? 'Internal admin note recorded (private to administration).'
           : 'Reply sent and student notified via college email.',
       });
     } catch (err: any) {
@@ -429,7 +429,7 @@ export const SubmissionAdminDrawer: React.FC<SubmissionAdminDrawerProps> = ({
             {/* Communication Thread & Internal Notes */}
             <div className="space-y-4">
               <span className="font-semibold text-ink-primary uppercase tracking-wider text-[11px]">
-                Communication Thread & Staff Notes
+                Communication Thread & Admin Notes
               </span>
 
               {/* Message Feed */}
@@ -454,7 +454,7 @@ export const SubmissionAdminDrawer: React.FC<SubmissionAdminDrawerProps> = ({
                           {isInternal && <Lock className="w-3 h-3 text-amber-700 shrink-0" />}
                           {msg.sender_name || 'User'}
                           <span className="text-ink-muted font-normal">
-                            ({isInternal ? 'Private Staff Note' : isStudent ? 'Student Reply' : 'Admin Reply'})
+                            ({isInternal ? 'Private Admin Note' : isStudent ? 'Student Reply' : 'Admin Reply'})
                           </span>
                         </span>
                         <span className="text-ink-muted text-[10px] sm:text-[11px]">
@@ -490,7 +490,7 @@ export const SubmissionAdminDrawer: React.FC<SubmissionAdminDrawerProps> = ({
                       className="text-amber-700"
                     />
                     <span className="text-amber-900 font-medium flex items-center gap-1">
-                      <Lock className="w-3 h-3 text-amber-700" /> Internal Staff Note Only
+                      <Lock className="w-3 h-3 text-amber-700" /> Internal Admin Note Only
                     </span>
                   </label>
                 </div>

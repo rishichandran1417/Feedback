@@ -193,7 +193,7 @@ export const EmailSettingsAndOutbox: React.FC = () => {
               <option value="submission_acknowledgement">Acknowledgements</option>
               <option value="status_update">Status Updates</option>
               <option value="issue_resolved">Resolution Notices</option>
-              <option value="admin_reply">Staff Replies</option>
+              <option value="admin_reply">Admin Replies</option>
               <option value="info_request">Information Requests</option>
             </select>
 
