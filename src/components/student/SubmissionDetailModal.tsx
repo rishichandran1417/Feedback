@@ -280,10 +280,19 @@ export const SubmissionDetailModal: React.FC<SubmissionDetailModalProps> = ({
                       <div className="flex items-center justify-between text-[11px]">
                         <span className="font-semibold text-ink-primary flex items-center gap-1.5">
                           {isInfoReq && <AlertTriangle className="w-3.5 h-3.5 text-amber-600" />}
-                          {msg.sender_name || (isStudent ? 'You' : 'Administrator')}
-                          <span className="text-ink-muted font-normal">
-                            ({isStudent ? 'Student' : isInfoReq ? 'Information Request' : 'Faculty Officer'})
-                          </span>
+                          {isStudent ? (
+                            <>
+                              <span>{msg.sender_name || 'You'}</span>
+                              <span className="text-ink-muted font-normal"> (Student)</span>
+                            </>
+                          ) : isInfoReq ? (
+                            <>
+                              <span>{msg.sender_name || 'Administrator'}</span>
+                              <span className="text-ink-muted font-normal"> (Information Request)</span>
+                            </>
+                          ) : (
+                            <span>{msg.sender_name || 'Administrator'}</span>
+                          )}
                         </span>
                         <span className="text-ink-muted">
                           {new Date(msg.created_at).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })}

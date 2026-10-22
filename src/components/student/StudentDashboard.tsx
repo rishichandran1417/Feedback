@@ -57,7 +57,7 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
           </h2>
           <p className="text-sm text-ink-secondary mt-1 max-w-xl">
             {user
-              ? 'Track your submitted campus grievances, reply to faculty inquiries, and submit new feedback directly to the responsible departments.'
+              ? 'Track your submitted campus grievances, reply to inquiries from administrators, and submit new feedback directly to the responsible departments.'
               : 'Submit academic or campus grievances, provide suggestions, and track college resolutions with verified institutional security.'}
           </p>
         </div>

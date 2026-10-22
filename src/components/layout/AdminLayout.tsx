@@ -182,7 +182,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
                   </div>
                   <div className="hidden sm:block">
                     <p className="text-xs font-semibold text-ink-primary leading-tight">{user?.full_name}</p>
-                    <p className="text-[11px] text-brand-700 font-medium capitalize">Faculty Administrator</p>
+                    <p className="text-[11px] text-brand-700 font-medium capitalize">Administrator</p>
                   </div>
                   <ChevronDown className="w-3.5 h-3.5 text-ink-secondary" />
                 </button>

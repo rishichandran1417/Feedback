@@ -111,7 +111,7 @@ export const UserManagement: React.FC = () => {
       setUserRoles((prev) => ({ ...prev, [p.id]: newRole }));
       setFeedback({
         type: 'success',
-        text: `Role for ${p.email} successfully updated to ${newRole === 'administrator' ? 'Faculty Administrator' : 'Student'}.`,
+        text: `Role for ${p.email} successfully updated to ${newRole === 'administrator' ? 'Administrator' : 'Student'}.`,
       });
       await loadProfiles();
     } finally {

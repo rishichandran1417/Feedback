@@ -47,7 +47,7 @@ export const AdminLoginModal: React.FC<AdminLoginModalProps> = ({ isOpen, onClos
       isOpen={isOpen}
       onClose={onClose}
       title="Administrator Portal Authentication"
-      description={`${settings.college_info.name || 'College'} Grievance Redressal Committee & Faculty Console`}
+      description={`${settings.college_info.name || 'College'} Administrator Console`}
     >
       <div className="space-y-5 py-2">
         {errorMsg && (

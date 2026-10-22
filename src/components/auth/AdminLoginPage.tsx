@@ -77,7 +77,7 @@ export const AdminLoginPage: React.FC = () => {
                 You are currently signed in as <strong>{user.full_name}</strong> (<span className="font-mono text-brand-700">{user.email}</span>) with the <strong>Student</strong> role.
               </p>
               <p className="text-xs text-ink-muted mt-2 leading-relaxed">
-                The institutional grievance administration panel is strictly restricted to authorized college officers, committee chairs, and faculty administrators. Student accounts cannot access this portal.
+                The institutional administration panel is strictly restricted to authorized administrators. Student accounts cannot access this portal.
               </p>
             </div>
 
@@ -142,9 +142,9 @@ export const AdminLoginPage: React.FC = () => {
       <div className="mt-6 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-6 sm:py-8 px-4 sm:px-8 rounded-xl border border-border shadow-lg space-y-6">
           <div className="border-b border-border pb-3">
-            <h3 className="text-base font-semibold text-ink-primary">Faculty Administrator Authentication</h3>
+            <h3 className="text-base font-semibold text-ink-primary">Administrator Authentication</h3>
             <p className="text-xs text-ink-secondary mt-0.5">
-              Restricted to authorized campus officers and committee chairs.
+              Restricted to authorized campus administrators.
             </p>
           </div>
 
@@ -158,7 +158,7 @@ export const AdminLoginPage: React.FC = () => {
           <form onSubmit={handleSubmit} className="space-y-4 text-xs">
             <div>
               <label className="block font-semibold text-ink-primary mb-1">
-                Faculty Administrator Email *
+                Administrator Email *
               </label>
               <div className="relative">
                 <Mail className="w-4 h-4 text-ink-muted absolute left-3 top-2.5" />
