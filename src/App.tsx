@@ -359,11 +359,7 @@ export default function App() {
             />
             <Route
               path="/admin/departments"
-              element={
-                <AdminRoute>
-                  <AdminPortal view="departments" />
-                </AdminRoute>
-              }
+              element={<Navigate to="/admin/dashboard" replace />}
             />
             <Route
               path="/admin/users"

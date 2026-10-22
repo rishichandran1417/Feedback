@@ -143,9 +143,6 @@ export const AdminLoginPage: React.FC = () => {
         <div className="bg-white py-6 sm:py-8 px-4 sm:px-8 rounded-xl border border-border shadow-lg space-y-6">
           <div className="border-b border-border pb-3">
             <h3 className="text-base font-semibold text-ink-primary">Administrator Authentication</h3>
-            <p className="text-xs text-ink-secondary mt-0.5">
-              Restricted to authorized campus administrators.
-            </p>
           </div>
 
           {errorMsg && (

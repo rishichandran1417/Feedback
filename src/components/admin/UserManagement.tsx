@@ -203,7 +203,7 @@ export const UserManagement: React.FC = () => {
             <p className="text-xs text-ink-secondary max-w-md mx-auto leading-relaxed">
               {searchTerm
                 ? 'No registered users match your search query.'
-                : 'When students and faculty sign in via Google Workspace (@cet.ac.in), their official records will appear here automatically.'}
+                : 'When students and administrators sign in via Google Workspace (@cet.ac.in), their official records will appear here automatically.'}
             </p>
           </div>
         ) : (

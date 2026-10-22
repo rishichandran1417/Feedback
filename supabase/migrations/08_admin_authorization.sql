@@ -106,7 +106,7 @@ CREATE POLICY "Admins can manage whitelist"
   ON public.admin_whitelist FOR ALL
   USING (public.is_admin());
 
--- Pre-seed known faculty administrative emails
+-- Pre-seed known administrative emails
 INSERT INTO public.admin_whitelist (email)
 VALUES 
   ('dean.academics@cet.ac.in'),

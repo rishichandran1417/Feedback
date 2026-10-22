@@ -24,7 +24,7 @@ ON CONFLICT (code) DO NOTHING;
 -- 3. Insert Demonstration Categories with SLA Targets
 INSERT INTO public.categories (id, name, description, department_id, target_resolution_days, is_active)
 VALUES
-  ('c1111111-1111-1111-1111-111111111111', 'Course Registration & Timetables', 'Issues with course enrollments, class conflicts, syllabus updates, or faculty scheduling.', 'd1111111-1111-1111-1111-111111111111', 3, true),
+  ('c1111111-1111-1111-1111-111111111111', 'Course Registration & Timetables', 'Issues with course enrollments, class conflicts, syllabus updates, or class scheduling.', 'd1111111-1111-1111-1111-111111111111', 3, true),
   ('c2222222-2222-2222-2222-222222222222', 'Classroom & Laboratory Equipment', 'Faulty AV projectors, broken laboratory apparatus, malfunctioning air conditioning.', 'd2222222-2222-2222-2222-222222222222', 2, true),
   ('c3333333-3333-3333-3333-333333333333', 'Campus WiFi & LMS Access', 'Campus Wi-Fi connectivity degradation, student portal login failures, or online test access.', 'd3333333-3333-3333-3333-333333333333', 1, true),
   ('c4444444-4444-4444-4444-444444444444', 'Hostel Maintenance & Mess Food', 'Hostel room repairs, plumbing/water availability, cleanliness, or cafeteria/mess dietary standards.', 'd4444444-4444-4444-4444-444444444444', 2, true),

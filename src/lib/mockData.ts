@@ -107,7 +107,7 @@ export const initialCategories: Category[] = [
   {
     id: 'c1111111-1111-1111-1111-111111111111',
     name: 'Course Registration & Timetables',
-    description: 'Issues with course enrollments, class conflicts, syllabus updates, or faculty scheduling.',
+    description: 'Issues with course enrollments, class conflicts, syllabus updates, or class scheduling.',
     department_id: 'd1111111-1111-1111-1111-111111111111',
     target_resolution_days: 3,
     is_active: true,
