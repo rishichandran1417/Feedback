@@ -97,7 +97,7 @@ export const MockStorage = {
     } else if (currentSettings.college_info && currentSettings.college_info.name !== 'College of Engineering Trivandrum') {
       currentSettings.college_info.name = 'College of Engineering Trivandrum';
       currentSettings.college_info.code = 'CET';
-      currentSettings.college_info.support_email = 'grievance@cet.ac.in';
+      currentSettings.college_info.support_email = 'admin@cet.ac.in';
       currentSettings.college_info.portal_url = 'https://feedback.cet.ac.in';
       if (currentSettings.auth_config) {
         currentSettings.auth_config.allowed_email_domain = '@cet.ac.in';

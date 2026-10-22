@@ -30,9 +30,9 @@ export const SystemSettingsView: React.FC = () => {
       : 'College of Engineering Trivandrum'
   );
   const [supportEmail, setSupportEmail] = useState(
-    settings.college_info?.support_email && !settings.college_info.support_email.includes('college.edu')
+    settings.college_info?.support_email && !settings.college_info.support_email.includes('college.edu') && !settings.college_info.support_email.includes('grievance')
       ? settings.college_info.support_email
-      : 'grievance@cet.ac.in'
+      : 'admin@cet.ac.in'
   );
   const [emailDomain, setEmailDomain] = useState(
     settings.auth_config?.allowed_email_domain && !settings.auth_config.allowed_email_domain.includes('college.edu')
@@ -60,9 +60,9 @@ export const SystemSettingsView: React.FC = () => {
         : 'College of Engineering Trivandrum'
     );
     setSupportEmail(
-      settings.college_info?.support_email && !settings.college_info.support_email.includes('college.edu')
+      settings.college_info?.support_email && !settings.college_info.support_email.includes('college.edu') && !settings.college_info.support_email.includes('grievance')
         ? settings.college_info.support_email
-        : 'grievance@cet.ac.in'
+        : 'admin@cet.ac.in'
     );
     setEmailDomain(
       settings.auth_config?.allowed_email_domain && !settings.auth_config.allowed_email_domain.includes('college.edu')
@@ -273,7 +273,7 @@ export const SystemSettingsView: React.FC = () => {
 
             <div>
               <label className="block font-medium text-ink-primary mb-1">
-                Central Grievance Cell Email
+                Administrator Support Email
               </label>
               <input
                 type="email"
@@ -283,7 +283,7 @@ export const SystemSettingsView: React.FC = () => {
                 required
               />
               <p className="text-[11px] text-ink-muted mt-1">
-                Official contact address included on student receipts and resolution notices.
+                Official administrative support contact address for students to reach if issues are not resolved on time.
               </p>
             </div>
           </div>

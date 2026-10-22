@@ -166,7 +166,7 @@ export const SubmitFeedbackForm: React.FC<SubmitFeedbackFormProps> = ({
                 {submittedRef.ref}
               </p>
               <p className="text-xs text-ink-secondary mt-2 max-w-sm mx-auto leading-relaxed">
-                An automated acknowledgement receipt has been queued to your registered college email. Please retain this reference code for future follow-ups.
+                Please retain this official reference code to track your submission status and future follow-ups.
               </p>
             </div>
 
@@ -200,12 +200,11 @@ export const SubmitFeedbackForm: React.FC<SubmitFeedbackFormProps> = ({
             </button>
           </div>
         ) : (
-          <div className="p-3.5 rounded-xl bg-brand-50/50 border border-brand-200 text-xs text-brand-900 flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3">
+          <div className="p-3.5 rounded-xl bg-brand-50/50 border border-brand-200 text-xs text-brand-900 flex items-center justify-between gap-3">
             <div className="flex items-center gap-2 truncate">
               <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
               <span className="truncate">Submitting as: <strong className="font-semibold">{user.full_name}</strong> ({user.email})</span>
             </div>
-            <span className="text-[11px] text-ink-muted shrink-0">Official receipts sent to your mail</span>
           </div>
         )}
 

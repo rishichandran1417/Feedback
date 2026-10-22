@@ -84,7 +84,7 @@ export const StudentProfileAndHelp: React.FC = () => {
               How does the grievance review workflow operate?
             </h4>
             <p>
-              When you submit a complaint or suggestion, a unique tracking reference number (e.g. <code>FB-2026-1001</code>) is automatically generated and an acknowledgement email is dispatched to your registered college address. The ticket is queued to the responsible department head, who assigns an officer to investigate and remediate the issue within target SLA deadlines.
+              When you submit a complaint or suggestion, a unique tracking reference number (e.g. <code>FB-2026-1001</code>) is automatically generated. The ticket is queued to the responsible department head or campus committee, who assigns an officer to investigate and remediate the issue within target SLA deadlines.
             </p>
           </div>
 
@@ -102,10 +102,7 @@ export const StudentProfileAndHelp: React.FC = () => {
               What should I do if my grievance is not resolved on time?
             </h4>
             <p>
-              Tickets that exceed their target due date are automatically flagged as <strong>Overdue</strong> on the Dean's central dashboard. You may also post a follow-up message inside the ticket communication thread or contact the Central Grievance Cell at{' '}
-              <a href={`mailto:${settings.college_info.support_email}`} className="text-brand-700 font-medium underline">
-                {settings.college_info.support_email}
-              </a>.
+              If your grievance is not resolved within the target timeframe, it is automatically flagged as <strong>Overdue</strong> on the central administrative console. You can reach support (the administrative team) directly by posting a message in your submission's communication thread to request an escalation or expedited review.
             </p>
           </div>
         </div>

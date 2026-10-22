@@ -96,9 +96,9 @@ export const StudentLayout: React.FC<StudentLayoutProps> = ({
       </div>
 
       <div className="p-3.5 rounded-xl bg-surface border border-border/80 text-xs">
-        <p className="font-semibold text-ink-primary mb-1">Confidential & Protected</p>
+        <p className="font-semibold text-ink-primary mb-1">Resolution Support</p>
         <p className="text-ink-secondary text-[11px] leading-relaxed">
-          Submissions are handled strictly in accordance with College Grievance Redressal Policies.
+          If your issue is not resolved on time, you can reach administrative support directly through your submission thread.
         </p>
       </div>
     </div>

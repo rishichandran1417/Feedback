@@ -144,6 +144,16 @@ export const SubmissionDetailModal: React.FC<SubmissionDetailModalProps> = ({
             </div>
           </div>
 
+          {/* Overdue / Escalation Alert if past due date */}
+          {sub.due_date && new Date(sub.due_date) < new Date() && sub.status !== 'resolved' && sub.status !== 'closed' && (
+            <div className="p-3.5 rounded-xl bg-amber-50/90 border border-amber-200 text-xs text-amber-900 flex items-start gap-2.5">
+              <Clock className="w-4 h-4 text-amber-700 shrink-0 mt-0.5" />
+              <div>
+                <span className="font-semibold text-amber-950">Resolution Target Exceeded:</span> If your issue has not been resolved on time, you can reach support (Admin) by posting a message in the communication thread below.
+              </div>
+            </div>
+          )}
+
           {/* Description Section */}
           <div className="space-y-2">
             <h4 className="text-xs font-semibold uppercase tracking-wider text-ink-secondary">
@@ -295,13 +305,13 @@ export const SubmissionDetailModal: React.FC<SubmissionDetailModalProps> = ({
               )}
               <div className="space-y-1.5">
                 <label className="block text-xs font-medium text-ink-primary">
-                  Reply to Administrative Officer
+                  Message Support / Administrative Officer
                 </label>
                 <textarea
                   rows={3}
                   value={replyText}
                   onChange={(e) => setReplyText(e.target.value)}
-                  placeholder="Type your message or clarification here..."
+                  placeholder="Need support, follow up on an unresolved issue, or reply to admin? Type here..."
                   className="w-full px-3.5 py-2.5 rounded-lg border border-border text-xs text-ink-primary focus:outline-none focus:ring-2 focus:ring-brand-500 placeholder:text-ink-muted resize-y"
                 />
               </div>

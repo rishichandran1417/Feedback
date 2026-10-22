@@ -12,7 +12,7 @@ export const initialSystemSettings: SystemSettings = {
   college_info: {
     name: 'College of Engineering Trivandrum',
     code: 'CET',
-    support_email: 'grievance@cet.ac.in',
+    support_email: 'admin@cet.ac.in',
     portal_url: 'https://feedback.cet.ac.in',
   },
   auth_config: {

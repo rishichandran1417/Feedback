@@ -3,7 +3,7 @@
 -- 1. Insert Initial System Settings
 INSERT INTO public.system_settings (key, value, description)
 VALUES 
-  ('college_info', '{"name": "College of Engineering Trivandrum", "code": "CET", "support_email": "grievance@cet.ac.in", "portal_url": "https://feedback.rishichandran17.workers.dev"}'::jsonb, 'College metadata and portal configuration'),
+  ('college_info', '{"name": "College of Engineering Trivandrum", "code": "CET", "support_email": "admin@cet.ac.in", "portal_url": "https://feedback.rishichandran17.workers.dev"}'::jsonb, 'College metadata and portal configuration'),
   ('auth_config', '{"allowed_email_domain": "@cet.ac.in", "require_email_verification": true}'::jsonb, 'Configurable student college email domain validation'),
   ('file_upload_limits', '{"max_file_size_mb": 10, "allowed_extensions": [".jpg", ".jpeg", ".png", ".pdf", ".docx"]}'::jsonb, 'Attachment upload security limits'),
   ('workflow_rules', '{"allow_anonymous": true, "enable_reopening": true, "reopen_window_days": 14}'::jsonb, 'Grievance lifecycle configuration'),
