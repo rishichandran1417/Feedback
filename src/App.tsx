@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
-import { SystemProvider } from './context/SystemContext';
+import { SystemProvider, useSystem } from './context/SystemContext';
 
 // Layouts
 import { StudentLayout } from './components/layout/StudentLayout';
 import { AdminLayout } from './components/layout/AdminLayout';
+import { MaintenancePage } from './components/common/MaintenancePage';
 
 // Auth Pages
 import { StudentLoginPage } from './components/auth/StudentLoginPage';
@@ -83,7 +84,19 @@ const StudentPortal: React.FC<{
   view: 'dashboard' | 'submit' | 'submissions' | 'notifications' | 'profile';
 }> = ({ view }) => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const { settings } = useSystem();
   const [selectedSubId, setSelectedSubId] = useState<string | null>(null);
+
+  // If maintenance mode is active and user is not an administrator, display maintenance screen
+  if (settings.maintenance_mode?.enabled && user?.role !== 'administrator') {
+    return (
+      <MaintenancePage
+        message={settings.maintenance_mode.message}
+        estimatedEnd={settings.maintenance_mode.estimated_end}
+      />
+    );
+  }
 
   const getMeta = () => {
     switch (view) {
@@ -289,6 +302,23 @@ const AdminPortal: React.FC<{
   );
 };
 
+// Protected / Maintenance-aware Student Login
+const StudentLoginRoute: React.FC = () => {
+  const { user } = useAuth();
+  const { settings } = useSystem();
+
+  if (settings.maintenance_mode?.enabled && user?.role !== 'administrator') {
+    return (
+      <MaintenancePage
+        message={settings.maintenance_mode.message}
+        estimatedEnd={settings.maintenance_mode.estimated_end}
+      />
+    );
+  }
+
+  return <StudentLoginPage />;
+};
+
 export default function App() {
   return (
     <AuthProvider>
@@ -299,7 +329,7 @@ export default function App() {
             <Route path="/auth/callback" element={<AuthCallback />} />
 
             {/* Public Auth Routes */}
-            <Route path="/login" element={<StudentLoginPage />} />
+            <Route path="/login" element={<StudentLoginRoute />} />
             <Route path="/register" element={<Navigate to="/login" replace />} />
             <Route path="/auth/callback" element={<AuthCallback />} />
 

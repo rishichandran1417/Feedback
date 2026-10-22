@@ -71,6 +71,13 @@ const sanitizeSettings = (raw: SystemSettings): SystemSettings => {
   if (merged.auth_config) {
     merged.auth_config.allowed_email_domain = '@cet.ac.in';
   }
+  if (!merged.maintenance_mode) {
+    merged.maintenance_mode = {
+      enabled: false,
+      message: 'This website is currently under maintenance. We are performing scheduled updates and will be back shortly.',
+      estimated_end: '',
+    };
+  }
   return merged;
 };
 
@@ -94,7 +101,10 @@ export const SystemProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         if (allSettings && allSettings.length > 0) {
           const coreConfig = allSettings.find((s) => s.key === 'core_config');
           if (coreConfig?.value) {
-            setSettings(sanitizeSettings(coreConfig.value));
+            const parsed = { ...coreConfig.value };
+            const maint = allSettings.find((s) => s.key === 'maintenance_mode');
+            if (maint?.value) parsed.maintenance_mode = maint.value;
+            setSettings(sanitizeSettings(parsed));
           } else {
             const fallback = MockStorage.getSystemSettings();
             const merged: SystemSettings = { ...fallback };
@@ -104,6 +114,7 @@ export const SystemProvider: React.FC<{ children: React.ReactNode }> = ({ childr
               if (item.key === 'file_upload_limits' && item.value) merged.file_upload_limits = item.value;
               if (item.key === 'workflow_rules' && item.value) merged.workflow_rules = item.value;
               if (item.key === 'email_provider_config' && item.value) merged.email_provider_config = item.value;
+              if (item.key === 'maintenance_mode' && item.value) merged.maintenance_mode = item.value;
             });
             setSettings(sanitizeSettings(merged));
           }
@@ -700,6 +711,11 @@ export const SystemProvider: React.FC<{ children: React.ReactNode }> = ({ childr
           supabase.from('system_settings').upsert({
             key: 'workflow_rules',
             value: updated.workflow_rules,
+            updated_at: new Date().toISOString(),
+          }),
+          supabase.from('system_settings').upsert({
+            key: 'maintenance_mode',
+            value: updated.maintenance_mode,
             updated_at: new Date().toISOString(),
           }),
         ]);

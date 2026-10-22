@@ -200,4 +200,9 @@ export interface SystemSettings {
     last_successful_send?: string;
     recent_failure_count?: number;
   };
+  maintenance_mode?: {
+    enabled: boolean;
+    message: string;
+    estimated_end?: string;
+  };
 }

@@ -12,6 +12,9 @@ import {
   RefreshCw,
   Server,
   AlertTriangle,
+  Wrench,
+  Clock,
+  Power,
 } from 'lucide-react';
 import {
   isUsingRealSupabase,
@@ -43,6 +46,18 @@ export const SystemSettingsView: React.FC = () => {
   const [allowAnon, setAllowAnon] = useState(settings.workflow_rules.allow_anonymous);
   const [reopenDays, setReopenDays] = useState(settings.workflow_rules.reopen_window_days);
 
+  // Maintenance mode state
+  const [maintenanceEnabled, setMaintenanceEnabled] = useState(
+    settings.maintenance_mode?.enabled ?? false
+  );
+  const [maintenanceMessage, setMaintenanceMessage] = useState(
+    settings.maintenance_mode?.message ||
+      'This website is currently under maintenance. We are performing scheduled updates and will be back shortly.'
+  );
+  const [estimatedEnd, setEstimatedEnd] = useState(
+    settings.maintenance_mode?.estimated_end || ''
+  );
+
   const [saved, setSaved] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -72,7 +87,30 @@ export const SystemSettingsView: React.FC = () => {
     setMaxFileMb(settings.file_upload_limits.max_file_size_mb);
     setAllowAnon(settings.workflow_rules.allow_anonymous);
     setReopenDays(settings.workflow_rules.reopen_window_days);
+    setMaintenanceEnabled(settings.maintenance_mode?.enabled ?? false);
+    setMaintenanceMessage(
+      settings.maintenance_mode?.message ||
+        'This website is currently under maintenance. We are performing scheduled updates and will be back shortly.'
+    );
+    setEstimatedEnd(settings.maintenance_mode?.estimated_end || '');
   }, [settings]);
+
+  const handleToggleMaintenanceInstant = async (newVal: boolean) => {
+    setMaintenanceEnabled(newVal);
+    try {
+      await updateSettings({
+        maintenance_mode: {
+          enabled: newVal,
+          message: maintenanceMessage.trim(),
+          estimated_end: estimatedEnd.trim(),
+        },
+      });
+      setSaved(true);
+      setTimeout(() => setSaved(false), 3000);
+    } catch (e) {
+      console.error('Failed to toggle maintenance mode:', e);
+    }
+  };
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -99,6 +137,11 @@ export const SystemSettingsView: React.FC = () => {
           ...settings.workflow_rules,
           allow_anonymous: allowAnon,
           reopen_window_days: Number(reopenDays) || 14,
+        },
+        maintenance_mode: {
+          enabled: maintenanceEnabled,
+          message: maintenanceMessage.trim(),
+          estimated_end: estimatedEnd.trim(),
         },
       });
 
@@ -246,6 +289,85 @@ export const SystemSettingsView: React.FC = () => {
             <span>System configuration, branding, and security policies updated successfully in Supabase.</span>
           </div>
         )}
+
+        {/* Website Maintenance Mode */}
+        <div className={`rounded-xl p-6 space-y-5 border transition-all ${
+          maintenanceEnabled
+            ? 'bg-amber-50/60 border-amber-300 ring-2 ring-amber-400/20'
+            : 'bg-white border-border'
+        }`}>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-border/80">
+            <div className="space-y-1">
+              <div className="flex items-center gap-2">
+                <Wrench className={`w-5 h-5 ${maintenanceEnabled ? 'text-amber-600 animate-pulse' : 'text-slate-500'}`} />
+                <h3 className="text-sm font-bold text-ink-primary">
+                  Website Maintenance Mode
+                </h3>
+                <span className={`text-[11px] px-2.5 py-0.5 rounded-full font-semibold border ${
+                  maintenanceEnabled
+                    ? 'bg-amber-100 text-amber-900 border-amber-300'
+                    : 'bg-emerald-50 text-emerald-800 border-emerald-200'
+                }`}>
+                  {maintenanceEnabled ? 'Active (Offline for Students)' : 'Inactive (Live for Students)'}
+                </span>
+              </div>
+              <p className="text-xs text-ink-secondary">
+                Control public site availability. When enabled, non-administrators see the maintenance screen.
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => handleToggleMaintenanceInstant(!maintenanceEnabled)}
+              className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer ${
+                maintenanceEnabled
+                  ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
+                  : 'bg-amber-500 hover:bg-amber-600 text-white'
+              }`}
+            >
+              <Power className="w-3.5 h-3.5" />
+              <span>{maintenanceEnabled ? 'Turn Off Maintenance Mode' : 'Turn On Maintenance Mode'}</span>
+            </button>
+          </div>
+
+          <div className="space-y-4 text-xs">
+            <div>
+              <label className="block font-semibold text-ink-primary mb-1">
+                Notice Message Displayed to Visitors *
+              </label>
+              <textarea
+                rows={3}
+                value={maintenanceMessage}
+                onChange={(e) => setMaintenanceMessage(e.target.value)}
+                placeholder="This website is currently under maintenance. We are performing scheduled updates and will be back shortly."
+                className="w-full px-3 py-2 rounded-lg border border-border focus:outline-none focus:ring-1 focus:ring-brand-500 resize-y"
+                required
+              />
+              <p className="text-[11px] text-ink-muted mt-1">
+                This explanation is displayed on the student maintenance screen.
+              </p>
+            </div>
+
+            <div>
+              <label className="block font-semibold text-ink-primary mb-1">
+                Estimated Completion Time / Return Window (Optional)
+              </label>
+              <div className="relative max-w-sm">
+                <Clock className="w-4 h-4 text-ink-muted absolute left-3 top-2.5" />
+                <input
+                  type="text"
+                  value={estimatedEnd}
+                  onChange={(e) => setEstimatedEnd(e.target.value)}
+                  placeholder="e.g. Today at 6:00 PM, or Oct 22, 2026"
+                  className="w-full pl-9 pr-3 py-2 rounded-lg border border-border focus:outline-none focus:ring-1 focus:ring-brand-500"
+                />
+              </div>
+              <p className="text-[11px] text-ink-muted mt-1">
+                Informs students when normal operations are expected to resume.
+              </p>
+            </div>
+          </div>
+        </div>
 
         {/* College Identity */}
         <div className="bg-white border border-border rounded-xl p-6 space-y-4">

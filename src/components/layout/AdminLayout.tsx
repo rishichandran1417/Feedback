@@ -19,6 +19,7 @@ import {
   Settings,
   Menu,
   X,
+  Wrench,
 } from 'lucide-react';
 
 import { AdminLoginModal } from '../auth/AdminLoginModal';
@@ -37,7 +38,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
   headerAction,
 }) => {
   const { user, logout } = useAuth();
-  const { metrics, settings } = useSystem();
+  const { metrics, settings, updateSettings } = useSystem();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -228,6 +229,31 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
           </div>
         </div>
       </header>
+
+      {/* Persistent Maintenance Mode Alert Bar */}
+      {settings.maintenance_mode?.enabled && (
+        <div className="bg-amber-500 text-white px-4 sm:px-6 py-2.5 text-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 z-40 border-b border-amber-600 shadow-xs">
+          <div className="flex items-center gap-2">
+            <Wrench className="w-4 h-4 shrink-0 animate-pulse text-amber-100" />
+            <span>
+              <strong>Maintenance Mode Active:</strong> Public portal access is currently paused. Students and visitors will see the maintenance notice.
+            </span>
+          </div>
+          <button
+            onClick={() =>
+              updateSettings({
+                maintenance_mode: {
+                  ...settings.maintenance_mode!,
+                  enabled: false,
+                },
+              })
+            }
+            className="px-3 py-1 rounded-lg bg-white text-amber-900 font-bold hover:bg-amber-50 transition-colors text-xs shrink-0 cursor-pointer shadow-xs"
+          >
+            Turn Off Maintenance Mode
+          </button>
+        </div>
+      )}
 
       {/* Main Workspace: Sidebar sits cleanly BELOW the header */}
       <div className="flex-1 flex w-full">

@@ -44,6 +44,11 @@ export const initialSystemSettings: SystemSettings = {
     last_successful_send: '2026-10-19T14:30:00Z',
     recent_failure_count: 0,
   },
+  maintenance_mode: {
+    enabled: false,
+    message: 'This website is currently under maintenance. We are performing scheduled updates and will be back shortly.',
+    estimated_end: '',
+  },
 };
 
 export const initialDepartments: Department[] = [
