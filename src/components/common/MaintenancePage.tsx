@@ -89,24 +89,15 @@ export const MaintenancePage: React.FC<MaintenancePageProps> = ({
           )}
 
           {/* Action Buttons */}
-          <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
+          <div className="pt-2 flex items-center justify-center">
             <Button
               variant="primary"
               size="md"
               onClick={handleReload}
               leftIcon={<RotateCw className="w-4 h-4" />}
-              className="w-full sm:w-auto"
             >
               Check Again
             </Button>
-
-            <Link
-              to="/admin/login"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-border hover:bg-surface text-ink-secondary hover:text-ink-primary text-xs font-semibold transition-colors"
-            >
-              <Shield className="w-4 h-4 text-brand-700" />
-              <span>Administrator Sign In</span>
-            </Link>
           </div>
         </div>
       </main>
