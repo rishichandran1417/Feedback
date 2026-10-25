@@ -56,7 +56,7 @@ export const StudentNotificationsView: React.FC<StudentNotificationsViewProps> =
         <div>
           <h3 className="text-base font-semibold text-ink-primary">Your Notification Feed</h3>
           <p className="text-xs text-ink-secondary mt-0.5">
-            Real-time status alerts, replies, and requests from administrative officers.
+            Real-time status alerts, replies, and updates from department representatives.
           </p>
         </div>
 

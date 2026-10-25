@@ -389,7 +389,7 @@ export const SystemSettingsView: React.FC = () => {
                 required
               />
               <p className="text-[11px] text-ink-muted mt-1">
-                Updates top navigation bar, email notification headers, and reports.
+                Updates top navigation bar, portal headers, and reports.
               </p>
             </div>
 

@@ -30,7 +30,6 @@ import { CategoryManagement } from './components/admin/CategoryManagement';
 import { DepartmentManagement } from './components/admin/DepartmentManagement';
 import { UserManagement } from './components/admin/UserManagement';
 import { ReportsAndExports } from './components/admin/ReportsAndExports';
-import { EmailSettingsAndOutbox } from './components/admin/EmailSettingsAndOutbox';
 import { SystemSettingsView } from './components/admin/SystemSettingsView';
 
 // Loading Screen
@@ -123,7 +122,7 @@ const StudentPortal: React.FC<{
       case 'profile':
         return {
           title: 'Student Profile & College Policy',
-          description: 'Verified student identity, redressal guidelines, and escalation directory.',
+          description: 'Verified student identity and grievance redressal guidelines.',
         };
     }
   };
@@ -190,13 +189,12 @@ const AdminPortal: React.FC<{
     | 'departments'
     | 'users'
     | 'reports'
-    | 'email-settings'
     | 'settings';
 }> = ({ view }) => {
   const navigate = useNavigate();
   const [selectedSubId, setSelectedSubId] = useState<string | null>(null);
 
-  const getMeta = () => {
+  const getMeta = (): { title: string; description: string } => {
     switch (view) {
       case 'dashboard':
         return {
@@ -238,12 +236,8 @@ const AdminPortal: React.FC<{
           title: 'Reports & Spreadsheet Exports',
           description: 'Export customized datasets to CSV or Excel (.xlsx).',
         };
-      case 'email-settings':
-        return {
-          title: 'Automated Email Notification Hub',
-          description: 'Resend provider configuration, active triggers, and transactional outbox logs.',
-        };
       case 'settings':
+      default:
         return {
           title: 'System Settings & Security Policies',
           description: 'Enforced email domain, attachment limits, and workflow parameters.',
@@ -288,7 +282,6 @@ const AdminPortal: React.FC<{
       {view === 'departments' && <DepartmentManagement />}
       {view === 'users' && <UserManagement />}
       {view === 'reports' && <ReportsAndExports />}
-      {view === 'email-settings' && <EmailSettingsAndOutbox />}
       {view === 'settings' && <SystemSettingsView />}
 
       {/* Administrator Action Drawer */}
@@ -404,14 +397,6 @@ export default function App() {
               element={
                 <AdminRoute>
                   <AdminPortal view="reports" />
-                </AdminRoute>
-              }
-            />
-            <Route
-              path="/admin/email-settings"
-              element={
-                <AdminRoute>
-                  <AdminPortal view="email-settings" />
                 </AdminRoute>
               }
             />

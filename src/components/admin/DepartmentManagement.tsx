@@ -55,7 +55,7 @@ export const DepartmentManagement: React.FC = () => {
         <div>
           <h3 className="text-base font-semibold text-ink-primary">College Departments</h3>
           <p className="text-xs text-ink-secondary mt-0.5">
-            Academic divisions, facility teams, and administrative units handling grievances.
+            Academic divisions, facility teams, and student representative units handling grievances.
           </p>
         </div>
 
@@ -93,7 +93,7 @@ export const DepartmentManagement: React.FC = () => {
               </div>
               <div className="flex items-center gap-2">
                 <UserCheck className="w-3.5 h-3.5 text-slate-400" />
-                <span className="truncate">{dept.head_of_department || 'Head not assigned'}</span>
+                <span className="truncate">{dept.head_of_department || 'Representative not assigned'}</span>
               </div>
             </div>
           </div>
@@ -154,13 +154,13 @@ export const DepartmentManagement: React.FC = () => {
 
             <div>
               <label className="block text-xs font-semibold text-ink-primary mb-1">
-                Head of Department / Officer
+                Department Representative
               </label>
               <input
                 type="text"
                 value={hod}
                 onChange={(e) => setHod(e.target.value)}
-                placeholder="e.g. Dr. Arthur Pendelton"
+                placeholder="e.g. Department Representative"
                 className="w-full px-3 py-2 rounded-lg border border-border text-xs text-ink-primary focus:outline-none focus:ring-2 focus:ring-brand-500"
               />
             </div>

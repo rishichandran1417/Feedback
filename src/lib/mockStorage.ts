@@ -82,7 +82,28 @@ export const MockStorage = {
     if (!localStorage.getItem(STORAGE_KEYS.CATEGORIES)) {
       setStored(STORAGE_KEYS.CATEGORIES, initialCategories);
     }
-    if (!localStorage.getItem(STORAGE_KEYS.DEPARTMENTS)) {
+    const storedDepts = getStored<Department[]>(STORAGE_KEYS.DEPARTMENTS, []);
+    const hasFacultyDepts =
+      !localStorage.getItem(STORAGE_KEYS.DEPARTMENTS) ||
+      storedDepts.some(
+        (d) =>
+          d.head_of_department?.includes('Dr.') ||
+          d.head_of_department?.includes('Prof.') ||
+          d.head_of_department?.includes('Eng.') ||
+          d.head_of_department?.includes('Officer') ||
+          d.head_of_department?.includes('Bursar') ||
+          d.head_of_department?.includes('Vance') ||
+          d.head_of_department?.includes('Wright') ||
+          d.head_of_department?.includes('Brody') ||
+          d.head_of_department?.includes('Menon') ||
+          d.head_of_department?.includes('Sterling') ||
+          d.head_of_department?.includes('Lin') ||
+          d.contact_email?.includes('dean') ||
+          d.contact_email?.includes('estate') ||
+          d.contact_email?.includes('coe') ||
+          d.contact_email?.includes('warden')
+      );
+    if (hasFacultyDepts) {
       setStored(STORAGE_KEYS.DEPARTMENTS, initialDepartments);
     }
     if (!localStorage.getItem(STORAGE_KEYS.NOTIFICATIONS)) {
@@ -359,7 +380,7 @@ export const MockStorage = {
     sub.department_id = departmentId;
     sub.department_name = dept?.name || sub.department_name;
     sub.assigned_to = assignedAdminId;
-    sub.assigned_to_name = admin?.full_name || 'Department Officer';
+    sub.assigned_to_name = admin?.full_name || 'Department Representative';
     sub.updated_at = new Date().toISOString();
 
     subs[subIndex] = sub;

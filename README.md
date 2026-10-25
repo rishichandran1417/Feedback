@@ -2,7 +2,7 @@
 
 A secure, production-grade, full-stack web application designed for collegiate institutions to manage student complaints, academic suggestions, and infrastructure grievances from initial submission to administrative remediation.
 
-Built with **React 19 + TypeScript + Vite**, **Tailwind CSS**, **Supabase (PostgreSQL, Auth, RLS, Storage)**, **Recharts**, **React Hook Form + Zod**, **SheetJS (XLSX)**, and an event-driven **Resend Automated Email Notification Engine**.
+Built with **React 19 + TypeScript + Vite**, **Tailwind CSS**, **Supabase (PostgreSQL, Auth, RLS, Storage)**, **Recharts**, **React Hook Form + Zod**, and **SheetJS (XLSX)**.
 
 ---
 
@@ -33,16 +33,8 @@ Adheres strictly to a **Clean, Minimal, Whitespace-First** design philosophy ins
 │  PostgreSQL Normalized Schema         │  │  Full In-Memory LocalStorage│
 │  Row Level Security (RLS) Policies    │  │  Simulated RLS & Role Filter│
 │  Storage Buckets (Short-lived URLs)   │  │  Audit Trail Logging Engine │
-│  Trigger Functions & Auto-Ref No.     │  │  Transactional Outbox Queue │
-└───────────────────▲───────────────────┘  └──────────────▲──────────────┘
-                    │                                     │
-                    ▼                                     ▼
-┌────────────────────────────────────────────────────────────────────────┐
-│            AUTOMATED EMAIL NOTIFICATION SYSTEM (RESEND)                │
-│  Supabase Edge Function: `supabase/functions/send-email/index.ts`       │
-│  Transactional Outbox Pattern • Idempotency Protection • Bounded Retry  │
-│  Branded Responsive HTML Email Templates with Plain-Text Fallbacks     │
-└────────────────────────────────────────────────────────────────────────┘
+│  Trigger Functions & Auto-Ref No.     │  │  Real-time In-Portal Feeds  │
+└───────────────────────────────────────┘  └─────────────────────────────┘
 ```
 
 ---
@@ -56,7 +48,7 @@ Adheres strictly to a **Clean, Minimal, Whitespace-First** design philosophy ins
    - Secure login, session persistence, and password recovery flows.
 2. **Dashboard & KPIs:**
    - Real-time summary cards: Total Submissions, Open Complaints, In-Progress, and Resolved.
-   - Attention banner when an administrative officer requests additional details.
+   - Attention banner when a department representative requests additional details.
    - Live activity timeline.
 3. **Formal Feedback Submission:**
    - Multi-type selection: **Complaint**, **Suggestion**, or **General Feedback**.
@@ -93,9 +85,9 @@ Adheres strictly to a **Clean, Minimal, Whitespace-First** design philosophy ins
    6. `Closed`
    7. `Reopened`
 4. **Mandatory Resolution Summary:**
-   - Marking a ticket as `Resolved` enforces entry of an official remediation summary before saving, triggering a dedicated resolution email to the student.
+   - Marking a ticket as `Resolved` enforces entry of an official remediation summary before saving, permanently archived in audit records.
 5. **Private Admin Notes vs. Student Remarks:**
-   - Clearly distinguished message types. Private internal notes are protected by database RLS and never exposed to student views, notifications, or email dispatches.
+   - Clearly distinguished message types. Private internal notes are protected by database RLS and never exposed to student views or notifications.
 6. **Department & Category Master:**
    - Add/edit departments, contact emails, and heads of department.
    - Configure category SLAs and resolution targets.
@@ -110,17 +102,12 @@ Adheres strictly to a **Clean, Minimal, Whitespace-First** design philosophy ins
 
 ---
 
-### C. Automated Email Communication System (Resend)
-Integrated via **Resend** and Supabase Edge Function (`supabase/functions/send-email/index.ts`):
-1. **Submission Acknowledgement:** Dispatched upon ticket creation containing reference number, subject, and secure portal link.
-2. **Status Change Update:** Dispatched when status moves between workflow stages.
-3. **Issue Resolved Email:** Transmits the official administrative resolution summary and 14-day reopening instructions.
-4. **Issue Reopened Alert:** Notifies student when a case is reopened for investigation.
-5. **Officer Reply / Information Request:** Sends student-visible replies and instructions when additional evidence is required.
-6. **Transactional Outbox Table (`email_notifications`):**
-   - Tracks `queued`, `sending`, `sent_to_provider`, `delivered`, and `failed` delivery states.
-   - Protected with unique `idempotency_key` constraints to eliminate duplicate sends.
-   - Admin Email Notification Hub featuring delivery logs, event toggles, and manual retry triggers.
+### C. In-Portal Real-Time Notification & Tracking
+Direct in-system notifications and real-time tracking for students:
+1. **Submission Acknowledgement:** Logged into student's submissions history with unique reference number and status.
+2. **Status Change Updates:** Real-time status movements across workflow stages reflected instantly in student dashboard.
+3. **Resolution Records:** Displays official administrative resolution summaries and closed grievance notes.
+4. **Representative Inquiries:** Live two-way messaging feed for requests for additional information and replies.
 
 ---
 
@@ -174,7 +161,7 @@ The application will be accessible at: **`http://localhost:5173/`**
 ### Pre-Configured Demo Accounts
 The system includes quick 1-click evaluation access in the header navigation and login screen:
 - **Student Account:** `arjun.patel@college.edu` (Student ID: `AIT-2024-CS-084`)
-- **Administrator Account:** `dean.academics@college.edu` (Dean Dr. Alistair Vance)
+- **Administrator Account:** `admin@cet.ac.in` (Academic Representative)
 
 ---
 
@@ -226,6 +213,6 @@ The system includes quick 1-click evaluation access in the header navigation and
 | 13 | Overdue issue detection | Dynamically calculates overdue tickets where `due_date < now` and status is unresolved | Verified |
 | 14 | Category & Department CRUD | Master management with safeguards preventing deletion of categories referenced by tickets | Verified |
 | 15 | CSV & Excel (.xlsx) export | Clean formatted exports with spreadsheet formula injection sanitization | Verified |
-| 16 | Transactional email outbox | Event-driven queue via Resend with idempotency keys and retry capabilities | Verified |
+| 16 | Real-time in-portal updates | Real-time tracking and notification feed for status changes and representative notes | Verified |
 | 17 | Responsive whitespace-first UI | Linear/Stripe-inspired minimal interface with generous spacing and mobile drawer support | Verified |
 | 18 | Production build pass | `npm run build` compiles with 0 errors in Vite + TypeScript | Verified |

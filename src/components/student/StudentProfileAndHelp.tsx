@@ -4,18 +4,13 @@ import { useSystem } from '../../context/SystemContext';
 import { CollegeLoginModal } from '../auth/CollegeLoginModal';
 import {
   User,
-  GraduationCap,
-  Shield,
   HelpCircle,
-  FileText,
   Mail,
-  ExternalLink,
-  Lock,
 } from 'lucide-react';
 
 export const StudentProfileAndHelp: React.FC = () => {
   const { user } = useAuth();
-  const { settings, departments } = useSystem();
+  const { settings } = useSystem();
   const [showLoginModal, setShowLoginModal] = useState(false);
 
   return (
@@ -84,7 +79,7 @@ export const StudentProfileAndHelp: React.FC = () => {
               How does the grievance review workflow operate?
             </h4>
             <p>
-              When you submit a complaint or suggestion, a unique tracking reference number (e.g. <code>FB-2026-1001</code>) is automatically generated. The ticket is queued to the responsible department head or campus committee, who assigns an officer to investigate and remediate the issue within target SLA deadlines.
+              When you submit a complaint or suggestion, a unique tracking reference number (e.g. <code>FB-2026-1001</code>) is automatically generated. The ticket is queued directly to the responsible Department Representative, who investigates, coordinates, and remediates the issue within target SLA deadlines.
             </p>
           </div>
 
@@ -93,7 +88,7 @@ export const StudentProfileAndHelp: React.FC = () => {
               How is my student data and evidence protected?
             </h4>
             <p>
-              Your submissions and evidence documents are stored securely with Row Level Security. Only the authorized departmental committee members assigned to your grievance have access to investigate your ticket.
+              Your submissions and evidence documents are stored securely with Row Level Security. Only authorized student department representatives assigned to your grievance have access to review and resolve your ticket.
             </p>
           </div>
 
@@ -102,35 +97,12 @@ export const StudentProfileAndHelp: React.FC = () => {
               What should I do if my grievance is not resolved on time?
             </h4>
             <p>
-              If your grievance is not resolved within the target timeframe, it is automatically flagged as <strong>Overdue</strong> on the central administrative console. You can reach support (the administrative team) directly by posting a message in your submission's communication thread to request an escalation or expedited review.
+              If your grievance is not resolved within the target timeframe, it is automatically flagged as <strong>Overdue</strong>. You can reach out directly by posting a message in your submission's communication thread to follow up with the department representative.
             </p>
           </div>
-        </div>
-      </div>
-
-      {/* Department Escalation Contacts */}
-      <div className="bg-white border border-border rounded-xl p-4 sm:p-6 lg:p-8 space-y-4 shadow-xs">
-        <h3 className="text-sm font-semibold text-ink-primary uppercase tracking-wider">
-          Campus Redressal Officers Directory
-        </h3>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-          {departments.map((dept) => (
-            <div key={dept.id} className="p-3.5 rounded-lg border border-border bg-surface/50 flex flex-col justify-between">
-              <div>
-                <p className="font-semibold text-ink-primary">{dept.name}</p>
-                <p className="text-ink-muted text-[11px]">{dept.head_of_department || 'Department Coordinator'}</p>
-              </div>
-              <a
-                href={`mailto:${dept.contact_email}`}
-                className="text-brand-700 font-mono text-[11px] mt-2 inline-flex items-center gap-1 hover:underline"
-              >
-                <Mail className="w-3 h-3" /> {dept.contact_email}
-              </a>
-            </div>
-          ))}
         </div>
       </div>
     </div>
   );
 };
+

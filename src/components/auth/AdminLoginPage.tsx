@@ -163,7 +163,7 @@ export const AdminLoginPage: React.FC = () => {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="dean.academics@cet.ac.in"
+                  placeholder="acad.rep@cet.ac.in"
                   className="w-full pl-9 pr-3 py-2 rounded-lg border border-border focus:outline-none focus:ring-2 focus:ring-brand-500 font-mono"
                   required
                 />

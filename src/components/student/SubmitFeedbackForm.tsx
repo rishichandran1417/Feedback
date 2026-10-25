@@ -189,7 +189,7 @@ export const SubmitFeedbackForm: React.FC<SubmitFeedbackFormProps> = ({
           <div className="p-4 rounded-xl bg-amber-50 border border-amber-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-amber-900">
             <div className="flex items-center gap-2.5">
               <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
-              <span>You are currently not signed in. Sign in with your official college mail (Gmail) to submit grievances and receive automated email communication.</span>
+              <span>You are currently not signed in. Sign in with your official college mail (Gmail) to submit grievances.</span>
             </div>
             <button
               type="button"

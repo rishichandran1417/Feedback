@@ -102,7 +102,7 @@ export const SubmissionAdminDrawer: React.FC<SubmissionAdminDrawerProps> = ({
       setShowResolveModal(false);
       setResolutionSummary('');
       setStatusRemarks('');
-      setFeedbackMsg({ type: 'success', text: 'Issue marked as Resolved. Resolution email dispatched to student.' });
+      setFeedbackMsg({ type: 'success', text: 'Issue marked as Resolved.' });
     } catch (err: any) {
       setFeedbackMsg({ type: 'error', text: err.message || 'Failed to resolve grievance.' });
     } finally {
@@ -140,7 +140,7 @@ export const SubmissionAdminDrawer: React.FC<SubmissionAdminDrawerProps> = ({
         type: 'success',
         text: isInternalNote
           ? 'Internal admin note recorded (private to administration).'
-          : 'Reply sent and student notified via college email.',
+          : 'Reply posted successfully.',
       });
     } catch (err: any) {
       setFeedbackMsg({ type: 'error', text: err.message || 'Message dispatch failed.' });
@@ -526,7 +526,7 @@ export const SubmissionAdminDrawer: React.FC<SubmissionAdminDrawerProps> = ({
                   placeholder={
                     isInternalNote
                       ? 'Add confidential note (never visible to student)...'
-                      : 'Add remarks for student (will trigger transactional email)...'
+                      : 'Add remarks for student...'
                   }
                   className="w-full px-3 py-2 rounded-lg border border-border text-ink-primary focus:outline-none focus:ring-2 focus:ring-brand-500 placeholder:text-ink-muted"
                 />
@@ -539,7 +539,7 @@ export const SubmissionAdminDrawer: React.FC<SubmissionAdminDrawerProps> = ({
                     disabled={!messageContent.trim()}
                     leftIcon={<Send className="w-3.5 h-3.5" />}
                   >
-                    {isInternalNote ? 'Save Private Note' : 'Send & Notify Student'}
+                    {isInternalNote ? 'Save Private Note' : 'Post Reply'}
                   </Button>
                 </div>
               </form>
@@ -566,7 +566,7 @@ export const SubmissionAdminDrawer: React.FC<SubmissionAdminDrawerProps> = ({
           <div className="space-y-4 py-2">
             <div>
               <label className="block text-xs font-semibold text-ink-primary mb-1.5">
-                Resolution Summary (Mandatory for Registry & Student Email) *
+                Resolution Summary (Mandatory for Registry) *
               </label>
               <textarea
                 rows={4}
@@ -577,7 +577,7 @@ export const SubmissionAdminDrawer: React.FC<SubmissionAdminDrawerProps> = ({
                 required
               />
               <p className="text-[11px] text-ink-muted mt-1">
-                This official summary will be emailed directly to the student and archived permanently in audit records.
+                This official summary will be recorded in student grievance history and archived permanently in audit records.
               </p>
             </div>
 

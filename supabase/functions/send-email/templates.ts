@@ -151,7 +151,7 @@ export function getSubmissionAcknowledgementTemplate(data: EmailTemplateData) {
       <div class="meta-row"><span class="meta-label">Subject</span><span class="meta-val">${data.subject}</span></div>
     </div>
 
-    <p style="margin-top: 16px;">You can track real-time status updates, view assigned officer remarks, and download confirmation receipts directly from your portal.</p>
+    <p style="margin-top: 16px;">You can track real-time status updates, view assigned representative remarks, and download confirmation receipts directly from your portal.</p>
   `;
 
   const plainText = `Dear ${data.recipientName || 'Student'},\n\n`
@@ -237,7 +237,7 @@ export function getIssueReopenedTemplate(data: EmailTemplateData) {
       ${data.remarks ? `<div class="meta-row"><span class="meta-label">Reason / Remarks</span><span class="meta-val">${data.remarks}</span></div>` : ''}
     </div>
 
-    <p>The assigned officer has been notified and will prioritize your request.</p>
+    <p>The assigned department representative has been notified and will prioritize your request.</p>
   `;
 
   const plainText = `Dear ${data.recipientName || 'Student'},\n\n`

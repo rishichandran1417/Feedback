@@ -314,13 +314,13 @@ export const SubmissionDetailModal: React.FC<SubmissionDetailModalProps> = ({
               )}
               <div className="space-y-1.5">
                 <label className="block text-xs font-medium text-ink-primary">
-                  Message Support / Administrative Officer
+                  Message Department Representative
                 </label>
                 <textarea
                   rows={3}
                   value={replyText}
                   onChange={(e) => setReplyText(e.target.value)}
-                  placeholder="Need support, follow up on an unresolved issue, or reply to admin? Type here..."
+                  placeholder="Need support, follow up on an unresolved issue, or reply to the department representative? Type here..."
                   className="w-full px-3.5 py-2.5 rounded-lg border border-border text-xs text-ink-primary focus:outline-none focus:ring-2 focus:ring-brand-500 placeholder:text-ink-muted resize-y"
                 />
               </div>

@@ -15,7 +15,6 @@ import {
   Tags,
   Users,
   BarChart3,
-  Mail,
   Settings,
   Menu,
   X,
@@ -54,7 +53,6 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
     { path: '/admin/categories', label: 'Categories & SLAs', icon: Tags },
     { path: '/admin/users', label: 'User Accounts', icon: Users },
     { path: '/admin/reports', label: 'Reports & Exports', icon: BarChart3 },
-    { path: '/admin/email-settings', label: 'Email Notification Hub', icon: Mail },
     { path: '/admin/settings', label: 'System Settings', icon: Settings },
   ];
 

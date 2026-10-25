@@ -13,13 +13,15 @@ ON CONFLICT (key) DO NOTHING;
 -- 2. Insert Core Academic & Campus Departments
 INSERT INTO public.departments (id, name, code, contact_email, head_of_department, is_active)
 VALUES
-  ('d1111111-1111-1111-1111-111111111111', 'Academic Affairs', 'ACAD', 'dean.academics@cet.ac.in', 'Dr. Alistair Vance', true),
-  ('d2222222-2222-2222-2222-222222222222', 'Facilities & Campus Infrastructure', 'FACIL', 'estate.manager@cet.ac.in', 'Eng. Marcus Brody', true),
-  ('d3333333-3333-3333-3333-333333333333', 'IT Services & Campus Network', 'IT-SYS', 'helpdesk@cet.ac.in', 'Sarah Lin, Chief IT Officer', true),
-  ('d4444444-4444-4444-4444-444444444444', 'Hostel & Residential Life', 'HOSTEL', 'warden.office@cet.ac.in', 'Dr. Kavita Menon', true),
-  ('d5555555-5555-5555-5555-555555555555', 'Financial Aid & Student Accounts', 'FIN-AID', 'accounts@cet.ac.in', 'Robert Sterling, Bursar', true),
-  ('d6666666-6666-6666-6666-666666666666', 'Examination & Records Cell', 'EXAM', 'coe@cet.ac.in', 'Prof. Eleanor Wright', true)
-ON CONFLICT (code) DO NOTHING;
+  ('d1111111-1111-1111-1111-111111111111', 'Academic Affairs', 'ACAD', 'acad.rep@cet.ac.in', 'Department Representative', true),
+  ('d2222222-2222-2222-2222-222222222222', 'Facilities & Campus Infrastructure', 'FACIL', 'facilities.rep@cet.ac.in', 'Department Representative', true),
+  ('d3333333-3333-3333-3333-333333333333', 'IT Services & Campus Network', 'IT-SYS', 'it.rep@cet.ac.in', 'Department Representative', true),
+  ('d4444444-4444-4444-4444-444444444444', 'Hostel & Residential Life', 'HOSTEL', 'hostel.rep@cet.ac.in', 'Department Representative', true),
+  ('d5555555-5555-5555-5555-555555555555', 'Financial Aid & Student Accounts', 'FIN-AID', 'accounts.rep@cet.ac.in', 'Department Representative', true),
+  ('d6666666-6666-6666-6666-666666666666', 'Examination & Records Cell', 'EXAM', 'exam.rep@cet.ac.in', 'Department Representative', true)
+ON CONFLICT (code) DO UPDATE SET
+  contact_email = EXCLUDED.contact_email,
+  head_of_department = EXCLUDED.head_of_department;
 
 -- 3. Insert Demonstration Categories with SLA Targets
 INSERT INTO public.categories (id, name, description, department_id, target_resolution_days, is_active)
