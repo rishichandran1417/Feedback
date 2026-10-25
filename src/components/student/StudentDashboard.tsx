@@ -53,7 +53,7 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
             Student Redressal Portal
           </span>
           <h2 className="text-xl sm:text-2xl font-semibold text-ink-primary mt-1">
-            {user?.full_name ? `Welcome back, ${user.full_name.split(' ')[0]}` : 'Welcome to voIcE'}
+            {user?.full_name ? `Welcome back, ${user.full_name.split(' ')[0]}` : 'Welcome to voice'}
           </h2>
           <p className="text-sm text-ink-secondary mt-1 max-w-xl">
             {user

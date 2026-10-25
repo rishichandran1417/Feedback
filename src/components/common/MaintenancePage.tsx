@@ -27,7 +27,7 @@ export const MaintenancePage: React.FC<MaintenancePageProps> = ({
         <div className="flex items-center gap-3">
           <img
             src="/voice-logo.png"
-            alt="voIcE"
+            alt="voice"
             className="h-8 sm:h-9 w-auto object-contain rounded-lg shadow-xs"
           />
           <div className="hidden sm:block">
@@ -104,7 +104,7 @@ export const MaintenancePage: React.FC<MaintenancePageProps> = ({
 
       {/* Footer */}
       <footer className="text-center text-[11px] text-ink-muted pt-4 border-t border-border max-w-4xl mx-auto w-full">
-        College of Engineering Trivandrum • voIcE Grievance & Feedback Platform
+        College of Engineering Trivandrum • voice Grievance & Feedback Platform
       </footer>
     </div>
   );

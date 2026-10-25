@@ -131,7 +131,7 @@ export const AdminLoginPage: React.FC = () => {
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center space-y-3">
         <img
           src="/voice-logo.png"
-          alt="voIcE"
+          alt="voice"
           className="h-14 sm:h-16 w-auto object-contain mx-auto rounded-xl shadow-md"
         />
         <p className="text-xs text-ink-secondary">

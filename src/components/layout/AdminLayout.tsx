@@ -142,7 +142,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
             <Link to="/admin/dashboard" className="flex items-center gap-3 select-none shrink-0 min-w-0">
               <img
                 src="/voice-logo.png"
-                alt="voIcE"
+                alt="voice"
                 className="h-8 sm:h-9 w-auto object-contain rounded-lg shadow-xs"
               />
               <div className="min-w-0">
@@ -272,7 +272,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
                 <div className="flex items-center gap-2">
                   <img
                     src="/voice-logo.png"
-                    alt="voIcE"
+                    alt="voice"
                     className="h-6 w-auto object-contain rounded-md"
                   />
                   <span className="font-semibold text-xs uppercase tracking-wider text-ink-secondary">
