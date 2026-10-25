@@ -49,8 +49,8 @@ export const CollegeLoginModal: React.FC<CollegeLoginModalProps> = ({ isOpen, on
     >
       <div className="space-y-5 py-2">
         {errorMsg && (
-          <div className="p-3 rounded-lg bg-rose-50 border border-rose-200 text-xs text-rose-700 flex items-start gap-2">
-            <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+          <div className="p-3 rounded-lg bg-rose-950/40 border border-rose-800/60 text-xs text-rose-300 flex items-start gap-2">
+            <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-rose-400" />
             <span>{errorMsg}</span>
           </div>
         )}
@@ -61,7 +61,7 @@ export const CollegeLoginModal: React.FC<CollegeLoginModalProps> = ({ isOpen, on
             type="button"
             onClick={handleGoogleSignIn}
             disabled={isLoading}
-            className="w-full flex items-center justify-center gap-3 py-3 px-4 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-ink-primary font-semibold text-sm shadow-xs transition-all hover:border-slate-400 disabled:opacity-50 cursor-pointer"
+            className="w-full flex items-center justify-center gap-3 py-3 px-4 rounded-xl border border-border bg-background hover:bg-surface text-ink-primary font-semibold text-sm shadow-xs transition-all hover:border-brand-500/40 disabled:opacity-50 cursor-pointer"
           >
             <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24">
               <path
@@ -85,9 +85,9 @@ export const CollegeLoginModal: React.FC<CollegeLoginModalProps> = ({ isOpen, on
           </button>
         </div>
 
-        <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-ink-secondary space-y-1.5">
+        <div className="p-3.5 rounded-xl bg-background/60 border border-border text-xs text-ink-secondary space-y-1.5">
           <div className="flex items-center gap-2 font-semibold text-ink-primary">
-            <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
+            <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
             <span>Secure Student Authentication</span>
           </div>
           <p className="text-[11px] text-ink-muted leading-relaxed">

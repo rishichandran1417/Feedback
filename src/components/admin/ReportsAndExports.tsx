@@ -70,7 +70,7 @@ export const ReportsAndExports: React.FC = () => {
   return (
     <div className="space-y-8">
       {/* Filters & Export Actions Card */}
-      <div className="bg-white border border-border rounded-xl p-6 space-y-6">
+      <div className="bg-surface border border-border rounded-xl p-6 space-y-6">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
             <h3 className="text-base font-semibold text-ink-primary">Audit Reports & Data Export</h3>
@@ -108,7 +108,7 @@ export const ReportsAndExports: React.FC = () => {
             <select
               value={dateRange}
               onChange={(e) => setDateRange(e.target.value as any)}
-              className="w-full px-3 py-2 rounded-lg border border-border text-xs text-ink-primary bg-white focus:outline-none focus:ring-1 focus:ring-brand-500"
+              className="w-full px-3 py-2 rounded-lg border border-border text-xs text-ink-primary bg-background focus:outline-none focus:ring-1 focus:ring-brand-500"
             >
               <option value="all">Entire Academic Year</option>
               <option value="30">Last 30 Days</option>
@@ -124,7 +124,7 @@ export const ReportsAndExports: React.FC = () => {
             <select
               value={selectedType}
               onChange={(e) => setSelectedType(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg border border-border text-xs text-ink-primary bg-white focus:outline-none focus:ring-1 focus:ring-brand-500"
+              className="w-full px-3 py-2 rounded-lg border border-border text-xs text-ink-primary bg-background focus:outline-none focus:ring-1 focus:ring-brand-500"
             >
               <option value="all">All Feedback Types</option>
               <option value="complaint">Complaints Only</option>
@@ -140,7 +140,7 @@ export const ReportsAndExports: React.FC = () => {
             <select
               value={selectedDept}
               onChange={(e) => setSelectedDept(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg border border-border text-xs text-ink-primary bg-white focus:outline-none focus:ring-1 focus:ring-brand-500"
+              className="w-full px-3 py-2 rounded-lg border border-border text-xs text-ink-primary bg-background focus:outline-none focus:ring-1 focus:ring-brand-500"
             >
               <option value="all">All Departments</option>
               {departments.map((d) => (
@@ -158,7 +158,7 @@ export const ReportsAndExports: React.FC = () => {
             <select
               value={selectedStatus}
               onChange={(e) => setSelectedStatus(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg border border-border text-xs text-ink-primary bg-white focus:outline-none focus:ring-1 focus:ring-brand-500"
+              className="w-full px-3 py-2 rounded-lg border border-border text-xs text-ink-primary bg-background focus:outline-none focus:ring-1 focus:ring-brand-500"
             >
               <option value="all">All Statuses</option>
               <option value="resolved">Resolved / Closed</option>
@@ -171,7 +171,7 @@ export const ReportsAndExports: React.FC = () => {
 
       {/* Analysis Metrics */}
       <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-        <div className="bg-white border border-border rounded-xl p-5">
+        <div className="bg-surface border border-border rounded-xl p-5">
           <span className="text-[11px] font-semibold uppercase tracking-wider text-ink-secondary block mb-1">
             Matching Records
           </span>
@@ -179,27 +179,27 @@ export const ReportsAndExports: React.FC = () => {
           <span className="text-xs text-ink-muted mt-1 block">Included in export</span>
         </div>
 
-        <div className="bg-white border border-border rounded-xl p-5">
+        <div className="bg-surface border border-border rounded-xl p-5">
           <span className="text-[11px] font-semibold uppercase tracking-wider text-ink-secondary block mb-1">
             Resolved Issues
           </span>
-          <p className="text-2xl font-bold text-emerald-600">{resolvedList.length}</p>
+          <p className="text-2xl font-bold text-emerald-400">{resolvedList.length}</p>
           <span className="text-xs text-ink-muted mt-1 block">
             {filtered.length > 0 ? `${Math.round((resolvedList.length / filtered.length) * 100)}% resolution rate` : 'N/A'}
           </span>
         </div>
 
-        <div className="bg-white border border-border rounded-xl p-5">
+        <div className="bg-surface border border-border rounded-xl p-5">
           <span className="text-[11px] font-semibold uppercase tracking-wider text-ink-secondary block mb-1">
             Overdue Issues
           </span>
-          <p className={`text-2xl font-bold ${overdueList.length > 0 ? 'text-rose-600' : 'text-ink-primary'}`}>
+          <p className={`text-2xl font-bold ${overdueList.length > 0 ? 'text-rose-400' : 'text-ink-primary'}`}>
             {overdueList.length}
           </p>
           <span className="text-xs text-ink-muted mt-1 block">Target date elapsed</span>
         </div>
 
-        <div className="bg-white border border-border rounded-xl p-5">
+        <div className="bg-surface border border-border rounded-xl p-5">
           <span className="text-[11px] font-semibold uppercase tracking-wider text-ink-secondary block mb-1">
             Avg Turnaround
           </span>
@@ -211,8 +211,8 @@ export const ReportsAndExports: React.FC = () => {
       </div>
 
       {/* Preview Table */}
-      <div className="bg-white border border-border rounded-xl overflow-hidden shadow-xs">
-        <div className="p-4 border-b border-border bg-surface/40 flex items-center justify-between">
+      <div className="bg-surface border border-border rounded-xl overflow-hidden shadow-xs">
+        <div className="p-4 border-b border-border bg-surface flex items-center justify-between">
           <span className="text-xs font-semibold uppercase tracking-wider text-ink-primary">
             Export Preview Dataset ({filtered.length} rows)
           </span>
@@ -221,7 +221,7 @@ export const ReportsAndExports: React.FC = () => {
 
         <div className="overflow-x-auto max-h-96 overflow-y-auto">
           <table className="w-full text-left border-collapse text-xs">
-            <thead className="bg-surface sticky top-0 border-b border-border text-ink-secondary uppercase tracking-wider font-semibold">
+            <thead className="bg-background/80 sticky top-0 border-b border-border text-ink-secondary uppercase tracking-wider font-semibold">
               <tr>
                 <th className="py-2.5 px-4">Ref #</th>
                 <th className="py-2.5 px-4">Date</th>
@@ -234,8 +234,8 @@ export const ReportsAndExports: React.FC = () => {
             </thead>
             <tbody className="divide-y divide-border">
               {filtered.map((s) => (
-                <tr key={s.id} className="hover:bg-surface/50">
-                  <td className="py-2.5 px-4 font-mono font-semibold text-brand-700">{s.reference_number}</td>
+                <tr key={s.id} className="hover:bg-background/50 transition-colors">
+                  <td className="py-2.5 px-4 font-mono font-semibold text-brand-400">{s.reference_number}</td>
                   <td className="py-2.5 px-4 text-ink-secondary">{new Date(s.created_at).toLocaleDateString()}</td>
                   <td className="py-2.5 px-4"><TypeBadge type={s.submission_type} /></td>
                   <td className="py-2.5 px-4 font-medium text-ink-primary">{s.category_name}</td>

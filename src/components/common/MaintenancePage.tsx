@@ -21,9 +21,9 @@ export const MaintenancePage: React.FC<MaintenancePageProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col justify-between py-8 px-4 sm:px-6 lg:px-8 selection:bg-amber-100 selection:text-amber-900">
+    <div className="min-h-screen bg-background flex flex-col justify-between py-8 px-4 sm:px-6 lg:px-8 selection:bg-brand-600 selection:text-white">
       {/* Top Header Identity */}
-      <header className="max-w-4xl mx-auto w-full flex items-center justify-between pb-4 border-b border-slate-200">
+      <header className="max-w-4xl mx-auto w-full flex items-center justify-between pb-4 border-b border-border">
         <div className="flex items-center gap-3">
           <img
             src="/voice-logo.png"
@@ -39,22 +39,22 @@ export const MaintenancePage: React.FC<MaintenancePageProps> = ({
 
         <Link
           to="/admin/login"
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-ink-secondary hover:text-ink-primary text-xs font-medium transition-colors"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-surface hover:bg-surface/80 text-ink-secondary hover:text-ink-primary text-xs font-medium transition-colors"
         >
-          <Shield className="w-3.5 h-3.5 text-slate-500" />
+          <Shield className="w-3.5 h-3.5 text-brand-400" />
           <span>Admin Portal</span>
         </Link>
       </header>
 
       {/* Main Central Maintenance Notice Card */}
       <main className="max-w-lg mx-auto w-full my-auto py-8">
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-xl p-6 sm:p-10 text-center space-y-6 relative overflow-hidden">
+        <div className="bg-surface rounded-2xl border border-border shadow-2xl p-6 sm:p-10 text-center space-y-6 relative overflow-hidden">
           {/* Subtle top accent bar */}
-          <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600" />
+          <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-brand-600 via-brand-500 to-purple-400" />
 
           {/* Animated Icon Badge */}
-          <div className="relative mx-auto w-16 h-16 rounded-2xl bg-amber-50 border border-amber-200 text-amber-600 flex items-center justify-center shadow-inner">
-            <Wrench className="w-8 h-8 animate-pulse text-amber-600" />
+          <div className="relative mx-auto w-16 h-16 rounded-2xl bg-amber-950/40 border border-amber-800/50 text-amber-400 flex items-center justify-center shadow-inner">
+            <Wrench className="w-8 h-8 animate-pulse text-amber-400" />
             <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75" />
               <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-amber-500" />
@@ -62,8 +62,8 @@ export const MaintenancePage: React.FC<MaintenancePageProps> = ({
           </div>
 
           {/* Status Tag */}
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 border border-amber-200/80 text-[11px] font-semibold text-amber-800">
-            <AlertTriangle className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-950/50 border border-amber-800/60 text-[11px] font-semibold text-amber-300">
+            <AlertTriangle className="w-3.5 h-3.5 text-amber-400 shrink-0" />
             <span>Scheduled Maintenance in Progress</span>
           </div>
 
@@ -79,8 +79,8 @@ export const MaintenancePage: React.FC<MaintenancePageProps> = ({
 
           {/* Estimated Completion Card if configured */}
           {estimatedEnd && (
-            <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-ink-secondary flex items-center justify-center gap-2">
-              <Clock className="w-4 h-4 text-brand-700 shrink-0" />
+            <div className="p-3.5 rounded-xl bg-background border border-border text-xs text-ink-secondary flex items-center justify-center gap-2">
+              <Clock className="w-4 h-4 text-brand-400 shrink-0" />
               <span>
                 Estimated return:{' '}
                 <strong className="text-ink-primary font-semibold">{estimatedEnd}</strong>
@@ -103,7 +103,7 @@ export const MaintenancePage: React.FC<MaintenancePageProps> = ({
       </main>
 
       {/* Footer */}
-      <footer className="text-center text-[11px] text-ink-muted pt-4 border-t border-slate-200 max-w-4xl mx-auto w-full">
+      <footer className="text-center text-[11px] text-ink-muted pt-4 border-t border-border max-w-4xl mx-auto w-full">
         College of Engineering Trivandrum • voIcE Grievance & Feedback Platform
       </footer>
     </div>

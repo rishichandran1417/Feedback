@@ -73,8 +73,8 @@ export const MySubmissions: React.FC<MySubmissionsProps> = ({
           isOpen={showLoginModal}
           onClose={() => setShowLoginModal(false)}
         />
-        <div className="bg-white border border-border rounded-xl p-10 sm:p-14 text-center space-y-4 shadow-xs max-w-xl mx-auto">
-          <div className="w-14 h-14 rounded-full bg-brand-50 text-brand-700 flex items-center justify-center mx-auto border border-brand-200">
+        <div className="bg-surface border border-border rounded-xl p-10 sm:p-14 text-center space-y-4 shadow-xs max-w-xl mx-auto">
+          <div className="w-14 h-14 rounded-full bg-brand-950/60 text-brand-300 flex items-center justify-center mx-auto border border-brand-800/80">
             <Lock className="w-7 h-7" />
           </div>
           <div className="space-y-1.5">
@@ -88,7 +88,7 @@ export const MySubmissions: React.FC<MySubmissionsProps> = ({
           <div className="pt-3">
             <button
               onClick={() => setShowLoginModal(true)}
-              className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl bg-brand-700 hover:bg-brand-800 text-white text-xs font-semibold shadow-xs transition-all cursor-pointer"
+              className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-semibold shadow-xs transition-all cursor-pointer"
             >
               <Mail className="w-4 h-4" />
               <span>Login with College Mail</span>
@@ -102,7 +102,7 @@ export const MySubmissions: React.FC<MySubmissionsProps> = ({
   return (
     <div className="space-y-6">
       {/* Search and Filters Bar */}
-      <div className="bg-white border border-border rounded-xl p-4 sm:p-5 space-y-4">
+      <div className="bg-surface border border-border rounded-xl p-4 sm:p-5 space-y-4">
         <div className="flex flex-col sm:flex-row gap-3">
           {/* Search Input */}
           <div className="relative flex-1">
@@ -112,7 +112,7 @@ export const MySubmissions: React.FC<MySubmissionsProps> = ({
               placeholder="Search by reference number (e.g. FB-2026-1001) or keywords..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 rounded-lg border border-border text-sm placeholder:text-ink-muted focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-colors"
+              className="w-full pl-9 pr-4 py-2 rounded-lg border border-border bg-background text-sm text-ink-primary placeholder:text-ink-muted focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-colors"
             />
           </div>
 
@@ -120,7 +120,7 @@ export const MySubmissions: React.FC<MySubmissionsProps> = ({
           <div className="flex items-center gap-2 shrink-0">
             <button
               onClick={() => setSortBy(sortBy === 'newest' ? 'oldest' : 'newest')}
-              className="px-3 py-2 rounded-lg border border-border text-xs font-medium text-ink-secondary hover:text-ink-primary hover:bg-surface flex items-center gap-1.5 transition-colors"
+              className="px-3 py-2 rounded-lg border border-border text-xs font-medium text-ink-secondary hover:text-ink-primary hover:bg-surface/80 flex items-center gap-1.5 transition-colors cursor-pointer"
             >
               <ArrowUpDown className="w-3.5 h-3.5" />
               {sortBy === 'newest' ? 'Newest First' : 'Oldest First'}
@@ -137,7 +137,7 @@ export const MySubmissions: React.FC<MySubmissionsProps> = ({
             <select
               value={selectedType}
               onChange={(e) => setSelectedType(e.target.value)}
-              className="w-full px-3 py-1.5 rounded-lg border border-border text-xs text-ink-primary bg-white focus:outline-none focus:ring-1 focus:ring-brand-500"
+              className="w-full px-3 py-1.5 rounded-lg border border-border text-xs text-ink-primary bg-background focus:outline-none focus:ring-1 focus:ring-brand-500"
             >
               <option value="all">All Types</option>
               <option value="complaint">Complaints</option>
@@ -153,7 +153,7 @@ export const MySubmissions: React.FC<MySubmissionsProps> = ({
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="w-full px-3 py-1.5 rounded-lg border border-border text-xs text-ink-primary bg-white focus:outline-none focus:ring-1 focus:ring-brand-500"
+              className="w-full px-3 py-1.5 rounded-lg border border-border text-xs text-ink-primary bg-background focus:outline-none focus:ring-1 focus:ring-brand-500"
             >
               <option value="all">All Categories</option>
               {categories.map((c) => (
@@ -171,7 +171,7 @@ export const MySubmissions: React.FC<MySubmissionsProps> = ({
             <select
               value={selectedStatus}
               onChange={(e) => setSelectedStatus(e.target.value)}
-              className="w-full px-3 py-1.5 rounded-lg border border-border text-xs text-ink-primary bg-white focus:outline-none focus:ring-1 focus:ring-brand-500"
+              className="w-full px-3 py-1.5 rounded-lg border border-border text-xs text-ink-primary bg-background focus:outline-none focus:ring-1 focus:ring-brand-500"
             >
               <option value="all">All Statuses</option>
               <option value="submitted">Submitted</option>
@@ -195,7 +195,7 @@ export const MySubmissions: React.FC<MySubmissionsProps> = ({
           onAction={onNewSubmission}
         />
       ) : (
-        <div className="bg-white border border-border rounded-xl divide-y divide-border overflow-hidden shadow-xs">
+        <div className="bg-surface border border-border rounded-xl divide-y divide-border overflow-hidden shadow-xs">
           {sortedSubmissions.map((sub) => {
             const isAwaiting = sub.status === 'awaiting_student_response';
             const messageCount = sub.messages ? sub.messages.filter((m) => !m.is_internal).length : 0;
@@ -204,28 +204,28 @@ export const MySubmissions: React.FC<MySubmissionsProps> = ({
               <div
                 key={sub.id}
                 onClick={() => onSelectSubmission(sub.id)}
-                className={`p-5 sm:p-6 transition-colors cursor-pointer hover:bg-surface/70 ${
-                  isAwaiting ? 'bg-amber-50/30' : ''
+                className={`p-5 sm:p-6 transition-colors cursor-pointer hover:bg-surface/80 ${
+                  isAwaiting ? 'bg-amber-950/20' : ''
                 }`}
               >
                 <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
                   <div className="space-y-2 flex-1 min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
-                      <span className="font-mono text-xs font-semibold text-brand-700 bg-brand-50 px-2 py-0.5 rounded border border-brand-200/60">
+                      <span className="font-mono text-xs font-semibold text-brand-300 bg-brand-950/80 px-2 py-0.5 rounded border border-brand-800/60">
                         {sub.reference_number}
                       </span>
                       <TypeBadge type={sub.submission_type} />
                       <PriorityBadge priority={sub.priority} />
 
                       {isAwaiting && (
-                        <span className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800">
+                        <span className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full bg-amber-950/60 text-amber-300 border border-amber-800/60">
                           <AlertCircle className="w-3 h-3" />
                           Action Required
                         </span>
                       )}
                     </div>
 
-                    <h3 className="text-base font-semibold text-ink-primary hover:text-brand-700 transition-colors">
+                    <h3 className="text-base font-semibold text-ink-primary hover:text-brand-400 transition-colors">
                       {sub.subject}
                     </h3>
 
@@ -247,7 +247,7 @@ export const MySubmissions: React.FC<MySubmissionsProps> = ({
                         <>
                           <span>•</span>
                           <span className="flex items-center gap-1 text-ink-primary font-medium">
-                            <MessageSquare className="w-3.5 h-3.5 text-brand-700" />
+                            <MessageSquare className="w-3.5 h-3.5 text-brand-400" />
                             {messageCount} {messageCount === 1 ? 'reply' : 'replies'}
                           </span>
                         </>

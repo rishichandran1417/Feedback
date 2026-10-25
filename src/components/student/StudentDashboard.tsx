@@ -74,16 +74,16 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
 
       {/* Guest Information Banner if not logged in */}
       {!user && (
-        <div className="bg-brand-50/60 border border-brand-200 rounded-xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-brand-900">
+        <div className="bg-brand-950/40 border border-brand-800/50 rounded-xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-brand-200">
           <div className="flex items-center gap-2.5">
-            <ShieldCheck className="w-5 h-5 text-brand-700 shrink-0" />
+            <ShieldCheck className="w-5 h-5 text-brand-400 shrink-0" />
             <span>
               You can browse categories, policies, and draft submissions freely. Login with your official college mail (<strong>@cet.ac.in</strong>) is only required when you submit feedback.
             </span>
           </div>
           <button
             onClick={() => onNavigate('submit')}
-            className="text-xs font-semibold px-3.5 py-1.5 rounded-lg bg-brand-700 text-white hover:bg-brand-800 shrink-0 self-start sm:self-auto cursor-pointer"
+            className="text-xs font-semibold px-3.5 py-1.5 rounded-lg bg-brand-600 text-white hover:bg-brand-500 shrink-0 self-start sm:self-auto cursor-pointer"
           >
             Start Feedback &rarr;
           </button>
@@ -92,21 +92,21 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
 
       {/* Action Required Alert Banner if awaiting response */}
       {awaitingStudentCount > 0 && (
-        <div className="bg-amber-50/80 border border-amber-200 rounded-xl p-3.5 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="bg-amber-950/40 border border-amber-800/50 rounded-xl p-3.5 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex items-start gap-3">
-            <AlertTriangle className="w-5 h-5 text-amber-700 shrink-0 mt-0.5" />
+            <AlertTriangle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
             <div className="flex-1">
-              <h4 className="text-sm font-semibold text-amber-900">
+              <h4 className="text-sm font-semibold text-amber-300">
                 Information Requested ({awaitingStudentCount})
               </h4>
-              <p className="text-xs text-amber-800 mt-0.5">
+              <p className="text-xs text-amber-400/90 mt-0.5">
                 An administrator has requested additional clarification or supporting documents for your open submission. Please provide a response to proceed.
               </p>
             </div>
           </div>
           <button
             onClick={() => onNavigate('submissions')}
-            className="text-xs font-semibold text-amber-900 hover:underline shrink-0 self-start sm:self-auto pl-8 sm:pl-0"
+            className="text-xs font-semibold text-amber-300 hover:underline shrink-0 self-start sm:self-auto pl-8 sm:pl-0"
           >
             Review Issues &rarr;
           </button>
@@ -115,37 +115,37 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
 
       {/* KPI Cards: Restrained, Whitespace-First */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
-        <div className="bg-white border border-border rounded-xl p-4 sm:p-5 lg:p-6 transition-all hover:border-slate-300">
+        <div className="bg-surface border border-border rounded-xl p-4 sm:p-5 lg:p-6 transition-all hover:border-brand-500/40">
           <div className="flex items-center justify-between text-ink-secondary mb-2.5 sm:mb-3">
             <span className="text-xs font-medium uppercase tracking-wider">Total Submissions</span>
-            <FileText className="w-4 h-4 text-slate-400" />
+            <FileText className="w-4 h-4 text-ink-muted" />
           </div>
           <p className="text-2xl sm:text-3xl font-semibold text-ink-primary">{totalSubmissions}</p>
           <span className="text-xs text-ink-muted mt-1 block">Lifetime student records</span>
         </div>
 
-        <div className="bg-white border border-border rounded-xl p-4 sm:p-5 lg:p-6 transition-all hover:border-slate-300">
+        <div className="bg-surface border border-border rounded-xl p-4 sm:p-5 lg:p-6 transition-all hover:border-brand-500/40">
           <div className="flex items-center justify-between text-ink-secondary mb-2.5 sm:mb-3">
             <span className="text-xs font-medium uppercase tracking-wider">Pending Review</span>
-            <Clock className="w-4 h-4 text-amber-500" />
+            <Clock className="w-4 h-4 text-amber-400" />
           </div>
           <p className="text-2xl sm:text-3xl font-semibold text-ink-primary">{pendingCount}</p>
           <span className="text-xs text-ink-muted mt-1 block">Awaiting triage</span>
         </div>
 
-        <div className="bg-white border border-border rounded-xl p-4 sm:p-5 lg:p-6 transition-all hover:border-slate-300">
+        <div className="bg-surface border border-border rounded-xl p-4 sm:p-5 lg:p-6 transition-all hover:border-brand-500/40">
           <div className="flex items-center justify-between text-ink-secondary mb-2.5 sm:mb-3">
             <span className="text-xs font-medium uppercase tracking-wider">In Progress</span>
-            <MessageSquare className="w-4 h-4 text-blue-500" />
+            <MessageSquare className="w-4 h-4 text-brand-400" />
           </div>
           <p className="text-2xl sm:text-3xl font-semibold text-ink-primary">{inProgressCount}</p>
           <span className="text-xs text-ink-muted mt-1 block">Under active investigation</span>
         </div>
 
-        <div className="bg-white border border-border rounded-xl p-4 sm:p-5 lg:p-6 transition-all hover:border-slate-300">
+        <div className="bg-surface border border-border rounded-xl p-4 sm:p-5 lg:p-6 transition-all hover:border-brand-500/40">
           <div className="flex items-center justify-between text-ink-secondary mb-2.5 sm:mb-3">
             <span className="text-xs font-medium uppercase tracking-wider">Resolved</span>
-            <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+            <CheckCircle2 className="w-4 h-4 text-emerald-400" />
           </div>
           <p className="text-2xl sm:text-3xl font-semibold text-ink-primary">{resolvedCount}</p>
           <span className="text-xs text-ink-muted mt-1 block">Successfully resolved</span>
@@ -162,7 +162,7 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
           {studentSubmissions.length > 0 && (
             <button
               onClick={() => onNavigate('submissions')}
-              className="text-xs font-medium text-brand-700 hover:text-brand-800 flex items-center gap-1"
+              className="text-xs font-medium text-brand-400 hover:text-brand-300 flex items-center gap-1"
             >
               View all ({studentSubmissions.length}) <ArrowRight className="w-3.5 h-3.5" />
             </button>
@@ -171,7 +171,7 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
 
         {recentSubmissions.length === 0 ? (
           <div className="p-8 text-center border border-dashed border-border rounded-xl bg-surface/30">
-            <FileText className="w-8 h-8 text-slate-300 mx-auto mb-2" />
+            <FileText className="w-8 h-8 text-ink-muted mx-auto mb-2" />
             <p className="text-sm font-medium text-ink-primary">No submissions yet</p>
             <p className="text-xs text-ink-secondary mt-1 mb-4">
               Have an academic issue or campus suggestion? Submit your first feedback.
@@ -181,7 +181,7 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
             </Button>
           </div>
         ) : (
-          <div className="bg-white border border-border rounded-xl divide-y divide-border overflow-hidden">
+          <div className="bg-surface border border-border rounded-xl divide-y divide-border overflow-hidden">
             {recentSubmissions.map((sub) => (
               <div
                 key={sub.id}
@@ -190,7 +190,7 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
               >
                 <div className="space-y-1.5 flex-1 min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="text-xs font-mono font-semibold text-brand-700">
+                    <span className="text-xs font-mono font-semibold text-brand-400">
                       {sub.reference_number}
                     </span>
                     <TypeBadge type={sub.submission_type} />

@@ -166,17 +166,17 @@ export const SubmissionAdminDrawer: React.FC<SubmissionAdminDrawerProps> = ({
       <div className="fixed inset-0 z-50 flex items-center justify-end overflow-hidden">
         {/* Backdrop */}
         <div
-          className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs transition-opacity"
+          className="fixed inset-0 bg-black/80 backdrop-blur-sm transition-opacity"
           onClick={onClose}
         />
 
         {/* Drawer Window */}
-        <div className="relative w-full max-w-2xl h-full bg-white border-l border-border shadow-2xl z-10 flex flex-col overflow-hidden animate-in slide-in-from-right duration-200">
+        <div className="relative w-full max-w-2xl h-full bg-surface border-l border-border shadow-2xl z-10 flex flex-col overflow-hidden animate-in slide-in-from-right duration-200">
           {/* Drawer Header */}
-          <div className="p-4 sm:p-5 border-b border-border flex items-start justify-between gap-3 bg-surface/50">
+          <div className="p-4 sm:p-5 border-b border-border flex items-start justify-between gap-3 bg-surface">
             <div className="space-y-1.5 min-w-0">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="font-mono text-xs font-bold text-brand-700 bg-brand-50 px-2 py-0.5 rounded border border-brand-200">
+                <span className="font-mono text-xs font-bold text-brand-300 bg-brand-950/80 px-2 py-0.5 rounded border border-brand-800/60">
                   {sub.reference_number}
                 </span>
                 <TypeBadge type={sub.submission_type} />
@@ -188,7 +188,7 @@ export const SubmissionAdminDrawer: React.FC<SubmissionAdminDrawerProps> = ({
 
             <button
               onClick={onClose}
-              className="text-ink-secondary hover:text-ink-primary p-1 rounded-lg hover:bg-surface transition-colors shrink-0"
+              className="text-ink-secondary hover:text-ink-primary p-1.5 rounded-lg hover:bg-background/60 transition-colors shrink-0 cursor-pointer"
               aria-label="Close drawer"
             >
               <X className="w-5 h-5" />
@@ -201,8 +201,8 @@ export const SubmissionAdminDrawer: React.FC<SubmissionAdminDrawerProps> = ({
               <div
                 className={`p-3 rounded-lg text-xs flex items-center gap-2 ${
                   feedbackMsg.type === 'success'
-                    ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
-                    : 'bg-rose-50 text-rose-800 border border-rose-200'
+                    ? 'bg-emerald-950/40 text-emerald-300 border border-emerald-800/60'
+                    : 'bg-rose-950/40 text-rose-300 border border-rose-800/60'
                 }`}
               >
                 <AlertCircle className="w-4 h-4 shrink-0" />
@@ -211,7 +211,7 @@ export const SubmissionAdminDrawer: React.FC<SubmissionAdminDrawerProps> = ({
             )}
 
             {/* Student Identity Card */}
-            <div className="p-3.5 sm:p-4 rounded-xl bg-surface border border-border space-y-2">
+            <div className="p-3.5 sm:p-4 rounded-xl bg-background/60 border border-border space-y-2">
               <div className="flex items-center justify-between">
                 <span className="font-semibold text-ink-primary uppercase tracking-wider text-[11px]">
                   Student Identity Details
@@ -288,7 +288,7 @@ export const SubmissionAdminDrawer: React.FC<SubmissionAdminDrawerProps> = ({
                 <Button
                   size="sm"
                   variant="secondary"
-                  className="text-rose-700 hover:bg-rose-50"
+                  className="text-rose-400 hover:bg-rose-950/40 border-rose-800/60"
                   disabled={sub.status !== 'resolved' && sub.status !== 'closed'}
                   onClick={() => handleStatusTransition('reopened')}
                 >
@@ -298,7 +298,7 @@ export const SubmissionAdminDrawer: React.FC<SubmissionAdminDrawerProps> = ({
             </div>
 
             {/* Department Assignment & Due Date */}
-            <div className="space-y-3 p-4 rounded-xl border border-border bg-white">
+            <div className="space-y-3 p-4 rounded-xl border border-border bg-background/60">
               <span className="font-semibold text-ink-primary uppercase tracking-wider text-[11px]">
                 Department Routing & Target Resolution SLA
               </span>
@@ -311,7 +311,7 @@ export const SubmissionAdminDrawer: React.FC<SubmissionAdminDrawerProps> = ({
                   <select
                     value={selectedDeptId}
                     onChange={(e) => setSelectedDeptId(e.target.value)}
-                    className="w-full px-2.5 py-1.5 rounded-lg border border-border text-xs text-ink-primary bg-white focus:outline-none focus:ring-1 focus:ring-brand-500"
+                    className="w-full px-2.5 py-1.5 rounded-lg border border-border text-xs text-ink-primary bg-background focus:outline-none focus:ring-1 focus:ring-brand-500"
                   >
                     {departments.map((d) => (
                       <option key={d.id} value={d.id}>
@@ -329,7 +329,7 @@ export const SubmissionAdminDrawer: React.FC<SubmissionAdminDrawerProps> = ({
                     type="date"
                     value={customDueDate}
                     onChange={(e) => setCustomDueDate(e.target.value)}
-                    className="w-full px-2.5 py-1.5 rounded-lg border border-border text-xs text-ink-primary bg-white focus:outline-none focus:ring-1 focus:ring-brand-500"
+                    className="w-full px-2.5 py-1.5 rounded-lg border border-border text-xs text-ink-primary bg-background focus:outline-none focus:ring-1 focus:ring-brand-500"
                   />
                 </div>
               </div>
@@ -346,7 +346,7 @@ export const SubmissionAdminDrawer: React.FC<SubmissionAdminDrawerProps> = ({
               <span className="font-semibold text-ink-primary uppercase tracking-wider text-[11px]">
                 Full Description
               </span>
-              <div className="p-4 rounded-xl bg-surface border border-border text-ink-primary leading-relaxed whitespace-pre-line">
+              <div className="p-4 rounded-xl bg-background/50 border border-border text-ink-primary leading-relaxed whitespace-pre-line">
                 {sub.description}
               </div>
               {sub.location && (
@@ -358,12 +358,12 @@ export const SubmissionAdminDrawer: React.FC<SubmissionAdminDrawerProps> = ({
 
             {/* Resolution Summary if Present */}
             {sub.resolution_summary && (
-              <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 space-y-1.5">
-                <div className="flex items-center gap-1.5 text-emerald-800 font-semibold text-xs">
-                  <CheckCircle className="w-4 h-4 text-emerald-700" />
+              <div className="p-4 rounded-xl bg-emerald-950/40 border border-emerald-800/60 space-y-1.5">
+                <div className="flex items-center gap-1.5 text-emerald-400 font-semibold text-xs">
+                  <CheckCircle className="w-4 h-4 text-emerald-400" />
                   Official Resolution Record
                 </div>
-                <p className="text-emerald-900 leading-relaxed pl-5 text-xs">
+                <p className="text-emerald-200 leading-relaxed pl-5 text-xs">
                   {sub.resolution_summary}
                 </p>
               </div>
@@ -379,7 +379,7 @@ export const SubmissionAdminDrawer: React.FC<SubmissionAdminDrawerProps> = ({
                   {sub.attachments.map((att) => (
                     <div
                       key={att.id}
-                      className="p-3 rounded-lg border border-border bg-white flex items-center justify-between gap-3"
+                      className="p-3 rounded-lg border border-border bg-background/70 flex items-center justify-between gap-3"
                     >
                       <div>
                         <p className="font-medium text-ink-primary">{att.file_name}</p>
@@ -387,7 +387,7 @@ export const SubmissionAdminDrawer: React.FC<SubmissionAdminDrawerProps> = ({
                       </div>
                       <button
                         onClick={() => handleDownloadAttachment(att.file_name)}
-                        className="p-1.5 text-brand-700 hover:bg-brand-50 rounded-md"
+                        className="p-1.5 text-brand-400 hover:bg-brand-950/60 rounded-md cursor-pointer"
                         title="Download evidence"
                       >
                         <Download className="w-4 h-4" />
@@ -401,10 +401,10 @@ export const SubmissionAdminDrawer: React.FC<SubmissionAdminDrawerProps> = ({
             {/* Audit History Timeline */}
             <div className="space-y-3">
               <span className="font-semibold text-ink-primary uppercase tracking-wider text-[11px] flex items-center gap-1.5">
-                <History className="w-3.5 h-3.5 text-ink-secondary" />
+                <History className="w-3.5 h-3.5 text-brand-400" />
                 Immutable Audit History
               </span>
-              <div className="border border-border rounded-xl divide-y divide-border bg-white overflow-hidden">
+              <div className="border border-border rounded-xl divide-y divide-border bg-background/50 overflow-hidden">
                 {sub.status_history?.map((hist) => (
                   <div key={hist.id} className="p-3 flex flex-col sm:flex-row sm:items-start justify-between gap-1.5 sm:gap-3">
                     <div className="space-y-0.5 min-w-0">
@@ -443,15 +443,15 @@ export const SubmissionAdminDrawer: React.FC<SubmissionAdminDrawerProps> = ({
                       key={msg.id}
                       className={`p-3.5 rounded-xl border space-y-1.5 ${
                         isInternal
-                          ? 'bg-amber-50/60 border-amber-300'
+                          ? 'bg-amber-950/40 border-amber-800/60 text-amber-200'
                           : isStudent
-                          ? 'bg-brand-50/50 border-brand-200'
-                          : 'bg-surface border-border'
+                          ? 'bg-brand-950/50 border-brand-800/60 text-brand-200'
+                          : 'bg-background/80 border-border text-ink-primary'
                       }`}
                     >
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-[11px]">
-                        <span className="font-semibold text-ink-primary flex items-center gap-1.5 flex-wrap">
-                          {isInternal && <Lock className="w-3 h-3 text-amber-700 shrink-0" />}
+                        <span className="font-semibold flex items-center gap-1.5 flex-wrap">
+                          {isInternal && <Lock className="w-3 h-3 text-amber-400 shrink-0" />}
                           {msg.sender_name || 'User'}
                           <span className="text-ink-muted font-normal">
                             ({isInternal ? 'Private Admin Note' : isStudent ? 'Student Reply' : 'Admin Reply'})
@@ -469,14 +469,14 @@ export const SubmissionAdminDrawer: React.FC<SubmissionAdminDrawerProps> = ({
 
               {/* Admin Composer */}
               <form onSubmit={handleSendMessage} className="space-y-3 pt-2">
-                <div className="flex flex-wrap items-center gap-2.5 sm:gap-4 bg-surface p-2.5 rounded-lg border border-border">
+                <div className="flex flex-wrap items-center gap-2.5 sm:gap-4 bg-background/60 p-2.5 rounded-lg border border-border">
                   <label className="flex items-center gap-1.5 cursor-pointer text-xs">
                     <input
                       type="radio"
                       name="msg_visibility"
                       checked={!isInternalNote}
                       onChange={() => setIsInternalNote(false)}
-                      className="text-brand-700"
+                      className="text-brand-500"
                     />
                     <span className="text-ink-primary font-medium">Student Visible Reply</span>
                   </label>
@@ -487,10 +487,10 @@ export const SubmissionAdminDrawer: React.FC<SubmissionAdminDrawerProps> = ({
                       name="msg_visibility"
                       checked={isInternalNote}
                       onChange={() => setIsInternalNote(true)}
-                      className="text-amber-700"
+                      className="text-amber-500"
                     />
-                    <span className="text-amber-900 font-medium flex items-center gap-1">
-                      <Lock className="w-3 h-3 text-amber-700" /> Internal Admin Note Only
+                    <span className="text-amber-300 font-medium flex items-center gap-1">
+                      <Lock className="w-3 h-3 text-amber-400" /> Internal Admin Note Only
                     </span>
                   </label>
                 </div>
@@ -528,7 +528,7 @@ export const SubmissionAdminDrawer: React.FC<SubmissionAdminDrawerProps> = ({
                       ? 'Add confidential note (never visible to student)...'
                       : 'Add remarks for student...'
                   }
-                  className="w-full px-3 py-2 rounded-lg border border-border text-ink-primary focus:outline-none focus:ring-2 focus:ring-brand-500 placeholder:text-ink-muted"
+                  className="w-full px-3 py-2 rounded-lg border border-border bg-background text-ink-primary focus:outline-none focus:ring-2 focus:ring-brand-500 placeholder:text-ink-muted"
                 />
 
                 <div className="flex justify-end">
@@ -547,7 +547,7 @@ export const SubmissionAdminDrawer: React.FC<SubmissionAdminDrawerProps> = ({
           </div>
 
           {/* Drawer Footer */}
-          <div className="p-4 border-t border-border flex justify-end bg-surface/40">
+          <div className="p-4 border-t border-border flex justify-end bg-surface">
             <Button variant="secondary" size="sm" onClick={onClose}>
               Close Drawer
             </Button>
@@ -573,7 +573,7 @@ export const SubmissionAdminDrawer: React.FC<SubmissionAdminDrawerProps> = ({
                 value={resolutionSummary}
                 onChange={(e) => setResolutionSummary(e.target.value)}
                 placeholder="Explain the investigation findings, corrective actions taken, and college remediation..."
-                className="w-full px-3.5 py-2.5 rounded-lg border border-border text-xs text-ink-primary focus:outline-none focus:ring-2 focus:ring-emerald-500 placeholder:text-ink-muted resize-y"
+                className="w-full px-3.5 py-2.5 rounded-lg border border-border bg-background text-xs text-ink-primary focus:outline-none focus:ring-2 focus:ring-emerald-500 placeholder:text-ink-muted resize-y"
                 required
               />
               <p className="text-[11px] text-ink-muted mt-1">
@@ -590,7 +590,7 @@ export const SubmissionAdminDrawer: React.FC<SubmissionAdminDrawerProps> = ({
                 value={statusRemarks}
                 onChange={(e) => setStatusRemarks(e.target.value)}
                 placeholder="e.g. Approved by Dean of Academic Affairs"
-                className="w-full px-3.5 py-2 rounded-lg border border-border text-xs text-ink-primary focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full px-3.5 py-2 rounded-lg border border-border bg-background text-xs text-ink-primary focus:outline-none focus:ring-2 focus:ring-emerald-500"
               />
             </div>
 

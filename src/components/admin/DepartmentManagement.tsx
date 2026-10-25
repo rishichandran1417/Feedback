@@ -68,11 +68,11 @@ export const DepartmentManagement: React.FC = () => {
         {departments.map((dept) => (
           <div
             key={dept.id}
-            className="p-5 rounded-xl border border-border bg-white space-y-3 hover:border-slate-300 transition-colors shadow-xs"
+            className="p-5 rounded-xl border border-border bg-surface space-y-3 hover:border-brand-500/40 transition-colors shadow-xs"
           >
             <div className="flex items-start justify-between">
               <div>
-                <span className="font-mono text-[10px] font-bold text-brand-700 bg-brand-50 px-2 py-0.5 rounded border border-brand-200">
+                <span className="font-mono text-[10px] font-bold text-brand-300 bg-brand-950/80 px-2 py-0.5 rounded border border-brand-800/60">
                   {dept.code}
                 </span>
                 <h4 className="text-sm font-semibold text-ink-primary mt-1.5">{dept.name}</h4>
@@ -80,19 +80,19 @@ export const DepartmentManagement: React.FC = () => {
 
               <button
                 onClick={() => handleOpenEdit(dept)}
-                className="p-1 text-ink-secondary hover:text-ink-primary hover:bg-surface rounded-md"
+                className="p-1.5 text-ink-secondary hover:text-ink-primary hover:bg-background/60 rounded-md transition-colors cursor-pointer"
               >
                 <Edit2 className="w-3.5 h-3.5" />
               </button>
             </div>
 
-            <div className="space-y-1.5 pt-2 border-t border-border/60 text-xs text-ink-secondary">
+            <div className="space-y-1.5 pt-2 border-t border-border text-xs text-ink-secondary">
               <div className="flex items-center gap-2">
-                <Mail className="w-3.5 h-3.5 text-slate-400" />
+                <Mail className="w-3.5 h-3.5 text-brand-400" />
                 <span className="truncate">{dept.contact_email}</span>
               </div>
               <div className="flex items-center gap-2">
-                <UserCheck className="w-3.5 h-3.5 text-slate-400" />
+                <UserCheck className="w-3.5 h-3.5 text-brand-400" />
                 <span className="truncate">{dept.head_of_department || 'Representative not assigned'}</span>
               </div>
             </div>
@@ -117,7 +117,7 @@ export const DepartmentManagement: React.FC = () => {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="e.g. Electrical Engineering & Computing"
-                className="w-full px-3 py-2 rounded-lg border border-border text-xs text-ink-primary focus:outline-none focus:ring-2 focus:ring-brand-500"
+                className="w-full px-3 py-2 rounded-lg border border-border bg-background text-xs text-ink-primary focus:outline-none focus:ring-2 focus:ring-brand-500 placeholder:text-ink-muted"
                 required
               />
             </div>
@@ -132,7 +132,7 @@ export const DepartmentManagement: React.FC = () => {
                   value={code}
                   onChange={(e) => setCode(e.target.value.toUpperCase())}
                   placeholder="e.g. ELEC"
-                  className="w-full px-3 py-2 rounded-lg border border-border text-xs text-ink-primary focus:outline-none focus:ring-2 focus:ring-brand-500 font-mono"
+                  className="w-full px-3 py-2 rounded-lg border border-border bg-background text-xs text-ink-primary focus:outline-none focus:ring-2 focus:ring-brand-500 font-mono placeholder:text-ink-muted"
                   required
                 />
               </div>
@@ -146,7 +146,7 @@ export const DepartmentManagement: React.FC = () => {
                   value={contactEmail}
                   onChange={(e) => setContactEmail(e.target.value)}
                   placeholder="dept@cet.ac.in"
-                  className="w-full px-3 py-2 rounded-lg border border-border text-xs text-ink-primary focus:outline-none focus:ring-2 focus:ring-brand-500"
+                  className="w-full px-3 py-2 rounded-lg border border-border bg-background text-xs text-ink-primary focus:outline-none focus:ring-2 focus:ring-brand-500 placeholder:text-ink-muted"
                   required
                 />
               </div>
@@ -161,7 +161,7 @@ export const DepartmentManagement: React.FC = () => {
                 value={hod}
                 onChange={(e) => setHod(e.target.value)}
                 placeholder="e.g. Department Representative"
-                className="w-full px-3 py-2 rounded-lg border border-border text-xs text-ink-primary focus:outline-none focus:ring-2 focus:ring-brand-500"
+                className="w-full px-3 py-2 rounded-lg border border-border bg-background text-xs text-ink-primary focus:outline-none focus:ring-2 focus:ring-brand-500 placeholder:text-ink-muted"
               />
             </div>
 

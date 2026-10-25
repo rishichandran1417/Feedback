@@ -51,8 +51,8 @@ export const AdminLoginModal: React.FC<AdminLoginModalProps> = ({ isOpen, onClos
     >
       <div className="space-y-5 py-2">
         {errorMsg && (
-          <div className="p-3 rounded-lg bg-rose-50 border border-rose-200 text-xs text-rose-700 flex items-start gap-2">
-            <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+          <div className="p-3 rounded-lg bg-rose-950/40 border border-rose-800/60 text-xs text-rose-300 flex items-start gap-2">
+            <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-rose-400" />
             <span>{errorMsg}</span>
           </div>
         )}
@@ -69,7 +69,7 @@ export const AdminLoginModal: React.FC<AdminLoginModalProps> = ({ isOpen, onClos
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="acad.rep@cet.ac.in"
-                className="w-full pl-9 pr-3 py-2 rounded-lg border border-border focus:outline-none focus:ring-2 focus:ring-brand-500 font-mono text-xs"
+                className="w-full pl-9 pr-3 py-2 rounded-lg border border-border bg-background text-ink-primary placeholder:text-ink-muted focus:outline-none focus:ring-2 focus:ring-brand-500 font-mono text-xs"
                 required
               />
             </div>
@@ -86,7 +86,7 @@ export const AdminLoginModal: React.FC<AdminLoginModalProps> = ({ isOpen, onClos
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••••••"
-                className="w-full pl-9 pr-3 py-2 rounded-lg border border-border focus:outline-none focus:ring-2 focus:ring-brand-500 text-xs"
+                className="w-full pl-9 pr-3 py-2 rounded-lg border border-border bg-background text-ink-primary placeholder:text-ink-muted focus:outline-none focus:ring-2 focus:ring-brand-500 text-xs"
                 required
               />
             </div>

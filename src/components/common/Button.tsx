@@ -24,8 +24,8 @@ export const Button: React.FC<ButtonProps> = ({
     'inline-flex items-center justify-center font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-1 disabled:opacity-50 disabled:pointer-events-none rounded-md select-none';
 
   const variantClasses = {
-    primary: 'bg-brand-700 hover:bg-brand-800 text-white shadow-sm',
-    secondary: 'bg-white border border-border text-ink-primary hover:bg-surface shadow-xs',
+    primary: 'bg-brand-600 hover:bg-brand-500 text-white shadow-sm shadow-brand-950/50',
+    secondary: 'bg-surface border border-border text-ink-primary hover:bg-surface/80 hover:border-brand-500/40 shadow-xs',
     subtle: 'bg-transparent text-ink-secondary hover:text-ink-primary hover:bg-surface',
     danger: 'bg-rose-600 hover:bg-rose-700 text-white shadow-sm',
   }[variant];

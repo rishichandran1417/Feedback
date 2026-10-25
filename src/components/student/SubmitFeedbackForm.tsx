@@ -123,7 +123,7 @@ export const SubmitFeedbackForm: React.FC<SubmitFeedbackFormProps> = ({
           particleCount: 80,
           spread: 60,
           origin: { y: 0.6 },
-          colors: ['#1d4ed8', '#3b82f6', '#10b981'],
+          colors: ['#7053de', '#8b5cf6', '#10b981'],
         });
       } catch {
         // graceful ignore
@@ -154,7 +154,7 @@ export const SubmitFeedbackForm: React.FC<SubmitFeedbackFormProps> = ({
           description="Your feedback has been logged into the college grievance registry."
         >
           <div className="space-y-6 text-center py-4">
-            <div className="w-14 h-14 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto">
+            <div className="w-14 h-14 rounded-full bg-emerald-950/60 border border-emerald-800/60 text-emerald-400 flex items-center justify-center mx-auto">
               <CheckCircle className="w-8 h-8" />
             </div>
 
@@ -162,7 +162,7 @@ export const SubmitFeedbackForm: React.FC<SubmitFeedbackFormProps> = ({
               <p className="text-xs text-ink-secondary uppercase tracking-wider font-semibold">
                 Your Official Reference Number
               </p>
-              <p className="text-2xl font-mono font-bold text-brand-700 mt-1 select-all">
+              <p className="text-2xl font-mono font-bold text-brand-400 mt-1 select-all">
                 {submittedRef.ref}
               </p>
               <p className="text-xs text-ink-secondary mt-2 max-w-sm mx-auto leading-relaxed">
@@ -183,34 +183,34 @@ export const SubmitFeedbackForm: React.FC<SubmitFeedbackFormProps> = ({
       )}
 
       {/* Form Container */}
-      <form onSubmit={handleSubmit} className="bg-white border border-border rounded-xl p-6 sm:p-8 space-y-8 shadow-xs min-w-0">
+      <form onSubmit={handleSubmit} className="bg-surface border border-border rounded-xl p-6 sm:p-8 space-y-8 shadow-xs min-w-0">
         {/* Unauthenticated / Authenticated Student Status Banner */}
         {!user ? (
-          <div className="p-4 rounded-xl bg-amber-50 border border-amber-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-amber-900">
+          <div className="p-4 rounded-xl bg-amber-950/40 border border-amber-800/60 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-amber-300">
             <div className="flex items-center gap-2.5">
-              <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
+              <AlertCircle className="w-4 h-4 text-amber-400 shrink-0" />
               <span>You are currently not signed in. Sign in with your official college mail (Gmail) to submit grievances.</span>
             </div>
             <button
               type="button"
               onClick={() => setShowLoginModal(true)}
-              className="px-3.5 py-1.5 rounded-lg bg-white border border-amber-300 font-semibold text-amber-900 hover:bg-amber-100 shrink-0 cursor-pointer text-xs shadow-xs"
+              className="px-3.5 py-1.5 rounded-lg bg-amber-900/60 border border-amber-700/60 font-semibold text-amber-200 hover:bg-amber-900/90 shrink-0 cursor-pointer text-xs shadow-xs"
             >
               Sign In with College Mail
             </button>
           </div>
         ) : (
-          <div className="p-3.5 rounded-xl bg-brand-50/50 border border-brand-200 text-xs text-brand-900 flex items-center justify-between gap-3">
+          <div className="p-3.5 rounded-xl bg-brand-950/60 border border-brand-800/60 text-xs text-brand-300 flex items-center justify-between gap-3">
             <div className="flex items-center gap-2 truncate">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
-              <span className="truncate">Submitting as: <strong className="font-semibold">{user.full_name}</strong> ({user.email})</span>
+              <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0" />
+              <span className="truncate">Submitting as: <strong className="font-semibold text-ink-primary">{user.full_name}</strong> ({user.email})</span>
             </div>
           </div>
         )}
 
         {errorMsg && (
-          <div className="p-4 rounded-lg bg-rose-50 border border-rose-200 text-xs text-rose-700 flex items-start gap-2.5">
-            <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+          <div className="p-4 rounded-lg bg-rose-950/40 border border-rose-800/60 text-xs text-rose-300 flex items-start gap-2.5">
+            <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-rose-400" />
             <span>{errorMsg}</span>
           </div>
         )}
@@ -246,11 +246,11 @@ export const SubmitFeedbackForm: React.FC<SubmitFeedbackFormProps> = ({
                   onClick={() => setSubmissionType(t.id as SubmissionType)}
                   className={`p-4 rounded-xl border text-left transition-all min-w-0 ${
                     isSelected
-                      ? 'border-brand-600 bg-brand-50/50 ring-1 ring-brand-600'
-                      : 'border-border hover:border-slate-300 bg-surface/30'
+                      ? 'border-brand-500 bg-brand-950/60 ring-1 ring-brand-500'
+                      : 'border-border hover:border-brand-500/40 bg-background/50'
                   }`}
                 >
-                  <p className={`text-sm font-semibold truncate ${isSelected ? 'text-brand-900' : 'text-ink-primary'}`}>
+                  <p className={`text-sm font-semibold truncate ${isSelected ? 'text-brand-300' : 'text-ink-primary'}`}>
                     {t.title}
                   </p>
                   <p className="text-xs text-ink-secondary mt-1 line-clamp-2">{t.desc}</p>
@@ -277,7 +277,7 @@ export const SubmitFeedbackForm: React.FC<SubmitFeedbackFormProps> = ({
               <select
                 value={categoryId}
                 onChange={(e) => setCategoryId(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-lg border border-border bg-white text-sm text-ink-primary focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-colors"
+                className="w-full px-3.5 py-2.5 rounded-lg border border-border bg-background text-sm text-ink-primary focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-colors"
               >
                 <option value="">-- Choose Category (Optional) --</option>
                 {activeCategories.map((c) => (
@@ -295,7 +295,7 @@ export const SubmitFeedbackForm: React.FC<SubmitFeedbackFormProps> = ({
               <select
                 value={priority}
                 onChange={(e) => setPriority(e.target.value as SubmissionPriority)}
-                className="w-full px-3.5 py-2.5 rounded-lg border border-border bg-white text-sm text-ink-primary focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-colors"
+                className="w-full px-3.5 py-2.5 rounded-lg border border-border bg-background text-sm text-ink-primary focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-colors"
               >
                 <option value="low">Low — Minor enhancement</option>
                 <option value="medium">Medium — Normal priority</option>
@@ -321,7 +321,7 @@ export const SubmitFeedbackForm: React.FC<SubmitFeedbackFormProps> = ({
               placeholder="e.g., Projector malfunctioning in IE151"
               value={subject}
               onChange={(e) => setSubject(e.target.value)}
-              className="w-full px-3.5 py-2.5 rounded-lg border border-border bg-white text-sm text-ink-primary focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent placeholder:text-ink-muted transition-colors"
+              className="w-full px-3.5 py-2.5 rounded-lg border border-border bg-background text-sm text-ink-primary focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent placeholder:text-ink-muted transition-colors"
               required
             />
           </div>
@@ -335,7 +335,7 @@ export const SubmitFeedbackForm: React.FC<SubmitFeedbackFormProps> = ({
               placeholder="Provide a specific description of what occurred, date/time observed, steps taken, or expected outcome..."
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="w-full px-3.5 py-2.5 rounded-lg border border-border bg-white text-sm text-ink-primary focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent placeholder:text-ink-muted transition-colors resize-y"
+              className="w-full px-3.5 py-2.5 rounded-lg border border-border bg-background text-sm text-ink-primary focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent placeholder:text-ink-muted transition-colors resize-y"
               required
             />
           </div>
@@ -349,7 +349,7 @@ export const SubmitFeedbackForm: React.FC<SubmitFeedbackFormProps> = ({
               placeholder="e.g., IE151 or Main Building"
               value={location}
               onChange={(e) => setLocation(e.target.value)}
-              className="w-full px-3.5 py-2.5 rounded-lg border border-border bg-white text-sm text-ink-primary focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent placeholder:text-ink-muted transition-colors"
+              className="w-full px-3.5 py-2.5 rounded-lg border border-border bg-background text-sm text-ink-primary focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent placeholder:text-ink-muted transition-colors"
             />
           </div>
         </div>
@@ -365,8 +365,8 @@ export const SubmitFeedbackForm: React.FC<SubmitFeedbackFormProps> = ({
             </span>
           </div>
 
-          <div className="border border-dashed border-border rounded-xl p-6 text-center hover:bg-surface/50 transition-colors">
-            <Upload className="w-6 h-6 text-slate-400 mx-auto mb-2" />
+          <div className="border border-dashed border-border rounded-xl p-6 text-center hover:bg-background/80 transition-colors bg-background/30">
+            <Upload className="w-6 h-6 text-brand-400 mx-auto mb-2" />
             <p className="text-xs font-medium text-ink-primary">
               Click to select or drag and drop supporting photos or documentation
             </p>
@@ -383,14 +383,14 @@ export const SubmitFeedbackForm: React.FC<SubmitFeedbackFormProps> = ({
             />
             <label
               htmlFor="file-upload-input"
-              className="inline-block mt-3 px-4 py-1.5 text-xs font-medium rounded-lg border border-border bg-white text-ink-primary hover:bg-surface cursor-pointer"
+              className="inline-block mt-3 px-4 py-1.5 text-xs font-medium rounded-lg border border-border bg-surface text-ink-primary hover:bg-surface/80 cursor-pointer"
             >
               Browse Files
             </label>
           </div>
 
           {uploadError && (
-            <p className="text-xs text-rose-600 font-medium">{uploadError}</p>
+            <p className="text-xs text-rose-400 font-medium">{uploadError}</p>
           )}
 
           {/* Attached Files List */}
@@ -399,10 +399,10 @@ export const SubmitFeedbackForm: React.FC<SubmitFeedbackFormProps> = ({
               {attachments.map((file, idx) => (
                 <div
                   key={idx}
-                  className="flex items-center justify-between p-2.5 rounded-lg border border-border bg-surface text-xs"
+                  className="flex items-center justify-between p-2.5 rounded-lg border border-border bg-background text-xs"
                 >
                   <div className="flex items-center gap-2 truncate">
-                    <File className="w-4 h-4 text-brand-700 shrink-0" />
+                    <File className="w-4 h-4 text-brand-400 shrink-0" />
                     <span className="font-medium text-ink-primary truncate">{file.file_name}</span>
                     <span className="text-ink-muted shrink-0">
                       ({Math.round(file.file_size / 1024)} KB)
@@ -411,7 +411,7 @@ export const SubmitFeedbackForm: React.FC<SubmitFeedbackFormProps> = ({
                   <button
                     type="button"
                     onClick={() => removeAttachment(idx)}
-                    className="text-ink-secondary hover:text-rose-600 p-1"
+                    className="text-ink-secondary hover:text-rose-400 p-1 cursor-pointer"
                   >
                     <X className="w-4 h-4" />
                   </button>

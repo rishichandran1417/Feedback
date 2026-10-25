@@ -73,17 +73,17 @@ export const SubmissionDetailModal: React.FC<SubmissionDetailModalProps> = ({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs transition-opacity"
+        className="fixed inset-0 bg-black/80 backdrop-blur-sm transition-opacity"
         onClick={onClose}
       />
 
       {/* Modal Dialog */}
-      <div className="relative w-full max-w-3xl max-h-[calc(100dvh-2rem)] flex flex-col bg-white rounded-xl border border-border shadow-2xl z-10 my-auto overflow-hidden animate-in zoom-in-95 duration-200">
+      <div className="relative w-full max-w-3xl max-h-[calc(100dvh-2rem)] flex flex-col bg-surface rounded-xl border border-border shadow-2xl z-10 my-auto overflow-hidden animate-in zoom-in-95 duration-200">
         {/* Header */}
-        <div className="p-4 sm:p-6 border-b border-border flex items-start justify-between bg-surface/40 shrink-0">
+        <div className="p-4 sm:p-6 border-b border-border flex items-start justify-between bg-surface shrink-0">
           <div className="space-y-1.5 pr-2 min-w-0">
             <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
-              <span className="font-mono text-xs font-bold text-brand-700 bg-brand-50 px-2 py-0.5 rounded border border-brand-200">
+              <span className="font-mono text-xs font-bold text-brand-300 bg-brand-950/80 px-2 py-0.5 rounded border border-brand-800/60">
                 {sub.reference_number}
               </span>
               <TypeBadge type={sub.submission_type} />
@@ -97,7 +97,7 @@ export const SubmissionDetailModal: React.FC<SubmissionDetailModalProps> = ({
 
           <button
             onClick={onClose}
-            className="text-ink-secondary hover:text-ink-primary p-1.5 rounded-lg hover:bg-surface transition-colors shrink-0"
+            className="text-ink-secondary hover:text-ink-primary p-1.5 rounded-lg hover:bg-background/60 transition-colors shrink-0 cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -106,7 +106,7 @@ export const SubmissionDetailModal: React.FC<SubmissionDetailModalProps> = ({
         {/* Scrollable Content */}
         <div className="p-4 sm:p-6 space-y-6 sm:space-y-8 flex-1 overflow-y-auto">
           {/* Metadata Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-4 p-3.5 sm:p-4 rounded-xl bg-surface border border-border text-xs">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-4 p-3.5 sm:p-4 rounded-xl bg-background/60 border border-border text-xs">
             <div>
               <span className="text-ink-muted block text-[10px] sm:text-[11px] uppercase tracking-wider font-semibold">
                 Submission Date
@@ -146,10 +146,10 @@ export const SubmissionDetailModal: React.FC<SubmissionDetailModalProps> = ({
 
           {/* Overdue / Escalation Alert if past due date */}
           {sub.due_date && new Date(sub.due_date) < new Date() && sub.status !== 'resolved' && sub.status !== 'closed' && (
-            <div className="p-3.5 rounded-xl bg-amber-50/90 border border-amber-200 text-xs text-amber-900 flex items-start gap-2.5">
-              <Clock className="w-4 h-4 text-amber-700 shrink-0 mt-0.5" />
+            <div className="p-3.5 rounded-xl bg-amber-950/40 border border-amber-800/60 text-xs text-amber-300 flex items-start gap-2.5">
+              <Clock className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
               <div>
-                <span className="font-semibold text-amber-950">Resolution Target Exceeded:</span> If your issue has not been resolved on time, you can reach support (Admin) by posting a message in the communication thread below.
+                <span className="font-semibold text-amber-200">Resolution Target Exceeded:</span> If your issue has not been resolved on time, you can reach support (Admin) by posting a message in the communication thread below.
               </div>
             </div>
           )}
@@ -159,7 +159,7 @@ export const SubmissionDetailModal: React.FC<SubmissionDetailModalProps> = ({
             <h4 className="text-xs font-semibold uppercase tracking-wider text-ink-secondary">
               Grievance Description
             </h4>
-            <div className="p-4 rounded-xl bg-surface/30 border border-border/80 text-sm text-ink-primary leading-relaxed whitespace-pre-line">
+            <div className="p-4 rounded-xl bg-background/50 border border-border text-sm text-ink-primary leading-relaxed whitespace-pre-line">
               {sub.description}
             </div>
             {sub.location && (
@@ -171,16 +171,16 @@ export const SubmissionDetailModal: React.FC<SubmissionDetailModalProps> = ({
 
           {/* Resolution Card if Resolved */}
           {sub.resolution_summary && (
-            <div className="p-5 rounded-xl bg-emerald-50/70 border border-emerald-200 space-y-2">
-              <div className="flex items-center gap-2 text-emerald-800 font-semibold text-sm">
-                <FileCheck className="w-5 h-5 text-emerald-700" />
+            <div className="p-5 rounded-xl bg-emerald-950/40 border border-emerald-800/60 space-y-2">
+              <div className="flex items-center gap-2 text-emerald-400 font-semibold text-sm">
+                <FileCheck className="w-5 h-5 text-emerald-400" />
                 Administrative Resolution Summary
               </div>
-              <p className="text-xs text-emerald-900 leading-relaxed pl-7">
+              <p className="text-xs text-emerald-200 leading-relaxed pl-7">
                 {sub.resolution_summary}
               </p>
               {sub.resolution_date && (
-                <p className="text-[11px] text-emerald-700 pl-7 font-medium">
+                <p className="text-[11px] text-emerald-400/80 pl-7 font-medium">
                   Resolved on: {new Date(sub.resolution_date).toLocaleDateString()} at{' '}
                   {new Date(sub.resolution_date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                 </p>
@@ -192,14 +192,14 @@ export const SubmissionDetailModal: React.FC<SubmissionDetailModalProps> = ({
           {sub.attachments && sub.attachments.length > 0 && (
             <div className="space-y-3">
               <h4 className="text-xs font-semibold uppercase tracking-wider text-ink-secondary flex items-center gap-1.5">
-                <Paperclip className="w-4 h-4" />
+                <Paperclip className="w-4 h-4 text-brand-400" />
                 Supporting Evidence ({sub.attachments.length})
               </h4>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {sub.attachments.map((att) => (
                   <div
                     key={att.id}
-                    className="p-3 rounded-lg border border-border bg-white flex items-center justify-between gap-3 text-xs"
+                    className="p-3 rounded-lg border border-border bg-background/70 flex items-center justify-between gap-3 text-xs"
                   >
                     <div className="truncate">
                       <p className="font-medium text-ink-primary truncate">{att.file_name}</p>
@@ -209,7 +209,7 @@ export const SubmissionDetailModal: React.FC<SubmissionDetailModalProps> = ({
                     </div>
                     <button
                       onClick={() => handleDownloadAttachment(att.file_name)}
-                      className="p-1.5 text-brand-700 hover:bg-brand-50 rounded-md transition-colors shrink-0"
+                      className="p-1.5 text-brand-400 hover:bg-brand-950/60 rounded-md transition-colors shrink-0 cursor-pointer"
                       title="Download file"
                     >
                       <Download className="w-4 h-4" />
@@ -224,10 +224,10 @@ export const SubmissionDetailModal: React.FC<SubmissionDetailModalProps> = ({
           {sub.status_history && sub.status_history.length > 0 && (
             <div className="space-y-3">
               <h4 className="text-xs font-semibold uppercase tracking-wider text-ink-secondary flex items-center gap-1.5">
-                <History className="w-4 h-4" />
+                <History className="w-4 h-4 text-brand-400" />
                 Official Status History
               </h4>
-              <div className="border border-border rounded-xl divide-y divide-border bg-white overflow-hidden text-xs">
+              <div className="border border-border rounded-xl divide-y divide-border bg-background/50 overflow-hidden text-xs">
                 {sub.status_history.map((hist) => (
                   <div key={hist.id} className="p-3.5 flex items-start justify-between gap-3">
                     <div className="space-y-1">
@@ -257,7 +257,7 @@ export const SubmissionDetailModal: React.FC<SubmissionDetailModalProps> = ({
             </h4>
 
             {visibleMessages.length === 0 ? (
-              <p className="text-xs text-ink-muted italic p-4 text-center border border-dashed border-border rounded-xl">
+              <p className="text-xs text-ink-muted italic p-4 text-center border border-dashed border-border rounded-xl bg-background/30">
                 No replies posted yet. When an administrator responds or requests info, messages will appear here.
               </p>
             ) : (
@@ -271,34 +271,34 @@ export const SubmissionDetailModal: React.FC<SubmissionDetailModalProps> = ({
                       key={msg.id}
                       className={`p-4 rounded-xl border text-xs space-y-1.5 ${
                         isStudent
-                          ? 'bg-brand-50/50 border-brand-200 ml-4 sm:ml-8'
+                          ? 'bg-brand-950/60 border-brand-800/60 ml-4 sm:ml-8 text-brand-200'
                           : isInfoReq
-                          ? 'bg-amber-50/80 border-amber-200 mr-4 sm:mr-8'
-                          : 'bg-surface border-border mr-4 sm:mr-8'
+                          ? 'bg-amber-950/40 border-amber-800/60 mr-4 sm:mr-8 text-amber-200'
+                          : 'bg-background/80 border-border mr-4 sm:mr-8 text-ink-primary'
                       }`}
                     >
                       <div className="flex items-center justify-between text-[11px]">
-                        <span className="font-semibold text-ink-primary flex items-center gap-1.5">
-                          {isInfoReq && <AlertTriangle className="w-3.5 h-3.5 text-amber-600" />}
+                        <span className="font-semibold flex items-center gap-1.5">
+                          {isInfoReq && <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />}
                           {isStudent ? (
                             <>
-                              <span>{msg.sender_name || 'You'}</span>
+                              <span className="text-brand-300">{msg.sender_name || 'You'}</span>
                               <span className="text-ink-muted font-normal"> (Student)</span>
                             </>
                           ) : isInfoReq ? (
                             <>
-                              <span>{msg.sender_name || 'Administrator'}</span>
+                              <span className="text-amber-300">{msg.sender_name || 'Administrator'}</span>
                               <span className="text-ink-muted font-normal"> (Information Request)</span>
                             </>
                           ) : (
-                            <span>{msg.sender_name || 'Administrator'}</span>
+                            <span className="text-ink-primary">{msg.sender_name || 'Administrator'}</span>
                           )}
                         </span>
                         <span className="text-ink-muted">
                           {new Date(msg.created_at).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })}
                         </span>
                       </div>
-                      <p className="text-ink-primary whitespace-pre-line leading-relaxed">
+                      <p className="whitespace-pre-line leading-relaxed text-ink-secondary">
                         {msg.content}
                       </p>
                     </div>
@@ -310,7 +310,7 @@ export const SubmissionDetailModal: React.FC<SubmissionDetailModalProps> = ({
             {/* Student Reply Input Box */}
             <form onSubmit={handleSendReply} className="space-y-3 pt-2">
               {errorMsg && (
-                <p className="text-xs text-rose-600 font-medium">{errorMsg}</p>
+                <p className="text-xs text-rose-400 font-medium">{errorMsg}</p>
               )}
               <div className="space-y-1.5">
                 <label className="block text-xs font-medium text-ink-primary">
@@ -321,7 +321,7 @@ export const SubmissionDetailModal: React.FC<SubmissionDetailModalProps> = ({
                   value={replyText}
                   onChange={(e) => setReplyText(e.target.value)}
                   placeholder="Need support, follow up on an unresolved issue, or reply to the department representative? Type here..."
-                  className="w-full px-3.5 py-2.5 rounded-lg border border-border text-xs text-ink-primary focus:outline-none focus:ring-2 focus:ring-brand-500 placeholder:text-ink-muted resize-y"
+                  className="w-full px-3.5 py-2.5 rounded-lg border border-border bg-background text-xs text-ink-primary focus:outline-none focus:ring-2 focus:ring-brand-500 placeholder:text-ink-muted resize-y"
                 />
               </div>
 
@@ -341,7 +341,7 @@ export const SubmissionDetailModal: React.FC<SubmissionDetailModalProps> = ({
         </div>
 
         {/* Modal Footer */}
-        <div className="p-4 border-t border-border flex justify-end bg-surface/30">
+        <div className="p-4 border-t border-border flex justify-end bg-surface">
           <Button variant="secondary" size="sm" onClick={onClose}>
             Close
           </Button>

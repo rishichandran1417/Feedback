@@ -60,9 +60,9 @@ export const StudentRegisterPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-surface flex flex-col justify-center py-8 sm:py-12 px-3.5 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-background flex flex-col justify-center py-8 sm:py-12 px-3.5 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center space-y-3">
-        <div className="w-12 h-12 rounded-xl bg-brand-700 text-white flex items-center justify-center mx-auto shadow-md">
+        <div className="w-12 h-12 rounded-xl bg-brand-600 text-white flex items-center justify-center mx-auto shadow-md">
           <GraduationCap className="w-7 h-7" />
         </div>
         <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-ink-primary">
@@ -74,7 +74,7 @@ export const StudentRegisterPage: React.FC = () => {
       </div>
 
       <div className="mt-6 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-6 sm:py-8 px-4 sm:px-8 border border-border rounded-xl shadow-xs space-y-6">
+        <div className="bg-surface py-6 sm:py-8 px-4 sm:px-8 border border-border rounded-xl shadow-xs space-y-6">
           <div className="border-b border-border pb-3">
             <h3 className="text-base font-semibold text-ink-primary">Create Student Account</h3>
             <p className="text-xs text-ink-secondary mt-0.5">
@@ -83,7 +83,7 @@ export const StudentRegisterPage: React.FC = () => {
           </div>
 
           {errorMsg && (
-            <div className="p-3.5 rounded-lg bg-rose-50 border border-rose-200 text-xs text-rose-700 flex items-start gap-2">
+            <div className="p-3.5 rounded-lg bg-rose-950/40 border border-rose-800/60 text-xs text-rose-300 flex items-start gap-2">
               <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
               <span>{errorMsg}</span>
             </div>
@@ -99,7 +99,7 @@ export const StudentRegisterPage: React.FC = () => {
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 placeholder="e.g. Maya Chen"
-                className="w-full px-3 py-2 rounded-lg border border-border focus:outline-none focus:ring-2 focus:ring-brand-500"
+                className="w-full px-3 py-2 rounded-lg border border-border bg-background text-ink-primary focus:outline-none focus:ring-2 focus:ring-brand-500"
                 required
               />
             </div>
@@ -113,7 +113,7 @@ export const StudentRegisterPage: React.FC = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder={`e.g. maya.chen${allowedDomain}`}
-                className="w-full px-3 py-2 rounded-lg border border-border focus:outline-none focus:ring-2 focus:ring-brand-500 font-mono"
+                className="w-full px-3 py-2 rounded-lg border border-border bg-background text-ink-primary focus:outline-none focus:ring-2 focus:ring-brand-500 font-mono"
                 required
               />
               <p className="text-[11px] text-ink-muted mt-1">
@@ -130,7 +130,7 @@ export const StudentRegisterPage: React.FC = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full px-3 py-2 rounded-lg border border-border focus:outline-none focus:ring-2 focus:ring-brand-500"
+                className="w-full px-3 py-2 rounded-lg border border-border bg-background text-ink-primary focus:outline-none focus:ring-2 focus:ring-brand-500"
                 required
               />
             </div>
@@ -145,7 +145,7 @@ export const StudentRegisterPage: React.FC = () => {
                   value={studentId}
                   onChange={(e) => setStudentId(e.target.value.toUpperCase())}
                   placeholder="AIT-2026-099"
-                  className="w-full px-3 py-2 rounded-lg border border-border focus:outline-none focus:ring-2 focus:ring-brand-500 font-mono"
+                  className="w-full px-3 py-2 rounded-lg border border-border bg-background text-ink-primary focus:outline-none focus:ring-2 focus:ring-brand-500 font-mono"
                   required
                 />
               </div>
@@ -157,7 +157,7 @@ export const StudentRegisterPage: React.FC = () => {
                 <select
                   value={department}
                   onChange={(e) => setDepartment(e.target.value)}
-                  className="w-full px-2 py-2 rounded-lg border border-border bg-white focus:outline-none focus:ring-1 focus:ring-brand-500"
+                  className="w-full px-2 py-2 rounded-lg border border-border bg-background text-ink-primary focus:outline-none focus:ring-1 focus:ring-brand-500"
                 >
                   {departments.length > 0 ? (
                     departments.map((d) => (
@@ -179,7 +179,7 @@ export const StudentRegisterPage: React.FC = () => {
               <select
                 value={courseProgramme}
                 onChange={(e) => setCourseProgramme(e.target.value)}
-                className="w-full px-2 py-2 rounded-lg border border-border bg-white focus:outline-none focus:ring-1 focus:ring-brand-500"
+                className="w-full px-2 py-2 rounded-lg border border-border bg-background text-ink-primary focus:outline-none focus:ring-1 focus:ring-brand-500"
               >
                 <option>B.Tech / Bachelor of Technology</option>
                 <option>M.Tech / Master of Technology</option>
@@ -199,7 +199,7 @@ export const StudentRegisterPage: React.FC = () => {
 
             <div className="text-center pt-2 text-ink-secondary">
               Already have an account?{' '}
-              <Link to="/login" className="text-brand-700 font-semibold hover:underline">
+              <Link to="/login" className="text-brand-400 font-semibold hover:underline">
                 Sign In
               </Link>
             </div>

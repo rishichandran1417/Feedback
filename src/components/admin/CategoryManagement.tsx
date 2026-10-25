@@ -86,14 +86,14 @@ export const CategoryManagement: React.FC = () => {
     <div className="space-y-6">
       {/* Notifications */}
       {errorMsg && (
-        <div className="p-4 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-800 flex items-center gap-2">
-          <AlertCircle className="w-4 h-4 shrink-0" />
+        <div className="p-4 rounded-xl bg-rose-950/40 border border-rose-800/60 text-xs text-rose-300 flex items-center gap-2">
+          <AlertCircle className="w-4 h-4 shrink-0 text-rose-400" />
           <span>{errorMsg}</span>
         </div>
       )}
       {successMsg && (
-        <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 flex items-center gap-2">
-          <CheckCircle className="w-4 h-4 shrink-0" />
+        <div className="p-4 rounded-xl bg-emerald-950/40 border border-emerald-800/60 text-xs text-emerald-300 flex items-center gap-2">
+          <CheckCircle className="w-4 h-4 shrink-0 text-emerald-400" />
           <span>{successMsg}</span>
         </div>
       )}
@@ -113,10 +113,10 @@ export const CategoryManagement: React.FC = () => {
       </div>
 
       {/* Categories Table */}
-      <div className="bg-white border border-border rounded-xl overflow-hidden shadow-xs">
+      <div className="bg-surface border border-border rounded-xl overflow-hidden shadow-xs">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse text-xs min-w-[620px]">
-            <thead className="bg-surface border-b border-border text-ink-secondary uppercase tracking-wider font-semibold">
+            <thead className="bg-background/80 border-b border-border text-ink-secondary uppercase tracking-wider font-semibold">
               <tr>
                 <th className="py-3 px-4">Category Name</th>
                 <th className="py-3 px-4">Default Department</th>
@@ -127,7 +127,7 @@ export const CategoryManagement: React.FC = () => {
             </thead>
             <tbody className="divide-y divide-border">
               {categories.map((c) => (
-                <tr key={c.id} className="hover:bg-surface/50 transition-colors">
+                <tr key={c.id} className="hover:bg-background/50 transition-colors">
                   <td className="py-3.5 px-4">
                     <p className="font-semibold text-ink-primary">{c.name}</p>
                     {c.description && <p className="text-ink-muted text-[11px] mt-0.5">{c.description}</p>}
@@ -139,7 +139,7 @@ export const CategoryManagement: React.FC = () => {
 
                   <td className="py-3.5 px-4 font-mono font-medium text-ink-primary whitespace-nowrap">
                     <span className="inline-flex items-center gap-1">
-                      <Clock className="w-3.5 h-3.5 text-brand-700" />
+                      <Clock className="w-3.5 h-3.5 text-brand-400" />
                       {c.target_resolution_days} days
                     </span>
                   </td>
@@ -147,13 +147,13 @@ export const CategoryManagement: React.FC = () => {
                   <td className="py-3.5 px-4 whitespace-nowrap">
                     <button
                       onClick={() => toggleCategoryActive(c.id)}
-                      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border ${
+                      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border cursor-pointer ${
                         c.is_active
-                          ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                          : 'bg-slate-100 text-slate-600 border-slate-200'
+                          ? 'bg-emerald-950/60 text-emerald-400 border-emerald-800/60'
+                          : 'bg-background text-ink-muted border-border'
                       }`}
                     >
-                      <span className={`w-1.5 h-1.5 rounded-full ${c.is_active ? 'bg-emerald-500' : 'bg-slate-400'}`} />
+                      <span className={`w-1.5 h-1.5 rounded-full ${c.is_active ? 'bg-emerald-400' : 'bg-ink-muted'}`} />
                       {c.is_active ? 'Active' : 'Deactivated'}
                     </button>
                   </td>
@@ -162,14 +162,14 @@ export const CategoryManagement: React.FC = () => {
                     <div className="flex items-center justify-end gap-1.5">
                       <button
                         onClick={() => handleOpenEdit(c)}
-                        className="p-1.5 text-ink-secondary hover:text-ink-primary hover:bg-surface rounded-md transition-colors"
+                        className="p-1.5 text-ink-secondary hover:text-ink-primary hover:bg-background/60 rounded-md transition-colors cursor-pointer"
                         title="Edit category"
                       >
                         <Edit2 className="w-3.5 h-3.5" />
                       </button>
                       <button
                         onClick={() => handleDelete(c)}
-                        className="p-1.5 text-ink-secondary hover:text-rose-600 hover:bg-rose-50 rounded-md transition-colors"
+                        className="p-1.5 text-ink-secondary hover:text-rose-400 hover:bg-rose-950/40 rounded-md transition-colors cursor-pointer"
                         title="Delete category"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
@@ -201,7 +201,7 @@ export const CategoryManagement: React.FC = () => {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="e.g., Campus Wi-Fi & LMS Connectivity"
-                className="w-full px-3 py-2 rounded-lg border border-border text-xs text-ink-primary focus:outline-none focus:ring-2 focus:ring-brand-500"
+                className="w-full px-3 py-2 rounded-lg border border-border bg-background text-xs text-ink-primary focus:outline-none focus:ring-2 focus:ring-brand-500 placeholder:text-ink-muted"
                 required
               />
             </div>
@@ -215,7 +215,7 @@ export const CategoryManagement: React.FC = () => {
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Describe types of problems handled under this category..."
-                className="w-full px-3 py-2 rounded-lg border border-border text-xs text-ink-primary focus:outline-none focus:ring-2 focus:ring-brand-500 resize-y"
+                className="w-full px-3 py-2 rounded-lg border border-border bg-background text-xs text-ink-primary focus:outline-none focus:ring-2 focus:ring-brand-500 placeholder:text-ink-muted resize-y"
               />
             </div>
 
@@ -227,7 +227,7 @@ export const CategoryManagement: React.FC = () => {
                 <select
                   value={deptId}
                   onChange={(e) => setDeptId(e.target.value)}
-                  className="w-full px-2.5 py-1.5 rounded-lg border border-border text-xs text-ink-primary bg-white focus:outline-none focus:ring-1 focus:ring-brand-500"
+                  className="w-full px-2.5 py-1.5 rounded-lg border border-border text-xs text-ink-primary bg-background focus:outline-none focus:ring-1 focus:ring-brand-500"
                   required
                 >
                   {departments.map((d) => (
@@ -248,7 +248,7 @@ export const CategoryManagement: React.FC = () => {
                   max={60}
                   value={targetDays}
                   onChange={(e) => setTargetDays(Number(e.target.value))}
-                  className="w-full px-3 py-1.5 rounded-lg border border-border text-xs text-ink-primary focus:outline-none focus:ring-1 focus:ring-brand-500"
+                  className="w-full px-3 py-1.5 rounded-lg border border-border bg-background text-xs text-ink-primary focus:outline-none focus:ring-1 focus:ring-brand-500"
                   required
                 />
               </div>

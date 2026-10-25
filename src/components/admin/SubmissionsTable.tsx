@@ -111,7 +111,7 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
   return (
     <div className="w-full max-w-full min-w-0 space-y-6">
       {/* Search & Export Toolbar */}
-      <div className="bg-white border border-border rounded-xl p-4 sm:p-5 space-y-4 w-full min-w-0 shadow-xs">
+      <div className="bg-surface border border-border rounded-xl p-4 sm:p-5 space-y-4 w-full min-w-0 shadow-xs">
         <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 min-w-0">
           {/* Search Bar */}
           <div className="relative flex-1 min-w-0">
@@ -124,7 +124,7 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
                 setSearchTerm(e.target.value);
                 setPage(1);
               }}
-              className="w-full pl-9 pr-4 py-2 rounded-lg border border-border text-sm placeholder:text-ink-muted focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-colors"
+              className="w-full pl-9 pr-4 py-2 rounded-lg border border-border bg-background text-sm text-ink-primary placeholder:text-ink-muted focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-colors"
             />
           </div>
 
@@ -142,7 +142,7 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
             <Button
               variant="secondary"
               size="sm"
-              leftIcon={<FileSpreadsheet className="w-3.5 h-3.5 text-emerald-600" />}
+              leftIcon={<FileSpreadsheet className="w-3.5 h-3.5 text-emerald-400" />}
               onClick={() => exportSubmissionsToExcel(filtered)}
               title="Export filtered records to Excel .xlsx"
             >
@@ -152,7 +152,7 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
         </div>
 
         {/* Multi-Filters Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 pt-3 border-t border-border/60 min-w-0">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 pt-3 border-t border-border min-w-0">
           <div className="min-w-0">
             <label className="block text-[11px] font-semibold uppercase tracking-wider text-ink-muted mb-1 truncate">
               Status
@@ -163,7 +163,7 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
                 setSelectedStatus(e.target.value);
                 setPage(1);
               }}
-              className="w-full px-2 py-1.5 rounded-lg border border-border text-xs text-ink-primary bg-white focus:outline-none focus:ring-1 focus:ring-brand-500 truncate"
+              className="w-full px-2 py-1.5 rounded-lg border border-border text-xs text-ink-primary bg-background focus:outline-none focus:ring-1 focus:ring-brand-500 truncate"
             >
               <option value="all">All Statuses</option>
               <option value="submitted">Submitted</option>
@@ -186,7 +186,7 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
                 setSelectedType(e.target.value);
                 setPage(1);
               }}
-              className="w-full px-2 py-1.5 rounded-lg border border-border text-xs text-ink-primary bg-white focus:outline-none focus:ring-1 focus:ring-brand-500 truncate"
+              className="w-full px-2 py-1.5 rounded-lg border border-border text-xs text-ink-primary bg-background focus:outline-none focus:ring-1 focus:ring-brand-500 truncate"
             >
               <option value="all">All Types</option>
               <option value="complaint">Complaint</option>
@@ -205,7 +205,7 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
                 setSelectedCategory(e.target.value);
                 setPage(1);
               }}
-              className="w-full px-2 py-1.5 rounded-lg border border-border text-xs text-ink-primary bg-white focus:outline-none focus:ring-1 focus:ring-brand-500 truncate"
+              className="w-full px-2 py-1.5 rounded-lg border border-border text-xs text-ink-primary bg-background focus:outline-none focus:ring-1 focus:ring-brand-500 truncate"
             >
               <option value="all">All Categories</option>
               {categories.map((c) => (
@@ -226,7 +226,7 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
                 setSelectedDepartment(e.target.value);
                 setPage(1);
               }}
-              className="w-full px-2 py-1.5 rounded-lg border border-border text-xs text-ink-primary bg-white focus:outline-none focus:ring-1 focus:ring-brand-500 truncate"
+              className="w-full px-2 py-1.5 rounded-lg border border-border text-xs text-ink-primary bg-background focus:outline-none focus:ring-1 focus:ring-brand-500 truncate"
             >
               <option value="all">All Departments</option>
               {departments.map((d) => (
@@ -247,7 +247,7 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
                 setSelectedPriority(e.target.value);
                 setPage(1);
               }}
-              className="w-full px-2 py-1.5 rounded-lg border border-border text-xs text-ink-primary bg-white focus:outline-none focus:ring-1 focus:ring-brand-500 truncate"
+              className="w-full px-2 py-1.5 rounded-lg border border-border text-xs text-ink-primary bg-background focus:outline-none focus:ring-1 focus:ring-brand-500 truncate"
             >
               <option value="all">All Priorities</option>
               <option value="low">Low</option>
@@ -266,9 +266,9 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
                   setOverdueOnly(e.target.checked);
                   setPage(1);
                 }}
-                className="rounded border-border text-rose-600 focus:ring-rose-500 h-4 w-4 shrink-0"
+                className="rounded border-border text-rose-500 focus:ring-rose-500 h-4 w-4 shrink-0 bg-background"
               />
-              <span className="text-rose-700 font-semibold flex items-center gap-1 truncate">
+              <span className="text-rose-400 font-semibold flex items-center gap-1 truncate">
                 <AlertTriangle className="w-3.5 h-3.5 shrink-0" /> Overdue Only
               </span>
             </label>
@@ -283,17 +283,17 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
           description="Adjust your search keywords or reset filter dropdowns."
         />
       ) : (
-        <div className="bg-white border border-border rounded-xl shadow-xs overflow-hidden w-full max-w-full min-w-0">
+        <div className="bg-surface border border-border rounded-xl shadow-xs overflow-hidden w-full max-w-full min-w-0">
           <div className="w-full overflow-x-auto min-w-0">
             <table className="w-full text-left border-collapse text-xs min-w-[860px]">
-              <thead className="bg-surface border-b border-border text-ink-secondary uppercase tracking-wider font-semibold">
+              <thead className="bg-background/80 border-b border-border text-ink-secondary uppercase tracking-wider font-semibold">
                 <tr>
                   <th
                     className="py-3 px-3 w-[110px] min-w-[100px] cursor-pointer hover:text-ink-primary whitespace-nowrap"
                     onClick={() => toggleSort('reference_number')}
                   >
                     <div className="flex items-center gap-1">
-                      <span>Ref #</span>
+                       <span>Ref #</span>
                       <ArrowUpDown className="w-3 h-3" />
                     </div>
                   </th>
@@ -336,11 +336,11 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
                     <tr
                       key={sub.id}
                       onClick={() => onSelectSubmission(sub.id)}
-                      className={`hover:bg-surface/70 cursor-pointer transition-colors ${
-                        isOverdue ? 'bg-rose-50/20' : ''
+                      className={`hover:bg-background/60 cursor-pointer transition-colors ${
+                        isOverdue ? 'bg-rose-950/20' : ''
                       }`}
                     >
-                      <td className="py-3 px-3 font-mono font-semibold text-brand-700 whitespace-nowrap">
+                      <td className="py-3 px-3 font-mono font-semibold text-brand-400 whitespace-nowrap">
                         {sub.reference_number}
                       </td>
 
@@ -387,8 +387,8 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
 
                       <td className="py-3 px-3 whitespace-nowrap">
                         {sub.due_date ? (
-                          <div className={isOverdue ? 'text-rose-600 font-semibold flex items-center gap-1' : 'text-ink-secondary'}>
-                            {isOverdue && <AlertTriangle className="w-3 h-3 text-rose-600 shrink-0" />}
+                          <div className={isOverdue ? 'text-rose-400 font-semibold flex items-center gap-1' : 'text-ink-secondary'}>
+                            {isOverdue && <AlertTriangle className="w-3 h-3 text-rose-400 shrink-0" />}
                             <span>{new Date(sub.due_date).toLocaleDateString()}</span>
                           </div>
                         ) : (
@@ -402,7 +402,7 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
                             e.stopPropagation();
                             onSelectSubmission(sub.id);
                           }}
-                          className="p-1.5 text-brand-700 hover:bg-brand-50 rounded-md transition-colors"
+                          className="p-1.5 text-brand-400 hover:bg-brand-950/60 rounded-md transition-colors cursor-pointer"
                           title="Manage Submission"
                         >
                           <Eye className="w-4 h-4" />
@@ -416,7 +416,7 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
           </div>
 
           {/* Pagination Controls */}
-          <div className="p-4 border-t border-border flex flex-wrap items-center justify-between gap-3 text-xs text-ink-secondary bg-surface/30">
+          <div className="p-4 border-t border-border flex flex-wrap items-center justify-between gap-3 text-xs text-ink-secondary bg-surface">
             <div>
               Showing <strong className="text-ink-primary">{(page - 1) * pageSize + 1}</strong> to{' '}
               <strong className="text-ink-primary">{Math.min(page * pageSize, sorted.length)}</strong> of{' '}

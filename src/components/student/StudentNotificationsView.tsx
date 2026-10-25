@@ -24,8 +24,8 @@ export const StudentNotificationsView: React.FC<StudentNotificationsViewProps> =
           isOpen={showLoginModal}
           onClose={() => setShowLoginModal(false)}
         />
-        <div className="bg-white border border-border rounded-xl p-8 sm:p-12 text-center space-y-4 shadow-xs max-w-xl mx-auto">
-          <div className="w-14 h-14 rounded-full bg-brand-50 text-brand-700 flex items-center justify-center mx-auto border border-brand-200">
+        <div className="bg-surface border border-border rounded-xl p-8 sm:p-12 text-center space-y-4 shadow-xs max-w-xl mx-auto">
+          <div className="w-14 h-14 rounded-full bg-brand-950/80 text-brand-300 flex items-center justify-center mx-auto border border-brand-800/60">
             <Lock className="w-7 h-7" />
           </div>
           <div className="space-y-1.5">
@@ -39,7 +39,7 @@ export const StudentNotificationsView: React.FC<StudentNotificationsViewProps> =
           <div className="pt-3">
             <button
               onClick={() => setShowLoginModal(true)}
-              className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl bg-brand-700 hover:bg-brand-800 text-white text-xs font-semibold shadow-xs transition-all cursor-pointer"
+              className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-semibold shadow-xs transition-all cursor-pointer"
             >
               <Mail className="w-4 h-4" />
               <span>Login with College Mail</span>
@@ -79,7 +79,7 @@ export const StudentNotificationsView: React.FC<StudentNotificationsViewProps> =
           description="You are completely up to date. Updates on your feedback will appear here."
         />
       ) : (
-        <div className="bg-white border border-border rounded-xl divide-y divide-border overflow-hidden shadow-xs">
+        <div className="bg-surface border border-border rounded-xl divide-y divide-border overflow-hidden shadow-xs">
           {notifications.map((notif) => (
             <div
               key={notif.id}
@@ -87,18 +87,18 @@ export const StudentNotificationsView: React.FC<StudentNotificationsViewProps> =
                 markNotificationRead(notif.id);
                 if (notif.submission_id) onSelectSubmission(notif.submission_id);
               }}
-              className={`p-3.5 sm:p-5 flex items-start justify-between gap-3 sm:gap-4 cursor-pointer transition-colors hover:bg-surface/60 ${
-                !notif.is_read ? 'bg-brand-50/30' : ''
+              className={`p-3.5 sm:p-5 flex items-start justify-between gap-3 sm:gap-4 cursor-pointer transition-colors hover:bg-background/60 ${
+                !notif.is_read ? 'bg-brand-950/40' : ''
               }`}
             >
               <div className="flex items-start gap-3 sm:gap-3.5 min-w-0 flex-1">
                 <div
-                  className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 mt-0.5 ${
+                  className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 mt-0.5 border ${
                     notif.type === 'warning'
-                      ? 'bg-amber-100 text-amber-700'
+                      ? 'bg-amber-950/60 text-amber-400 border-amber-800/60'
                       : notif.type === 'success'
-                      ? 'bg-emerald-100 text-emerald-700'
-                      : 'bg-brand-100 text-brand-700'
+                      ? 'bg-emerald-950/60 text-emerald-400 border-emerald-800/60'
+                      : 'bg-brand-950/60 text-brand-300 border-brand-800/60'
                   }`}
                 >
                   {notif.type === 'warning' ? (
@@ -114,7 +114,7 @@ export const StudentNotificationsView: React.FC<StudentNotificationsViewProps> =
                   <div className="flex items-center gap-2">
                     <h4 className="text-sm font-semibold text-ink-primary break-words">{notif.title}</h4>
                     {!notif.is_read && (
-                      <span className="w-2 h-2 rounded-full bg-brand-700 inline-block shrink-0" />
+                      <span className="w-2 h-2 rounded-full bg-brand-400 inline-block shrink-0" />
                     )}
                   </div>
                   <p className="text-xs text-ink-secondary leading-relaxed break-words">{notif.message}</p>
@@ -128,7 +128,7 @@ export const StudentNotificationsView: React.FC<StudentNotificationsViewProps> =
               </div>
 
               {notif.submission_id && (
-                <div className="flex items-center gap-1 text-xs font-medium text-brand-700 shrink-0 self-center">
+                <div className="flex items-center gap-1 text-xs font-medium text-brand-400 shrink-0 self-center">
                   <span>View</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </div>

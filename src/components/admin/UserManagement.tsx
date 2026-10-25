@@ -148,8 +148,8 @@ export const UserManagement: React.FC = () => {
         <div
           className={`p-4 rounded-xl text-xs flex items-center gap-2 ${
             feedback.type === 'success'
-              ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
-              : 'bg-rose-50 text-rose-800 border border-rose-200'
+              ? 'bg-emerald-950/40 text-emerald-300 border border-emerald-800/60'
+              : 'bg-rose-950/40 text-rose-300 border border-rose-800/60'
           }`}
         >
           <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
@@ -158,12 +158,12 @@ export const UserManagement: React.FC = () => {
       )}
 
       {/* Header and Search */}
-      <div className="bg-white border border-border rounded-xl p-5 space-y-4">
+      <div className="bg-surface border border-border rounded-xl p-5 space-y-4">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
             <h3 className="text-base font-semibold text-ink-primary">College User Registry & Roles</h3>
             <p className="text-xs text-ink-secondary mt-0.5">
-              Verified college accounts, authoritative database roles from <code className="font-mono text-brand-700">user_roles</code>, and activity status.
+              Verified college accounts, authoritative database roles from <code className="font-mono text-brand-300">user_roles</code>, and activity status.
             </p>
           </div>
 
@@ -175,7 +175,7 @@ export const UserManagement: React.FC = () => {
                 placeholder="Search name, student ID, email..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-9 pr-3 py-1.5 rounded-lg border border-border text-xs focus:outline-none focus:ring-1 focus:ring-brand-500"
+                className="w-full pl-9 pr-3 py-1.5 rounded-lg border border-border bg-background text-xs text-ink-primary placeholder:text-ink-muted focus:outline-none focus:ring-1 focus:ring-brand-500"
               />
             </div>
 
@@ -193,10 +193,10 @@ export const UserManagement: React.FC = () => {
       </div>
 
       {/* Users Table or Clean Empty State */}
-      <div className="bg-white border border-border rounded-xl overflow-hidden shadow-xs">
+      <div className="bg-surface border border-border rounded-xl overflow-hidden shadow-xs">
         {filtered.length === 0 ? (
           <div className="py-16 px-4 text-center space-y-3">
-            <div className="w-12 h-12 rounded-full bg-brand-50 text-brand-700 flex items-center justify-center mx-auto">
+            <div className="w-12 h-12 rounded-full bg-brand-950/80 text-brand-300 flex items-center justify-center mx-auto border border-brand-800/60">
               <Users className="w-6 h-6" />
             </div>
             <p className="text-sm font-semibold text-ink-primary">No User Accounts Found</p>
@@ -209,7 +209,7 @@ export const UserManagement: React.FC = () => {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse text-xs min-w-[720px]">
-              <thead className="bg-surface border-b border-border text-ink-secondary uppercase tracking-wider font-semibold">
+              <thead className="bg-background/80 border-b border-border text-ink-secondary uppercase tracking-wider font-semibold">
                 <tr>
                   <th className="py-3 px-4">User Details</th>
                   <th className="py-3 px-4">Official College Email</th>
@@ -226,10 +226,10 @@ export const UserManagement: React.FC = () => {
                   const subCount = getSubmissionsCount(p.id);
 
                   return (
-                    <tr key={p.id} className="hover:bg-surface/50 transition-colors">
+                    <tr key={p.id} className="hover:bg-background/50 transition-colors">
                       <td className="py-3.5 px-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-full bg-brand-50 text-brand-700 font-bold flex items-center justify-center shrink-0 border border-brand-200">
+                          <div className="w-8 h-8 rounded-full bg-brand-950/80 text-brand-300 font-bold flex items-center justify-center shrink-0 border border-brand-800/60">
                             {p.full_name?.charAt(0) || p.email?.charAt(0)?.toUpperCase() || 'U'}
                           </div>
                           <div>
@@ -245,12 +245,12 @@ export const UserManagement: React.FC = () => {
 
                       <td className="py-3.5 px-4 whitespace-nowrap">
                         {isAdmin ? (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-brand-50 text-brand-700 border border-brand-200">
-                            <Shield className="w-3 h-3 text-brand-700" />
+                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-brand-950/80 text-brand-300 border border-brand-800/60">
+                            <Shield className="w-3 h-3 text-brand-400" />
                             Administrator
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-surface text-ink-secondary border border-border">
+                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-background text-ink-secondary border border-border">
                             Student
                           </span>
                         )}
@@ -258,15 +258,17 @@ export const UserManagement: React.FC = () => {
 
                       <td className="py-3.5 px-4 font-medium text-ink-primary whitespace-nowrap">
                         <span className="inline-flex items-center gap-1">
-                          <FileText className="w-3.5 h-3.5 text-slate-400" />
+                          <FileText className="w-3.5 h-3.5 text-brand-400" />
                           {subCount} record{subCount === 1 ? '' : 's'}
                         </span>
                       </td>
 
                       <td className="py-3.5 px-4 whitespace-nowrap">
                         <span
-                          className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium ${
-                            p.is_active ? 'text-emerald-700 bg-emerald-50' : 'text-rose-700 bg-rose-50'
+                          className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium border ${
+                            p.is_active
+                              ? 'text-emerald-400 bg-emerald-950/60 border-emerald-800/60'
+                              : 'text-rose-400 bg-rose-950/60 border-rose-800/60'
                           }`}
                         >
                           {p.is_active ? 'Active' : 'Suspended'}

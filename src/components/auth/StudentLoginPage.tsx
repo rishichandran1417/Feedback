@@ -59,7 +59,7 @@ export const StudentLoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50/60 flex flex-col justify-center py-8 sm:py-12 px-3.5 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-background flex flex-col justify-center py-8 sm:py-12 px-3.5 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center space-y-3">
         <img
           src="/voice-logo.png"
@@ -74,16 +74,16 @@ export const StudentLoginPage: React.FC = () => {
       <div className="mt-6 sm:mx-auto sm:w-full sm:max-w-md space-y-4">
         {/* Requirement 6: Clear banner for rejected non-college domain */}
         {isDomainError && (
-          <div className="rounded-2xl bg-amber-50 border border-amber-200 p-5 shadow-xs space-y-3 animate-in fade-in-50 duration-200">
+          <div className="rounded-2xl bg-amber-950/40 border border-amber-800/60 p-5 shadow-xs space-y-3 animate-in fade-in-50 duration-200">
             <div className="flex items-start gap-3">
-              <div className="w-9 h-9 rounded-xl bg-amber-100 border border-amber-200 text-amber-700 flex items-center justify-center shrink-0 mt-0.5">
+              <div className="w-9 h-9 rounded-xl bg-amber-900/60 border border-amber-700/60 text-amber-300 flex items-center justify-center shrink-0 mt-0.5">
                 <ShieldAlert className="w-5 h-5" />
               </div>
               <div className="space-y-1">
-                <h3 className="text-sm font-bold text-amber-950">
+                <h3 className="text-sm font-bold text-amber-200">
                   Please sign in with your college email ({allowedDomain}).
                 </h3>
-                <p className="text-xs text-amber-800 leading-relaxed">
+                <p className="text-xs text-amber-300/90 leading-relaxed">
                   Only official institutional accounts ending in {allowedDomain} are authorized. Personal email accounts (such as personal Gmail or Yahoo) are strictly restricted.
                 </p>
               </div>
@@ -94,7 +94,7 @@ export const StudentLoginPage: React.FC = () => {
                 type="button"
                 onClick={handleGoogleSignIn}
                 disabled={isLoading}
-                className="w-full flex items-center justify-center gap-2.5 py-2.5 px-4 rounded-xl bg-amber-700 hover:bg-amber-800 text-white text-xs font-semibold shadow-xs transition-all cursor-pointer disabled:opacity-50"
+                className="w-full flex items-center justify-center gap-2.5 py-2.5 px-4 rounded-xl bg-amber-900/80 hover:bg-amber-900 text-amber-100 text-xs font-semibold shadow-xs transition-all cursor-pointer disabled:opacity-50"
               >
                 <RotateCcw className="w-4 h-4" />
                 <span>Try again with college email ({allowedDomain})</span>
@@ -105,11 +105,11 @@ export const StudentLoginPage: React.FC = () => {
 
         {/* Other URL or Internal Error */}
         {!isDomainError && (rawError || internalError) && (
-          <div className="rounded-2xl bg-rose-50 border border-rose-200 p-4 shadow-xs flex items-start gap-3 text-xs text-rose-800">
-            <AlertCircle className="w-5 h-5 text-rose-600 shrink-0 mt-0.5" />
+          <div className="rounded-2xl bg-rose-950/40 border border-rose-800/60 p-4 shadow-xs flex items-start gap-3 text-xs text-rose-300">
+            <AlertCircle className="w-5 h-5 text-rose-400 shrink-0 mt-0.5" />
             <div className="space-y-1">
-              <p className="font-semibold">Authentication Notice</p>
-              <p className="text-[11px] text-rose-700">
+              <p className="font-semibold text-rose-200">Authentication Notice</p>
+              <p className="text-[11px] text-rose-300/90">
                 {internalError || (
                   rawError === 'access_denied'
                     ? 'Sign-in cancelled by user.'
@@ -125,10 +125,10 @@ export const StudentLoginPage: React.FC = () => {
         )}
 
         {/* Main Sign-In Card: Requirement 1 & 4 (Google OAuth Only) */}
-        <div className="bg-white py-6 sm:py-8 px-4 sm:px-8 border border-border rounded-2xl shadow-sm space-y-6">
+        <div className="bg-surface py-6 sm:py-8 px-4 sm:px-8 border border-border rounded-2xl shadow-sm space-y-6">
           <div className="text-center space-y-1.5 border-b border-border pb-5">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200">
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold bg-emerald-950/60 text-emerald-400 border border-emerald-800/60">
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
               Restricted Institutional Access
             </span>
             <h3 className="text-lg font-bold text-ink-primary pt-1">
@@ -145,7 +145,7 @@ export const StudentLoginPage: React.FC = () => {
               type="button"
               onClick={handleGoogleSignIn}
               disabled={isLoading}
-              className="w-full flex items-center justify-center gap-3 py-3.5 px-4 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 active:bg-slate-100 text-ink-primary font-semibold text-sm shadow-xs transition-all hover:border-slate-400 disabled:opacity-50 cursor-pointer"
+              className="w-full flex items-center justify-center gap-3 py-3.5 px-4 rounded-xl border border-border bg-background hover:bg-surface text-ink-primary font-semibold text-sm shadow-xs transition-all hover:border-brand-500/40 disabled:opacity-50 cursor-pointer"
             >
               <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24">
                 <path
@@ -171,7 +171,7 @@ export const StudentLoginPage: React.FC = () => {
             <div className="pt-2 text-center">
               <Link
                 to="/"
-                className="text-xs font-medium text-ink-secondary hover:text-brand-700 transition-colors inline-flex items-center gap-1.5"
+                className="text-xs font-medium text-ink-secondary hover:text-brand-400 transition-colors inline-flex items-center gap-1.5"
               >
                 &larr; Return to Portal Home (Browse without sign-in)
               </Link>

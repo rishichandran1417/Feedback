@@ -161,13 +161,13 @@ export const SystemSettingsView: React.FC = () => {
   return (
     <div className="max-w-3xl space-y-8">
       {/* Live Branding Reflection Banner */}
-      <div className="bg-brand-50/70 border border-brand-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div className="bg-brand-950/60 border border-brand-800/60 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg bg-brand-700 text-white flex items-center justify-center font-bold">
+          <div className="w-9 h-9 rounded-lg bg-brand-600 text-white flex items-center justify-center font-bold">
             <Globe className="w-5 h-5" />
           </div>
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-brand-900">
+            <p className="text-xs font-semibold uppercase tracking-wider text-brand-300">
               Active Portal Identity
             </p>
             <p className="text-sm font-bold text-ink-primary">
@@ -175,17 +175,17 @@ export const SystemSettingsView: React.FC = () => {
             </p>
           </div>
         </div>
-        <span className="text-[11px] font-semibold px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200 flex items-center gap-1.5 shrink-0">
-          <span className="w-2 h-2 rounded-full bg-emerald-600 animate-pulse" />
+        <span className="text-[11px] font-semibold px-2.5 py-1 rounded-full bg-emerald-950/60 text-emerald-400 border border-emerald-800/60 flex items-center gap-1.5 shrink-0">
+          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
           Live in Headers
         </span>
       </div>
 
       {/* Supabase Database Connection Card */}
-      <div className="bg-white border border-border rounded-xl p-6 space-y-4">
+      <div className="bg-surface border border-border rounded-xl p-6 space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Database className="w-4 h-4 text-brand-700" />
+            <Database className="w-4 h-4 text-brand-400" />
             <h3 className="text-sm font-semibold text-ink-primary">
               Supabase Backend & Storage Engine
             </h3>
@@ -193,25 +193,26 @@ export const SystemSettingsView: React.FC = () => {
           <button
             type="button"
             onClick={() => setShowDbConfig(!showDbConfig)}
-            className="text-xs font-medium text-brand-700 hover:text-brand-900 cursor-pointer"
+            className="text-xs font-medium text-brand-400 hover:text-brand-300 cursor-pointer"
           >
             {showDbConfig ? 'Hide Connection Details' : 'Configure Connection'}
           </button>
         </div>
 
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 rounded-xl bg-surface border border-border">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 rounded-xl bg-background/60 border border-border">
           <div className="flex items-center gap-3">
-            <div className={`w-8 h-8 rounded-lg flex items-center justify-center font-bold ${isUsingRealSupabase ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-200 text-slate-700'
-              }`}>
+            <div className={`w-8 h-8 rounded-lg flex items-center justify-center font-bold ${
+              isUsingRealSupabase ? 'bg-emerald-950/60 text-emerald-400 border border-emerald-800/60' : 'bg-background text-ink-muted border border-border'
+            }`}>
               <Server className="w-4 h-4" />
             </div>
             <div>
               <p className="text-xs font-semibold text-ink-primary flex items-center gap-2">
                 <span>Database Engine:</span>
                 {isUsingRealSupabase ? (
-                  <span className="text-emerald-700 font-bold">Connected to Supabase PostgreSQL</span>
+                  <span className="text-emerald-400 font-bold">Connected to Supabase PostgreSQL</span>
                 ) : (
-                  <span className="text-slate-700 font-bold">Local Database Engine</span>
+                  <span className="text-ink-secondary font-bold">Local Database Engine</span>
                 )}
               </p>
               <p className="text-[11px] text-ink-muted font-mono truncate max-w-sm sm:max-w-md">
@@ -222,12 +223,12 @@ export const SystemSettingsView: React.FC = () => {
 
           <div className="flex items-center gap-2">
             {isUsingRealSupabase ? (
-              <span className="px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-1">
+              <span className="px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-950/60 text-emerald-400 border border-emerald-800/60 flex items-center gap-1">
                 <CheckCircle className="w-3.5 h-3.5" />
                 Live Cloud Sync
               </span>
             ) : (
-              <span className="px-2.5 py-1 rounded-full text-[11px] font-semibold bg-amber-50 text-amber-700 border border-amber-200 flex items-center gap-1">
+              <span className="px-2.5 py-1 rounded-full text-[11px] font-semibold bg-amber-950/60 text-amber-400 border border-amber-800/60 flex items-center gap-1">
                 <AlertTriangle className="w-3.5 h-3.5" />
                 Local Mode
               </span>
@@ -246,7 +247,7 @@ export const SystemSettingsView: React.FC = () => {
                 value={customUrl}
                 onChange={(e) => setCustomUrl(e.target.value)}
                 placeholder="https://xyzcompany.supabase.co"
-                className="w-full px-3 py-2 rounded-lg border border-border font-mono text-xs focus:outline-none focus:ring-1 focus:ring-brand-500"
+                className="w-full px-3 py-2 rounded-lg border border-border bg-background text-ink-primary font-mono text-xs focus:outline-none focus:ring-1 focus:ring-brand-500 placeholder:text-ink-muted"
                 required
               />
             </div>
@@ -259,7 +260,7 @@ export const SystemSettingsView: React.FC = () => {
                 value={customKey}
                 onChange={(e) => setCustomKey(e.target.value)}
                 placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-                className="w-full px-3 py-2 rounded-lg border border-border font-mono text-xs focus:outline-none focus:ring-1 focus:ring-brand-500"
+                className="w-full px-3 py-2 rounded-lg border border-border bg-background text-ink-primary font-mono text-xs focus:outline-none focus:ring-1 focus:ring-brand-500 placeholder:text-ink-muted"
                 required
               />
             </div>
@@ -284,8 +285,8 @@ export const SystemSettingsView: React.FC = () => {
 
       <form onSubmit={handleSave} className="space-y-8">
         {saved && (
-          <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 flex items-center gap-2">
-            <CheckCircle className="w-4 h-4 shrink-0" />
+          <div className="p-4 rounded-xl bg-emerald-950/40 border border-emerald-800/60 text-xs text-emerald-300 flex items-center gap-2">
+            <CheckCircle className="w-4 h-4 shrink-0 text-emerald-400" />
             <span>System configuration, branding, and security policies updated successfully in Supabase.</span>
           </div>
         )}
@@ -293,20 +294,20 @@ export const SystemSettingsView: React.FC = () => {
         {/* Website Maintenance Mode */}
         <div className={`rounded-xl p-6 space-y-5 border transition-all ${
           maintenanceEnabled
-            ? 'bg-amber-50/60 border-amber-300 ring-2 ring-amber-400/20'
-            : 'bg-white border-border'
+            ? 'bg-amber-950/40 border-amber-800/60 ring-2 ring-amber-500/20'
+            : 'bg-surface border-border'
         }`}>
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-border/80">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-border">
             <div className="space-y-1">
               <div className="flex items-center gap-2">
-                <Wrench className={`w-5 h-5 ${maintenanceEnabled ? 'text-amber-600 animate-pulse' : 'text-slate-500'}`} />
+                <Wrench className={`w-5 h-5 ${maintenanceEnabled ? 'text-amber-400 animate-pulse' : 'text-ink-muted'}`} />
                 <h3 className="text-sm font-bold text-ink-primary">
                   Website Maintenance Mode
                 </h3>
                 <span className={`text-[11px] px-2.5 py-0.5 rounded-full font-semibold border ${
                   maintenanceEnabled
-                    ? 'bg-amber-100 text-amber-900 border-amber-300'
-                    : 'bg-emerald-50 text-emerald-800 border-emerald-200'
+                    ? 'bg-amber-900/60 text-amber-200 border-amber-700/60'
+                    : 'bg-emerald-950/60 text-emerald-400 border-emerald-800/60'
                 }`}>
                   {maintenanceEnabled ? 'Active (Offline for Students)' : 'Inactive (Live for Students)'}
                 </span>
@@ -321,8 +322,8 @@ export const SystemSettingsView: React.FC = () => {
               onClick={() => handleToggleMaintenanceInstant(!maintenanceEnabled)}
               className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer ${
                 maintenanceEnabled
-                  ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
-                  : 'bg-amber-500 hover:bg-amber-600 text-white'
+                  ? 'bg-emerald-600 hover:bg-emerald-500 text-white'
+                  : 'bg-amber-600 hover:bg-amber-500 text-white'
               }`}
             >
               <Power className="w-3.5 h-3.5" />
@@ -340,7 +341,7 @@ export const SystemSettingsView: React.FC = () => {
                 value={maintenanceMessage}
                 onChange={(e) => setMaintenanceMessage(e.target.value)}
                 placeholder="This website is currently under maintenance. We are performing scheduled updates and will be back shortly."
-                className="w-full px-3 py-2 rounded-lg border border-border focus:outline-none focus:ring-1 focus:ring-brand-500 resize-y"
+                className="w-full px-3 py-2 rounded-lg border border-border bg-background text-ink-primary focus:outline-none focus:ring-1 focus:ring-brand-500 placeholder:text-ink-muted resize-y"
                 required
               />
               <p className="text-[11px] text-ink-muted mt-1">
@@ -359,7 +360,7 @@ export const SystemSettingsView: React.FC = () => {
                   value={estimatedEnd}
                   onChange={(e) => setEstimatedEnd(e.target.value)}
                   placeholder="e.g. Today at 6:00 PM, or Oct 22, 2026"
-                  className="w-full pl-9 pr-3 py-2 rounded-lg border border-border focus:outline-none focus:ring-1 focus:ring-brand-500"
+                  className="w-full pl-9 pr-3 py-2 rounded-lg border border-border bg-background text-ink-primary focus:outline-none focus:ring-1 focus:ring-brand-500 placeholder:text-ink-muted"
                 />
               </div>
               <p className="text-[11px] text-ink-muted mt-1">
@@ -370,9 +371,9 @@ export const SystemSettingsView: React.FC = () => {
         </div>
 
         {/* College Identity */}
-        <div className="bg-white border border-border rounded-xl p-6 space-y-4">
+        <div className="bg-surface border border-border rounded-xl p-6 space-y-4">
           <h3 className="text-sm font-semibold text-ink-primary flex items-center gap-2">
-            <Globe className="w-4 h-4 text-brand-700" />
+            <Globe className="w-4 h-4 text-brand-400" />
             College Portal Identity & Branding
           </h3>
 
@@ -385,7 +386,7 @@ export const SystemSettingsView: React.FC = () => {
                 type="text"
                 value={collegeName}
                 onChange={(e) => setCollegeName(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg border border-border focus:outline-none focus:ring-1 focus:ring-brand-500"
+                className="w-full px-3 py-2 rounded-lg border border-border bg-background text-ink-primary focus:outline-none focus:ring-1 focus:ring-brand-500"
                 required
               />
               <p className="text-[11px] text-ink-muted mt-1">
@@ -401,7 +402,7 @@ export const SystemSettingsView: React.FC = () => {
                 type="email"
                 value={supportEmail}
                 onChange={(e) => setSupportEmail(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg border border-border focus:outline-none focus:ring-1 focus:ring-brand-500"
+                className="w-full px-3 py-2 rounded-lg border border-border bg-background text-ink-primary focus:outline-none focus:ring-1 focus:ring-brand-500"
                 required
               />
               <p className="text-[11px] text-ink-muted mt-1">
@@ -412,9 +413,9 @@ export const SystemSettingsView: React.FC = () => {
         </div>
 
         {/* Student Authentication Security */}
-        <div className="bg-white border border-border rounded-xl p-6 space-y-4">
+        <div className="bg-surface border border-border rounded-xl p-6 space-y-4">
           <h3 className="text-sm font-semibold text-ink-primary flex items-center gap-2">
-            <Shield className="w-4 h-4 text-brand-700" />
+            <Shield className="w-4 h-4 text-brand-400" />
             Authentication & Email Domain Policy
           </h3>
 
@@ -428,7 +429,7 @@ export const SystemSettingsView: React.FC = () => {
                 value={emailDomain}
                 onChange={(e) => setEmailDomain(e.target.value)}
                 placeholder="@cet.ac.in"
-                className="w-full max-w-sm px-3 py-2 rounded-lg border border-border font-mono focus:outline-none focus:ring-1 focus:ring-brand-500"
+                className="w-full max-w-sm px-3 py-2 rounded-lg border border-border bg-background text-ink-primary font-mono focus:outline-none focus:ring-1 focus:ring-brand-500 placeholder:text-ink-muted"
                 required
               />
               <p className="text-[11px] text-ink-muted mt-1">
@@ -439,9 +440,9 @@ export const SystemSettingsView: React.FC = () => {
         </div>
 
         {/* Upload Limits & Grievance Lifecycle */}
-        <div className="bg-white border border-border rounded-xl p-6 space-y-4">
+        <div className="bg-surface border border-border rounded-xl p-6 space-y-4">
           <h3 className="text-sm font-semibold text-ink-primary flex items-center gap-2">
-            <FileCheck className="w-4 h-4 text-brand-700" />
+            <FileCheck className="w-4 h-4 text-brand-400" />
             Grievance Lifecycle & Evidence Upload Limits
           </h3>
 
@@ -456,7 +457,7 @@ export const SystemSettingsView: React.FC = () => {
                 max={50}
                 value={maxFileMb}
                 onChange={(e) => setMaxFileMb(Number(e.target.value))}
-                className="w-full px-3 py-2 rounded-lg border border-border focus:outline-none focus:ring-1 focus:ring-brand-500"
+                className="w-full px-3 py-2 rounded-lg border border-border bg-background text-ink-primary focus:outline-none focus:ring-1 focus:ring-brand-500"
                 required
               />
             </div>
@@ -471,7 +472,7 @@ export const SystemSettingsView: React.FC = () => {
                 max={90}
                 value={reopenDays}
                 onChange={(e) => setReopenDays(Number(e.target.value))}
-                className="w-full px-3 py-2 rounded-lg border border-border focus:outline-none focus:ring-1 focus:ring-brand-500"
+                className="w-full px-3 py-2 rounded-lg border border-border bg-background text-ink-primary focus:outline-none focus:ring-1 focus:ring-brand-500"
                 required
               />
             </div>
