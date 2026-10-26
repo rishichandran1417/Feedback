@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Wrench, Clock, RotateCw, Shield, AlertTriangle } from 'lucide-react';
 import { Button } from './Button';
+import { ThemeToggle } from './ThemeToggle';
 
 interface MaintenancePageProps {
   message?: string;
@@ -37,13 +38,16 @@ export const MaintenancePage: React.FC<MaintenancePageProps> = ({
           </div>
         </div>
 
-        <Link
-          to="/admin/login"
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-surface hover:bg-surface/80 text-ink-secondary hover:text-ink-primary text-xs font-medium transition-colors"
-        >
-          <Shield className="w-3.5 h-3.5 text-brand-400" />
-          <span>Admin Portal</span>
-        </Link>
+        <div className="flex items-center gap-3">
+          <ThemeToggle variant="normal" />
+          <Link
+            to="/admin/login"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-surface hover:bg-surface/80 text-ink-secondary hover:text-ink-primary text-xs font-medium transition-colors"
+          >
+            <Shield className="w-3.5 h-3.5 text-brand-400" />
+            <span>Admin Portal</span>
+          </Link>
+        </div>
       </header>
 
       {/* Main Central Maintenance Notice Card */}

@@ -74,7 +74,7 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
 
       {/* Guest Information Banner if not logged in */}
       {!user && (
-        <div className="bg-brand-950/40 border border-brand-800/50 rounded-xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-brand-200">
+        <div className="bg-brand-50 dark:bg-brand-950/40 border border-brand-200 dark:border-brand-800/50 rounded-xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-brand-900 dark:text-brand-200">
           <div className="flex items-center gap-2.5">
             <ShieldCheck className="w-5 h-5 text-brand-400 shrink-0" />
             <span>

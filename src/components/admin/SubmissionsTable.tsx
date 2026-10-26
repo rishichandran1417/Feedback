@@ -337,7 +337,7 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
                       key={sub.id}
                       onClick={() => onSelectSubmission(sub.id)}
                       className={`hover:bg-background/60 cursor-pointer transition-colors ${
-                        isOverdue ? 'bg-rose-950/20' : ''
+                        isOverdue ? 'bg-rose-50/70 dark:bg-rose-950/20' : ''
                       }`}
                     >
                       <td className="py-3 px-3 font-mono font-semibold text-brand-400 whitespace-nowrap">

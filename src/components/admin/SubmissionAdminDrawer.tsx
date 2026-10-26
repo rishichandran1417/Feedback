@@ -201,8 +201,8 @@ export const SubmissionAdminDrawer: React.FC<SubmissionAdminDrawerProps> = ({
               <div
                 className={`p-3 rounded-lg text-xs flex items-center gap-2 ${
                   feedbackMsg.type === 'success'
-                    ? 'bg-emerald-950/40 text-emerald-300 border border-emerald-800/60'
-                    : 'bg-rose-950/40 text-rose-300 border border-rose-800/60'
+                    ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60'
+                    : 'bg-rose-50 dark:bg-rose-950/40 text-rose-800 dark:text-rose-300 border border-rose-200 dark:border-rose-800/60'
                 }`}
               >
                 <AlertCircle className="w-4 h-4 shrink-0" />
@@ -443,9 +443,9 @@ export const SubmissionAdminDrawer: React.FC<SubmissionAdminDrawerProps> = ({
                       key={msg.id}
                       className={`p-3.5 rounded-xl border space-y-1.5 ${
                         isInternal
-                          ? 'bg-amber-950/40 border-amber-800/60 text-amber-200'
+                          ? 'bg-amber-50 dark:bg-amber-950/40 border-amber-200 dark:border-amber-800/60 text-amber-900 dark:text-amber-200'
                           : isStudent
-                          ? 'bg-brand-950/50 border-brand-800/60 text-brand-200'
+                          ? 'bg-brand-50 dark:bg-brand-950/50 border-brand-200 dark:border-brand-800/60 text-brand-900 dark:text-brand-200'
                           : 'bg-background/80 border-border text-ink-primary'
                       }`}
                     >

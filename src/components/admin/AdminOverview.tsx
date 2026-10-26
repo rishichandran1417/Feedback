@@ -1,5 +1,6 @@
 import React from 'react';
 import { useSystem } from '../../context/SystemContext';
+import { useTheme } from '../../context/ThemeContext';
 import {
   Inbox,
   Clock,
@@ -28,6 +29,18 @@ import {
 
 export const AdminOverview: React.FC<{ onNavigate: (tab: string) => void }> = ({ onNavigate }) => {
   const { submissions, categories, metrics } = useSystem();
+  const { isDark } = useTheme();
+
+  const gridStroke = isDark ? '#251d45' : '#e2e8f0';
+  const tooltipStyle = {
+    backgroundColor: isDark ? '#120e24' : '#ffffff',
+    borderRadius: '8px',
+    border: isDark ? '1px solid #251d45' : '1px solid #e2e8f0',
+    color: isDark ? '#f8fafc' : '#0f172a',
+    fontSize: '12px',
+    boxShadow: isDark ? '0 8px 24px rgba(0,0,0,0.5)' : '0 8px 24px rgba(0,0,0,0.08)',
+  };
+  const tooltipItemStyle = { color: isDark ? '#f8fafc' : '#0f172a' };
 
   // Status breakdown data for Pie Chart
   const statusCounts: Record<string, number> = {};
@@ -73,21 +86,21 @@ export const AdminOverview: React.FC<{ onNavigate: (tab: string) => void }> = ({
     <div className="space-y-8">
       {/* Overdue Warning Alert Banner if overdue complaints exist */}
       {metrics.overdue > 0 && (
-        <div className="bg-rose-950/40 border border-rose-800/60 rounded-xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
+        <div className="bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800/60 rounded-xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
           <div className="flex items-center gap-3">
-            <AlertOctagon className="w-5 h-5 text-rose-400 shrink-0" />
+            <AlertOctagon className="w-5 h-5 text-rose-500 dark:text-rose-400 shrink-0" />
             <div>
-              <p className="text-sm font-semibold text-rose-300">
+              <p className="text-sm font-semibold text-rose-900 dark:text-rose-300">
                 Action Required: {metrics.overdue} Overdue Grievance{metrics.overdue > 1 ? 's' : ''}
               </p>
-              <p className="text-xs text-rose-400/90 mt-0.5">
+              <p className="text-xs text-rose-700 dark:text-rose-400/90 mt-0.5">
                 Target SLA resolution dates have passed without resolution. Immediate departmental escalation recommended.
               </p>
             </div>
           </div>
           <button
             onClick={() => onNavigate('admin_overdue')}
-            className="text-xs font-semibold text-rose-200 hover:text-white bg-rose-900/60 border border-rose-700/60 px-3 py-1.5 rounded-lg shrink-0 shadow-2xs hover:bg-rose-900/90 transition-colors cursor-pointer"
+            className="text-xs font-semibold text-rose-800 dark:text-rose-200 hover:text-white bg-rose-100 hover:bg-rose-600 dark:bg-rose-900/60 dark:hover:bg-rose-900/90 border border-rose-300 dark:border-rose-700/60 px-3 py-1.5 rounded-lg shrink-0 shadow-2xs transition-colors cursor-pointer"
           >
             Review Overdue Issues &rarr;
           </button>
@@ -216,13 +229,13 @@ export const AdminOverview: React.FC<{ onNavigate: (tab: string) => void }> = ({
           <div className="h-64 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={categoryChartData} layout="vertical" margin={{ left: 10, right: 20, top: 10, bottom: 10 }}>
-                <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#251d45" />
-                <XAxis type="number" allowDecimals={false} tick={{ fontSize: 11, fill: '#94a3b8' }} stroke="#251d45" />
-                <YAxis dataKey="name" type="category" width={110} tick={{ fontSize: 11, fill: '#94a3b8' }} stroke="#251d45" />
+                <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke={gridStroke} />
+                <XAxis type="number" allowDecimals={false} tick={{ fontSize: 11, fill: '#94a3b8' }} stroke={gridStroke} />
+                <YAxis dataKey="name" type="category" width={110} tick={{ fontSize: 11, fill: '#94a3b8' }} stroke={gridStroke} />
                 <Tooltip
                   formatter={(val: any) => [`${val} grievances`, 'Volume']}
-                  contentStyle={{ backgroundColor: '#120e24', borderRadius: '8px', border: '1px solid #251d45', color: '#f8fafc', fontSize: '12px' }}
-                  itemStyle={{ color: '#f8fafc' }}
+                  contentStyle={tooltipStyle}
+                  itemStyle={tooltipItemStyle}
                 />
                 <Bar dataKey="count" fill="#7053de" radius={[0, 4, 4, 0]} />
               </BarChart>
@@ -243,13 +256,13 @@ export const AdminOverview: React.FC<{ onNavigate: (tab: string) => void }> = ({
           <div className="h-56 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={timelineChartData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#251d45" vertical={false} />
-                <XAxis dataKey="date" tick={{ fontSize: 11, fill: '#94a3b8' }} stroke="#251d45" />
-                <YAxis allowDecimals={false} tick={{ fontSize: 11, fill: '#94a3b8' }} stroke="#251d45" />
+                <CartesianGrid strokeDasharray="3 3" stroke={gridStroke} vertical={false} />
+                <XAxis dataKey="date" tick={{ fontSize: 11, fill: '#94a3b8' }} stroke={gridStroke} />
+                <YAxis allowDecimals={false} tick={{ fontSize: 11, fill: '#94a3b8' }} stroke={gridStroke} />
                 <Tooltip
                   formatter={(val: any) => [`${val} submissions`, 'Received']}
-                  contentStyle={{ backgroundColor: '#120e24', borderRadius: '8px', border: '1px solid #251d45', color: '#f8fafc', fontSize: '12px' }}
-                  itemStyle={{ color: '#f8fafc' }}
+                  contentStyle={tooltipStyle}
+                  itemStyle={tooltipItemStyle}
                 />
                 <Line
                   type="monotone"

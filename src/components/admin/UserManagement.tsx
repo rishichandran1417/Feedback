@@ -148,8 +148,8 @@ export const UserManagement: React.FC = () => {
         <div
           className={`p-4 rounded-xl text-xs flex items-center gap-2 ${
             feedback.type === 'success'
-              ? 'bg-emerald-950/40 text-emerald-300 border border-emerald-800/60'
-              : 'bg-rose-950/40 text-rose-300 border border-rose-800/60'
+              ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60'
+              : 'bg-rose-50 dark:bg-rose-950/40 text-rose-800 dark:text-rose-300 border border-rose-200 dark:border-rose-800/60'
           }`}
         >
           <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
@@ -267,8 +267,8 @@ export const UserManagement: React.FC = () => {
                         <span
                           className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium border ${
                             p.is_active
-                              ? 'text-emerald-400 bg-emerald-950/60 border-emerald-800/60'
-                              : 'text-rose-400 bg-rose-950/60 border-rose-800/60'
+                              ? 'text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 border-emerald-200 dark:border-emerald-800/60'
+                              : 'text-rose-700 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/60 border-rose-200 dark:border-rose-800/60'
                           }`}
                         >
                           {p.is_active ? 'Active' : 'Suspended'}

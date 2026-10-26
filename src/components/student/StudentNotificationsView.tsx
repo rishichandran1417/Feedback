@@ -88,17 +88,17 @@ export const StudentNotificationsView: React.FC<StudentNotificationsViewProps> =
                 if (notif.submission_id) onSelectSubmission(notif.submission_id);
               }}
               className={`p-3.5 sm:p-5 flex items-start justify-between gap-3 sm:gap-4 cursor-pointer transition-colors hover:bg-background/60 ${
-                !notif.is_read ? 'bg-brand-950/40' : ''
+                !notif.is_read ? 'bg-brand-50/60 dark:bg-brand-950/40' : ''
               }`}
             >
               <div className="flex items-start gap-3 sm:gap-3.5 min-w-0 flex-1">
                 <div
                   className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 mt-0.5 border ${
                     notif.type === 'warning'
-                      ? 'bg-amber-950/60 text-amber-400 border-amber-800/60'
+                      ? 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-800/60'
                       : notif.type === 'success'
-                      ? 'bg-emerald-950/60 text-emerald-400 border-emerald-800/60'
-                      : 'bg-brand-950/60 text-brand-300 border-brand-800/60'
+                      ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800/60'
+                      : 'bg-brand-50 dark:bg-brand-950/60 text-brand-700 dark:text-brand-300 border-brand-200 dark:border-brand-800/60'
                   }`}
                 >
                   {notif.type === 'warning' ? (

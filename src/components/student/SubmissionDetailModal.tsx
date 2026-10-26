@@ -271,9 +271,9 @@ export const SubmissionDetailModal: React.FC<SubmissionDetailModalProps> = ({
                       key={msg.id}
                       className={`p-4 rounded-xl border text-xs space-y-1.5 ${
                         isStudent
-                          ? 'bg-brand-950/60 border-brand-800/60 ml-4 sm:ml-8 text-brand-200'
+                          ? 'bg-brand-50 dark:bg-brand-950/60 border-brand-200 dark:border-brand-800/60 ml-4 sm:ml-8 text-brand-900 dark:text-brand-200'
                           : isInfoReq
-                          ? 'bg-amber-950/40 border-amber-800/60 mr-4 sm:mr-8 text-amber-200'
+                          ? 'bg-amber-50 dark:bg-amber-950/40 border-amber-200 dark:border-amber-800/60 mr-4 sm:mr-8 text-amber-900 dark:text-amber-200'
                           : 'bg-background/80 border-border mr-4 sm:mr-8 text-ink-primary'
                       }`}
                     >

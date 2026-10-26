@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 
 import { AdminLoginModal } from '../auth/AdminLoginModal';
+import { ThemeToggle } from '../common/ThemeToggle';
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -110,11 +111,18 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
         </nav>
       </div>
 
-      <div className="p-3.5 rounded-xl bg-surface border border-border/80 text-xs">
-        <p className="font-semibold text-ink-primary mb-1">Administrative Role Active</p>
-        <p className="text-ink-secondary text-[11px] leading-relaxed">
-          All status modifications, assignments, and resolution notes create permanent audit history records.
-        </p>
+      <div className="space-y-3">
+        <div className="p-3 rounded-xl bg-surface border border-border/80 flex items-center justify-between">
+          <span className="text-xs font-semibold text-ink-primary">Theme Mode</span>
+          <ThemeToggle variant="compact" />
+        </div>
+
+        <div className="p-3.5 rounded-xl bg-surface border border-border/80 text-xs">
+          <p className="font-semibold text-ink-primary mb-1">Administrative Role Active</p>
+          <p className="text-ink-secondary text-[11px] leading-relaxed">
+            All status modifications, assignments, and resolution notes create permanent audit history records.
+          </p>
+        </div>
       </div>
     </div>
   );
@@ -158,8 +166,9 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
             </Link>
           </div>
 
-          {/* Right Area: Admin Profile & Logout OR Administrator Sign In */}
-          <div className="flex items-center gap-3 shrink-0">
+          {/* Right Area: Theme Toggle & Admin Profile */}
+          <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
+            <ThemeToggle variant="normal" />
             {!user || user.role !== 'administrator' ? (
               <button
                 onClick={() => setShowAdminLoginModal(true)}

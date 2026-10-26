@@ -4,42 +4,99 @@
 
 @layer base {
   :root {
-    --color-background: #090714;
-    --color-surface: #120e24;
-    --color-border: #251d45;
-    --color-ink-primary: #f8fafc;
-    --color-ink-secondary: #a1a1aa;
+    /* Light Theme Color Tokens (RGB channels for Tailwind opacity modifier support) */
+    --color-background: 248 249 252;
+    --color-surface: 255 255 255;
+    --color-border: 228 226 238;
+    --color-ink-primary: 15 23 42;
+    --color-ink-secondary: 71 85 105;
+    --color-ink-muted: 148 163 184;
+    --color-ink-subtle: 241 243 249;
+
+    --color-brand-50: 245 243 255;
+    --color-brand-100: 237 233 254;
+    --color-brand-200: 221 214 254;
+    --color-brand-300: 112 83 222;
+    --color-brand-400: 109 87 217;
+    --color-brand-500: 112 83 222;
+    --color-brand-600: 109 87 217;
+    --color-brand-700: 91 67 204;
+    --color-brand-800: 73 52 170;
+    --color-brand-900: 56 39 135;
+    --color-brand-950: 243 240 255;
+    color-scheme: light;
+  }
+
+  html.dark {
+    /* Dark Theme Color Tokens */
+    --color-background: 9 7 20;
+    --color-surface: 18 14 36;
+    --color-border: 37 29 69;
+    --color-ink-primary: 248 250 252;
+    --color-ink-secondary: 161 161 170;
+    --color-ink-muted: 113 113 122;
+    --color-ink-subtle: 45 36 84;
+
+    --color-brand-50: 26 19 56;
+    --color-brand-100: 38 26 79;
+    --color-brand-200: 61 40 130;
+    --color-brand-300: 167 139 250;
+    --color-brand-400: 196 181 253;
+    --color-brand-500: 112 83 222;
+    --color-brand-600: 109 87 217;
+    --color-brand-700: 91 67 204;
+    --color-brand-800: 73 52 170;
+    --color-brand-900: 56 39 135;
+    --color-brand-950: 29 18 72;
     color-scheme: dark;
   }
 
   html {
-    background-color: #090714;
-    color-scheme: dark;
+    background-color: rgb(var(--color-background));
+    color: rgb(var(--color-ink-primary));
   }
 
   body {
-    background-color: var(--color-background);
-    color: var(--color-ink-primary);
+    background-color: rgb(var(--color-background));
+    color: rgb(var(--color-ink-primary));
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
     -webkit-font-smoothing: antialiased;
   }
-
-  input, select, textarea {
-    color-scheme: dark;
-  }
 }
 
-/* Custom minimal dark scrollbar */
+/* Smooth global theme transitions on color & surface changes */
+body, header, nav, main, aside, footer, div, section, article, form, input, select, textarea, button, p, span, h1, h2, h3, h4, table, tr, td, th {
+  transition-property: background-color, border-color, color, fill, stroke, box-shadow;
+  transition-duration: 280ms;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Disable transition on fast continuous animations */
+.animate-spin, .animate-ping, .animate-pulse {
+  transition: none !important;
+}
+
+/* View Transition circular expansion support */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+/* Custom scrollbars for both light and dark mode */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #090714;
+  background: rgb(var(--color-background));
 }
 ::-webkit-scrollbar-thumb {
-  background: #2b2252;
+  background: #cbd5e1;
   border-radius: 9999px;
+}
+html.dark ::-webkit-scrollbar-thumb {
+  background: #2b2252;
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #7053de;

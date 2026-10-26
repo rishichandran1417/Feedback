@@ -11,6 +11,7 @@ import {
   AlertCircle,
   CheckCircle2,
 } from 'lucide-react';
+import { ThemeToggle } from '../common/ThemeToggle';
 
 export const StudentRegisterPage: React.FC = () => {
   const { registerStudent, allowedEmailDomain } = useAuth();
@@ -60,7 +61,10 @@ export const StudentRegisterPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col justify-center py-8 sm:py-12 px-3.5 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-background flex flex-col justify-center py-8 sm:py-12 px-3.5 sm:px-6 lg:px-8 relative">
+      <div className="absolute top-4 right-4 sm:top-6 sm:right-8 z-20">
+        <ThemeToggle variant="pill-with-label" />
+      </div>
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center space-y-3">
         <div className="w-12 h-12 rounded-xl bg-brand-600 text-white flex items-center justify-center mx-auto shadow-md">
           <GraduationCap className="w-7 h-7" />
@@ -83,8 +87,8 @@ export const StudentRegisterPage: React.FC = () => {
           </div>
 
           {errorMsg && (
-            <div className="p-3.5 rounded-lg bg-rose-950/40 border border-rose-800/60 text-xs text-rose-300 flex items-start gap-2">
-              <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+            <div className="p-3.5 rounded-lg bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800/60 text-xs text-rose-800 dark:text-rose-300 flex items-start gap-2">
+              <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-rose-500 dark:text-rose-400" />
               <span>{errorMsg}</span>
             </div>
           )}

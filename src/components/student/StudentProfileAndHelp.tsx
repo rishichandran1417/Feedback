@@ -54,7 +54,7 @@ export const StudentProfileAndHelp: React.FC = () => {
                   <span className="text-[11px] font-mono font-medium px-2 py-0.5 rounded bg-background border border-border text-brand-300">
                     {user?.student_id || 'ID Pending'}
                   </span>
-                  <span className="text-[11px] text-emerald-400 bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-800/60 font-medium">
+                  <span className="text-[11px] text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-200 dark:border-emerald-800/60 font-medium">
                     Verified College Identity
                   </span>
                 </div>

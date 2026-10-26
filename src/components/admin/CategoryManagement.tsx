@@ -86,14 +86,14 @@ export const CategoryManagement: React.FC = () => {
     <div className="space-y-6">
       {/* Notifications */}
       {errorMsg && (
-        <div className="p-4 rounded-xl bg-rose-950/40 border border-rose-800/60 text-xs text-rose-300 flex items-center gap-2">
-          <AlertCircle className="w-4 h-4 shrink-0 text-rose-400" />
+        <div className="p-4 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800/60 text-xs text-rose-800 dark:text-rose-300 flex items-center gap-2">
+          <AlertCircle className="w-4 h-4 shrink-0 text-rose-500 dark:text-rose-400" />
           <span>{errorMsg}</span>
         </div>
       )}
       {successMsg && (
-        <div className="p-4 rounded-xl bg-emerald-950/40 border border-emerald-800/60 text-xs text-emerald-300 flex items-center gap-2">
-          <CheckCircle className="w-4 h-4 shrink-0 text-emerald-400" />
+        <div className="p-4 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 text-xs text-emerald-800 dark:text-emerald-300 flex items-center gap-2">
+          <CheckCircle className="w-4 h-4 shrink-0 text-emerald-500 dark:text-emerald-400" />
           <span>{successMsg}</span>
         </div>
       )}

@@ -12,6 +12,7 @@ import {
   CheckCircle2,
   Home,
 } from 'lucide-react';
+import { ThemeToggle } from '../common/ThemeToggle';
 
 export const AuthCallback: React.FC = () => {
   const navigate = useNavigate();
@@ -192,7 +193,10 @@ export const AuthCallback: React.FC = () => {
   }, [location, navigate, syncSession, allowedEmailDomain, setAuthUser]);
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-3.5 sm:p-4">
+    <div className="min-h-screen bg-background flex items-center justify-center p-3.5 sm:p-4 relative">
+      <div className="absolute top-4 right-4 sm:top-6 sm:right-8 z-20">
+        <ThemeToggle variant="pill-with-label" />
+      </div>
       <div className="w-full max-w-md bg-surface border border-border rounded-2xl shadow-lg p-5 sm:p-8">
         {/* Processing State */}
         {status === 'processing' && (
@@ -215,7 +219,7 @@ export const AuthCallback: React.FC = () => {
         {/* Success State */}
         {status === 'success' && (
           <div className="text-center space-y-4 animate-in fade-in-50 duration-200">
-            <div className="w-12 h-12 rounded-2xl bg-emerald-950/50 border border-emerald-800/60 text-emerald-400 flex items-center justify-center mx-auto">
+            <div className="w-12 h-12 rounded-2xl bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mx-auto">
               <CheckCircle2 className="w-6 h-6" />
             </div>
             <div>
@@ -230,7 +234,7 @@ export const AuthCallback: React.FC = () => {
         {/* Ineligible Domain State */}
         {status === 'ineligible' && (
           <div className="space-y-5 animate-in fade-in-50 duration-200">
-            <div className="w-12 h-12 rounded-2xl bg-amber-950/50 border border-amber-800/60 text-amber-400 flex items-center justify-center mx-auto">
+            <div className="w-12 h-12 rounded-2xl bg-amber-50 dark:bg-amber-950/50 border border-amber-200 dark:border-amber-800/60 text-amber-600 dark:text-amber-400 flex items-center justify-center mx-auto">
               <ShieldAlert className="w-6 h-6" />
             </div>
 
@@ -244,13 +248,13 @@ export const AuthCallback: React.FC = () => {
             <div className="p-4 rounded-xl bg-background border border-border text-xs space-y-2">
               <div className="flex items-center justify-between gap-2">
                 <span className="text-ink-muted text-[11px] font-semibold uppercase shrink-0">Selected Account</span>
-                <span className="font-mono font-medium text-rose-400 truncate max-w-[140px] sm:max-w-[200px]" title={ineligibleEmail}>
+                <span className="font-mono font-medium text-rose-600 dark:text-rose-400 truncate max-w-[140px] sm:max-w-[200px]" title={ineligibleEmail}>
                   {ineligibleEmail}
                 </span>
               </div>
               <div className="flex items-center justify-between gap-2 border-t border-border pt-2">
                 <span className="text-ink-muted text-[11px] font-semibold uppercase shrink-0">Required Domain</span>
-                <span className="font-mono font-semibold px-2 py-0.5 rounded-md bg-emerald-950/60 text-emerald-300 border border-emerald-800/60 shrink-0">
+                <span className="font-mono font-semibold px-2 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60 shrink-0">
                   {allowedEmailDomain || '@cet.ac.in'}
                 </span>
               </div>
@@ -285,13 +289,13 @@ export const AuthCallback: React.FC = () => {
         {/* Generic Error State */}
         {status === 'error' && (
           <div className="space-y-5 animate-in fade-in-50 duration-200">
-            <div className="w-12 h-12 rounded-2xl bg-rose-950/50 border border-rose-800/60 text-rose-400 flex items-center justify-center mx-auto">
+            <div className="w-12 h-12 rounded-2xl bg-rose-50 dark:bg-rose-950/50 border border-rose-200 dark:border-rose-800/60 text-rose-600 dark:text-rose-400 flex items-center justify-center mx-auto">
               <AlertCircle className="w-6 h-6" />
             </div>
 
             <div className="text-center">
               <h2 className="text-lg font-bold text-ink-primary">Authentication Failed</h2>
-              <p className="text-xs text-rose-400 mt-1">{errorMessage}</p>
+              <p className="text-xs text-rose-600 dark:text-rose-400 mt-1">{errorMessage}</p>
             </div>
 
             <div className="space-y-2 pt-2">

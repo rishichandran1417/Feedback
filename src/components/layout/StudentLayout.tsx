@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 
 import { CollegeLoginModal } from '../auth/CollegeLoginModal';
+import { ThemeToggle } from '../common/ThemeToggle';
 
 interface StudentLayoutProps {
   children: React.ReactNode;
@@ -95,11 +96,18 @@ export const StudentLayout: React.FC<StudentLayoutProps> = ({
         </nav>
       </div>
 
-      <div className="p-3.5 rounded-xl bg-surface border border-border/80 text-xs">
-        <p className="font-semibold text-ink-primary mb-1">Resolution Support</p>
-        <p className="text-ink-secondary text-[11px] leading-relaxed">
-          If your issue is not resolved on time, you can reach administrative support directly through your submission thread.
-        </p>
+      <div className="space-y-3">
+        <div className="p-3 rounded-xl bg-surface border border-border/80 flex items-center justify-between">
+          <span className="text-xs font-semibold text-ink-primary">Theme Mode</span>
+          <ThemeToggle variant="compact" />
+        </div>
+
+        <div className="p-3.5 rounded-xl bg-surface border border-border/80 text-xs">
+          <p className="font-semibold text-ink-primary mb-1">Resolution Support</p>
+          <p className="text-ink-secondary text-[11px] leading-relaxed">
+            If your issue is not resolved on time, you can reach administrative support directly through your submission thread.
+          </p>
+        </div>
       </div>
     </div>
   );
@@ -138,8 +146,9 @@ export const StudentLayout: React.FC<StudentLayoutProps> = ({
             </Link>
           </div>
 
-          {/* Right Area: Login Button or Profile */}
-          <div className="flex items-center gap-3 shrink-0">
+          {/* Right Area: Theme Toggle & Login/Profile */}
+          <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
+            <ThemeToggle variant="normal" />
             {!user ? (
               <button
                 onClick={() => setShowLoginModal(true)}

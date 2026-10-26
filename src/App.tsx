@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { SystemProvider, useSystem } from './context/SystemContext';
+import { ThemeProvider } from './context/ThemeContext';
 
 // Layouts
 import { StudentLayout } from './components/layout/StudentLayout';
@@ -314,7 +315,8 @@ const StudentLoginRoute: React.FC = () => {
 
 export default function App() {
   return (
-    <AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
       <SystemProvider>
         <BrowserRouter>
           <Routes>
@@ -415,5 +417,6 @@ export default function App() {
         </BrowserRouter>
       </SystemProvider>
     </AuthProvider>
-  );
+  </ThemeProvider>
+);
 }
