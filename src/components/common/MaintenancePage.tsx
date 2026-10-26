@@ -57,8 +57,8 @@ export const MaintenancePage: React.FC<MaintenancePageProps> = ({
           <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-brand-600 via-brand-500 to-purple-400" />
 
           {/* Animated Icon Badge */}
-          <div className="relative mx-auto w-16 h-16 rounded-2xl bg-amber-950/40 border border-amber-800/50 text-amber-400 flex items-center justify-center shadow-inner">
-            <Wrench className="w-8 h-8 animate-pulse text-amber-400" />
+          <div className="relative mx-auto w-16 h-16 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/50 text-amber-600 dark:text-amber-400 flex items-center justify-center shadow-inner">
+            <Wrench className="w-8 h-8 animate-pulse text-amber-600 dark:text-amber-400" />
             <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75" />
               <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-amber-500" />
@@ -66,8 +66,8 @@ export const MaintenancePage: React.FC<MaintenancePageProps> = ({
           </div>
 
           {/* Status Tag */}
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-950/50 border border-amber-800/60 text-[11px] font-semibold text-amber-300">
-            <AlertTriangle className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 dark:bg-amber-950/50 border border-amber-200 dark:border-amber-800/60 text-[11px] font-semibold text-amber-800 dark:text-amber-300">
+            <AlertTriangle className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 shrink-0" />
             <span>Scheduled Maintenance in Progress</span>
           </div>
 

@@ -198,8 +198,8 @@ export const AdminOverview: React.FC<{ onNavigate: (tab: string) => void }> = ({
                 </Pie>
                 <Tooltip
                   formatter={(value: any, name: any) => [`${value} tickets`, name]}
-                  contentStyle={{ backgroundColor: '#120e24', borderRadius: '8px', border: '1px solid #251d45', color: '#f8fafc', fontSize: '12px' }}
-                  itemStyle={{ color: '#f8fafc' }}
+                  contentStyle={tooltipStyle}
+                  itemStyle={tooltipItemStyle}
                 />
               </PieChart>
             </ResponsiveContainer>

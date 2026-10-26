@@ -18,13 +18,16 @@
   <script>
     (function () {
       try {
-        var theme = localStorage.getItem('voice_theme') || 'dark';
-        if (theme === 'dark') {
+        var saved = localStorage.getItem('voice_theme');
+        var isDark = saved ? (saved === 'dark') : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        if (isDark) {
           document.documentElement.classList.add('dark');
           document.documentElement.classList.remove('light');
+          document.documentElement.style.colorScheme = 'dark';
         } else {
           document.documentElement.classList.remove('dark');
           document.documentElement.classList.add('light');
+          document.documentElement.style.colorScheme = 'light';
         }
       } catch (e) {
         document.documentElement.classList.add('dark');

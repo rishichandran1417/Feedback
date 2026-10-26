@@ -64,23 +64,78 @@
   }
 }
 
-/* Smooth global theme transitions on color & surface changes */
-body, header, nav, main, aside, footer, div, section, article, form, input, select, textarea, button, p, span, h1, h2, h3, h4, table, tr, td, th {
+/* Smooth coordinated 280ms theme transitions on color & surface changes */
+body,
+header,
+nav,
+main,
+aside,
+footer,
+div,
+section,
+article,
+form,
+input,
+select,
+textarea,
+button,
+p,
+span,
+h1,
+h2,
+h3,
+h4,
+table,
+tr,
+td,
+th,
+[role="dialog"],
+[role="menu"],
+[role="listbox"],
+dialog {
   transition-property: background-color, border-color, color, fill, stroke, box-shadow;
   transition-duration: 280ms;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Disable transition on fast continuous animations */
-.animate-spin, .animate-ping, .animate-pulse {
+/* While circular view-transition is active, disable internal CSS property transitions so new snapshot is immediate */
+html.theme-transitioning,
+html.theme-transitioning * {
   transition: none !important;
 }
 
-/* View Transition circular expansion support */
+/* Disable transition on fast continuous animations */
+.animate-spin,
+.animate-ping,
+.animate-pulse {
+  transition: none !important;
+}
+
+/* View Transition circular expansion configuration */
 ::view-transition-old(root),
 ::view-transition-new(root) {
   animation: none;
   mix-blend-mode: normal;
+}
+
+::view-transition-old(root) {
+  z-index: 1;
+}
+
+::view-transition-new(root) {
+  z-index: 9999;
+}
+
+/* Accessibility: respect user preference for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 /* Custom scrollbars for both light and dark mode */

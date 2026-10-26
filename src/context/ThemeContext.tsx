@@ -1,121 +1,163 @@
-import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
+import React, { createContext, useContext, useEffect, useState, useCallback, useRef } from 'react';
 
 export type Theme = 'dark' | 'light';
 
 interface ThemeContextType {
   theme: Theme;
   isDark: boolean;
-  toggleTheme: (event?: React.MouseEvent) => void;
+  toggleTheme: (event?: React.MouseEvent | React.KeyboardEvent | HTMLElement) => void;
   setTheme: (theme: Theme) => void;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
-// Micro-audio synthesis using Web Audio API for tactile feedback
-const playThemeSound = (toTheme: Theme) => {
-  try {
-    const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
-    if (!AudioCtx) return;
-    const ctx = new AudioCtx();
-    const now = ctx.currentTime;
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-
-    osc.type = 'sine';
-    if (toTheme === 'light') {
-      // Ascending uplifting sun chime: 523Hz (C5) -> 783Hz (G5)
-      osc.frequency.setValueAtTime(523.25, now);
-      osc.frequency.exponentialRampToValueAtTime(783.99, now + 0.12);
-      gain.gain.setValueAtTime(0.04, now);
-      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.16);
-    } else {
-      // Descending velvety night chime: 783Hz (G5) -> 440Hz (A4)
-      osc.frequency.setValueAtTime(783.99, now);
-      osc.frequency.exponentialRampToValueAtTime(440.00, now + 0.14);
-      gain.gain.setValueAtTime(0.04, now);
-      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.18);
-    }
-
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.start(now);
-    osc.stop(now + 0.2);
-  } catch {
-    // Audio is an optional micro-interaction enhancement
-  }
-};
+const STORAGE_KEY = 'voice_theme';
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [theme, setThemeState] = useState<Theme>(() => {
     try {
-      const saved = localStorage.getItem('voice_theme');
+      const saved = localStorage.getItem(STORAGE_KEY);
       if (saved === 'light' || saved === 'dark') return saved;
     } catch {
-      // Ignore storage errors
+      // Fallback if localStorage access is restricted
+    }
+    // If no saved theme, respect system operating system preference
+    if (typeof window !== 'undefined' && window.matchMedia) {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
     }
     return 'dark';
   });
 
   const isDark = theme === 'dark';
+  const isTransitioningRef = useRef(false);
 
-  // Synchronize <html> classes and color scheme
+  // Synchronize <html> root classes and persist to localStorage
   useEffect(() => {
     const root = document.documentElement;
     if (theme === 'dark') {
       root.classList.add('dark');
       root.classList.remove('light');
+      root.style.colorScheme = 'dark';
     } else {
       root.classList.remove('dark');
       root.classList.add('light');
+      root.style.colorScheme = 'light';
     }
     try {
-      localStorage.setItem('voice_theme', theme);
+      localStorage.setItem(STORAGE_KEY, theme);
     } catch {
       // Ignore storage errors
     }
   }, [theme]);
 
-  const toggleTheme = useCallback((event?: React.MouseEvent) => {
+  // Listen to system preference changes if user hasn't explicitly set preference in localStorage
+  useEffect(() => {
+    if (typeof window === 'undefined' || !window.matchMedia) return;
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+
+    const handleChange = (e: MediaQueryListEvent) => {
+      try {
+        if (!localStorage.getItem(STORAGE_KEY)) {
+          setThemeState(e.matches ? 'dark' : 'light');
+        }
+      } catch {
+        // Ignore storage errors
+      }
+    };
+
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, []);
+
+  const toggleTheme = useCallback((event?: React.MouseEvent | React.KeyboardEvent | HTMLElement) => {
+    // Prevent overlapping transitions from rapid repeated clicks
+    if (isTransitioningRef.current) return;
+
     const nextTheme: Theme = theme === 'dark' ? 'light' : 'dark';
 
-    // Play subtle audio chime
-    playThemeSound(nextTheme);
-
-    // If browser supports Document View Transitions API, animate with circular clip-path from click coordinates
+    // Check if View Transition API is supported and reduced motion is NOT requested
     const doc = document as any;
-    if (event && doc.startViewTransition && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      const x = event.clientX;
-      const y = event.clientY;
+    const prefersReducedMotion = typeof window !== 'undefined' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (doc.startViewTransition && !prefersReducedMotion) {
+      isTransitioningRef.current = true;
+
+      // Calculate reveal origin from button position or event coordinates
+      let x = window.innerWidth / 2;
+      let y = 0;
+
+      if (event) {
+        if ('currentTarget' in event && event.currentTarget) {
+          const rect = (event.currentTarget as HTMLElement).getBoundingClientRect();
+          x = rect.left + rect.width / 2;
+          y = rect.top + rect.height / 2;
+        } else if (event instanceof HTMLElement) {
+          const rect = event.getBoundingClientRect();
+          x = rect.left + rect.width / 2;
+          y = rect.top + rect.height / 2;
+        } else if ('clientX' in event && typeof event.clientX === 'number' && event.clientX > 0) {
+          x = event.clientX;
+          y = event.clientY;
+        }
+      }
+
       const endRadius = Math.hypot(
         Math.max(x, window.innerWidth - x),
         Math.max(y, window.innerHeight - y)
       );
 
-      const transition = doc.startViewTransition(() => {
-        setThemeState(nextTheme);
-      });
+      try {
+        doc.documentElement.classList.add('theme-transitioning');
 
-      transition.ready.then(() => {
-        const clipPath = [
-          `circle(0px at ${x}px ${y}px)`,
-          `circle(${endRadius}px at ${x}px ${y}px)`
-        ];
-        doc.documentElement.animate(
-          {
-            clipPath: nextTheme === 'dark' ? clipPath : [...clipPath].reverse(),
-          },
-          {
-            duration: 450,
-            easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
-            pseudoElement: nextTheme === 'dark'
-              ? '::view-transition-new(root)'
-              : '::view-transition-old(root)',
+        const transition = doc.startViewTransition(() => {
+          if (nextTheme === 'dark') {
+            doc.documentElement.classList.add('dark');
+            doc.documentElement.classList.remove('light');
+            doc.documentElement.style.colorScheme = 'dark';
+          } else {
+            doc.documentElement.classList.remove('dark');
+            doc.documentElement.classList.add('light');
+            doc.documentElement.style.colorScheme = 'light';
           }
-        );
-      }).catch(() => {
+          setThemeState(nextTheme);
+        });
+
+        transition.ready
+          .then(() => {
+            const clipPath = [
+              `circle(0px at ${x}px ${y}px)`,
+              `circle(${endRadius}px at ${x}px ${y}px)`,
+            ];
+
+            const animation = doc.documentElement.animate(
+              {
+                clipPath,
+              },
+              {
+                duration: 400,
+                easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
+                pseudoElement: '::view-transition-new(root)',
+              }
+            );
+
+            animation.finished.finally(() => {
+              doc.documentElement.classList.remove('theme-transitioning');
+              isTransitioningRef.current = false;
+            });
+          })
+          .catch(() => {
+            doc.documentElement.classList.remove('theme-transitioning');
+            isTransitioningRef.current = false;
+            setThemeState(nextTheme);
+          });
+      } catch {
+        doc.documentElement.classList.remove('theme-transitioning');
+        isTransitioningRef.current = false;
         setThemeState(nextTheme);
-      });
+      }
     } else {
+      // Graceful fallback to standard CSS transitions
       setThemeState(nextTheme);
     }
   }, [theme]);
