@@ -146,10 +146,10 @@ export const SubmissionDetailModal: React.FC<SubmissionDetailModalProps> = ({
 
           {/* Overdue / Escalation Alert if past due date */}
           {sub.due_date && new Date(sub.due_date) < new Date() && sub.status !== 'resolved' && sub.status !== 'closed' && (
-            <div className="p-3.5 rounded-xl bg-amber-950/40 border border-amber-800/60 text-xs text-amber-300 flex items-start gap-2.5">
-              <Clock className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+            <div className="p-3.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 text-xs text-amber-900 dark:text-amber-200 flex items-start gap-2.5">
+              <Clock className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
               <div>
-                <span className="font-semibold text-amber-200">Resolution Target Exceeded:</span> If your issue has not been resolved on time, you can reach support (Admin) by posting a message in the communication thread below.
+                <span className="font-semibold text-amber-950 dark:text-amber-100">Resolution Target Exceeded:</span> If your issue has not been resolved on time, you can reach support (Admin) by posting a message in the communication thread below.
               </div>
             </div>
           )}
@@ -271,9 +271,9 @@ export const SubmissionDetailModal: React.FC<SubmissionDetailModalProps> = ({
                       key={msg.id}
                       className={`p-4 rounded-xl border text-xs space-y-1.5 ${
                         isStudent
-                          ? 'bg-brand-50 dark:bg-brand-950/60 border-brand-200 dark:border-brand-800/60 ml-4 sm:ml-8 text-brand-900 dark:text-brand-200'
+                          ? 'bg-brand-50 dark:bg-brand-950/60 border-brand-200 dark:border-brand-800/60 ml-4 sm:ml-8 text-brand-950 dark:text-purple-100'
                           : isInfoReq
-                          ? 'bg-amber-50 dark:bg-amber-950/40 border-amber-200 dark:border-amber-800/60 mr-4 sm:mr-8 text-amber-900 dark:text-amber-200'
+                          ? 'bg-amber-50 dark:bg-amber-950/40 border-amber-200 dark:border-amber-800/60 mr-4 sm:mr-8 text-amber-950 dark:text-amber-100'
                           : 'bg-background/80 border-border mr-4 sm:mr-8 text-ink-primary'
                       }`}
                     >

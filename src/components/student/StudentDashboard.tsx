@@ -49,7 +49,7 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
       {/* Welcome Banner */}
       <div className="bg-surface border border-border rounded-xl p-4 sm:p-6 lg:p-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4 sm:gap-6">
         <div>
-          <span className="text-xs font-semibold uppercase tracking-wider text-brand-700">
+          <span className="text-xs font-semibold uppercase tracking-wider text-brand-600 dark:text-brand-300">
             Student Redressal Portal
           </span>
           <h2 className="text-xl sm:text-2xl font-semibold text-ink-primary mt-1">
@@ -74,16 +74,16 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
 
       {/* Guest Information Banner if not logged in */}
       {!user && (
-        <div className="bg-brand-50 dark:bg-brand-950/40 border border-brand-200 dark:border-brand-800/50 rounded-xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-brand-900 dark:text-brand-200">
+        <div className="bg-brand-50 dark:bg-brand-950/60 border border-brand-200 dark:border-brand-800/60 rounded-xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
           <div className="flex items-center gap-2.5">
-            <ShieldCheck className="w-5 h-5 text-brand-400 shrink-0" />
-            <span>
-              You can browse categories, policies, and draft submissions freely. Login with your official college mail (<strong>@cet.ac.in</strong>) is only required when you submit feedback.
+            <ShieldCheck className="w-5 h-5 text-brand-600 dark:text-brand-400 shrink-0" />
+            <span className="text-brand-900 dark:text-purple-100 leading-relaxed">
+              You can browse categories, policies, and draft submissions freely. Login with your official college mail (<strong className="font-semibold text-brand-950 dark:text-white">@cet.ac.in</strong>) is only required when you submit feedback.
             </span>
           </div>
           <button
             onClick={() => onNavigate('submit')}
-            className="text-xs font-semibold px-3.5 py-1.5 rounded-lg bg-brand-600 text-white hover:bg-brand-500 shrink-0 self-start sm:self-auto cursor-pointer"
+            className="text-xs font-semibold px-3.5 py-1.5 rounded-lg bg-brand-600 text-white hover:bg-brand-500 shrink-0 self-start sm:self-auto cursor-pointer shadow-xs transition-colors"
           >
             Start Feedback &rarr;
           </button>
@@ -92,21 +92,21 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
 
       {/* Action Required Alert Banner if awaiting response */}
       {awaitingStudentCount > 0 && (
-        <div className="bg-amber-950/40 border border-amber-800/50 rounded-xl p-3.5 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="bg-amber-50 dark:bg-amber-950/50 border border-amber-200 dark:border-amber-800/60 rounded-xl p-3.5 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex items-start gap-3">
-            <AlertTriangle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
+            <AlertTriangle className="w-5 h-5 text-amber-500 dark:text-amber-400 shrink-0 mt-0.5" />
             <div className="flex-1">
-              <h4 className="text-sm font-semibold text-amber-300">
+              <h4 className="text-sm font-semibold text-amber-900 dark:text-amber-200">
                 Information Requested ({awaitingStudentCount})
               </h4>
-              <p className="text-xs text-amber-400/90 mt-0.5">
+              <p className="text-xs text-amber-800 dark:text-amber-300 mt-0.5 leading-relaxed">
                 An administrator has requested additional clarification or supporting documents for your open submission. Please provide a response to proceed.
               </p>
             </div>
           </div>
           <button
             onClick={() => onNavigate('submissions')}
-            className="text-xs font-semibold text-amber-300 hover:underline shrink-0 self-start sm:self-auto pl-8 sm:pl-0"
+            className="text-xs font-semibold text-amber-800 dark:text-amber-300 hover:underline shrink-0 self-start sm:self-auto pl-8 sm:pl-0"
           >
             Review Issues &rarr;
           </button>

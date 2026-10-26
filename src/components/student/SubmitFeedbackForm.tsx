@@ -186,21 +186,21 @@ export const SubmitFeedbackForm: React.FC<SubmitFeedbackFormProps> = ({
       <form onSubmit={handleSubmit} className="bg-surface border border-border rounded-xl p-6 sm:p-8 space-y-8 shadow-xs min-w-0">
         {/* Unauthenticated / Authenticated Student Status Banner */}
         {!user ? (
-          <div className="p-4 rounded-xl bg-amber-950/40 border border-amber-800/60 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-amber-300">
+          <div className="p-4 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-amber-900 dark:text-amber-200">
             <div className="flex items-center gap-2.5">
-              <AlertCircle className="w-4 h-4 text-amber-400 shrink-0" />
+              <AlertCircle className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
               <span>You are currently not signed in. Sign in with your official college mail (Gmail) to submit grievances.</span>
             </div>
             <button
               type="button"
               onClick={() => setShowLoginModal(true)}
-              className="px-3.5 py-1.5 rounded-lg bg-amber-900/60 border border-amber-700/60 font-semibold text-amber-200 hover:bg-amber-900/90 shrink-0 cursor-pointer text-xs shadow-xs"
+              className="px-3.5 py-1.5 rounded-lg bg-amber-600 dark:bg-amber-900/60 text-white dark:text-amber-100 border border-amber-700/60 font-semibold hover:bg-amber-500 dark:hover:bg-amber-900/90 shrink-0 cursor-pointer text-xs shadow-xs"
             >
               Sign In with College Mail
             </button>
           </div>
         ) : (
-          <div className="p-3.5 rounded-xl bg-brand-950/60 border border-brand-800/60 text-xs text-brand-300 flex items-center justify-between gap-3">
+          <div className="p-3.5 rounded-xl bg-brand-50 dark:bg-brand-950/60 border border-brand-200 dark:border-brand-800/60 text-xs text-brand-900 dark:text-brand-300 flex items-center justify-between gap-3">
             <div className="flex items-center gap-2 truncate">
               <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0" />
               <span className="truncate">Submitting as: <strong className="font-semibold text-ink-primary">{user.full_name}</strong> ({user.email})</span>

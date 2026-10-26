@@ -114,7 +114,7 @@ export const StudentLoginPage: React.FC = () => {
             <AlertCircle className="w-5 h-5 text-rose-500 dark:text-rose-400 shrink-0 mt-0.5" />
             <div className="space-y-1">
               <p className="font-semibold text-rose-900 dark:text-rose-200">Authentication Notice</p>
-              <p className="text-[11px] text-rose-300/90">
+              <p className="text-[11px] text-rose-700 dark:text-rose-300/90">
                 {internalError || (
                   rawError === 'access_denied'
                     ? 'Sign-in cancelled by user.'

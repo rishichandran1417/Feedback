@@ -443,9 +443,9 @@ export const SubmissionAdminDrawer: React.FC<SubmissionAdminDrawerProps> = ({
                       key={msg.id}
                       className={`p-3.5 rounded-xl border space-y-1.5 ${
                         isInternal
-                          ? 'bg-amber-50 dark:bg-amber-950/40 border-amber-200 dark:border-amber-800/60 text-amber-900 dark:text-amber-200'
+                          ? 'bg-amber-50 dark:bg-amber-950/40 border-amber-200 dark:border-amber-800/60 text-amber-950 dark:text-amber-100'
                           : isStudent
-                          ? 'bg-brand-50 dark:bg-brand-950/50 border-brand-200 dark:border-brand-800/60 text-brand-900 dark:text-brand-200'
+                          ? 'bg-brand-50 dark:bg-brand-950/50 border-brand-200 dark:border-brand-800/60 text-brand-950 dark:text-purple-100'
                           : 'bg-background/80 border-border text-ink-primary'
                       }`}
                     >

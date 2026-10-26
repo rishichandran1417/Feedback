@@ -239,9 +239,9 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
 
       {/* Persistent Maintenance Mode Alert Bar */}
       {settings.maintenance_mode?.enabled && (
-        <div className="bg-amber-950/80 text-amber-200 px-4 sm:px-6 py-2.5 text-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 z-40 border-b border-amber-800/80 shadow-xs">
+        <div className="bg-amber-100 dark:bg-amber-950/80 text-amber-900 dark:text-amber-200 px-4 sm:px-6 py-2.5 text-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 z-40 border-b border-amber-300 dark:border-amber-800/80 shadow-xs">
           <div className="flex items-center gap-2">
-            <Wrench className="w-4 h-4 shrink-0 animate-pulse text-amber-400" />
+            <Wrench className="w-4 h-4 shrink-0 animate-pulse text-amber-600 dark:text-amber-400" />
             <span>
               <strong>Maintenance Mode Active:</strong> Public portal access is currently paused. Students and visitors will see the maintenance notice.
             </span>
@@ -255,7 +255,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
                 },
               })
             }
-            className="px-3 py-1 rounded-lg bg-surface border border-amber-600 text-amber-300 font-bold hover:bg-amber-900/60 transition-colors text-xs shrink-0 cursor-pointer shadow-xs"
+            className="px-3 py-1 rounded-lg bg-surface border border-amber-500 dark:border-amber-600 text-amber-900 dark:text-amber-300 font-bold hover:bg-amber-50 dark:hover:bg-amber-900/60 transition-colors text-xs shrink-0 cursor-pointer shadow-xs"
           >
             Turn Off Maintenance Mode
           </button>

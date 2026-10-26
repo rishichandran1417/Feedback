@@ -218,7 +218,7 @@ export const MySubmissions: React.FC<MySubmissionsProps> = ({
                       <PriorityBadge priority={sub.priority} />
 
                       {isAwaiting && (
-                        <span className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full bg-amber-950/60 text-amber-300 border border-amber-800/60">
+                        <span className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full bg-amber-50 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800/60">
                           <AlertCircle className="w-3 h-3" />
                           Action Required
                         </span>
