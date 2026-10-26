@@ -96,7 +96,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       setCelestialAnimation(nextTheme === 'light' ? 'to-light' : 'to-dark');
       celestialTimerRef.current = setTimeout(() => {
         setCelestialAnimation(null);
-      }, 1850);
+      }, 3100);
     }
 
     // Check if View Transition API is supported and reduced motion is NOT requested

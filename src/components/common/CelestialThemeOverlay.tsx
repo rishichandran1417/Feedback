@@ -20,17 +20,17 @@ const MorningBird: React.FC<{
     >
       <svg
         viewBox="0 0 36 22"
-        className="w-10 h-6 overflow-visible fill-amber-900/85 dark:fill-amber-800/85 drop-shadow-md"
+        className="w-11 h-7 overflow-visible fill-amber-950 dark:fill-amber-900 drop-shadow-md"
       >
         {/* Left Wing (flapping up & down from shoulder joint) */}
         <path
           d="M 14 10 C 10 2, 3 0, 0 2 C 4 6, 10 9, 14 11 Z"
-          className="animate-[bird-wing-left_0.32s_ease-in-out_infinite] origin-[14px_10px]"
+          className="animate-[bird-wing-left_0.38s_ease-in-out_infinite] origin-[14px_10px]"
         />
         {/* Right Wing (flapping up & down from shoulder joint) */}
         <path
           d="M 18 11 C 22 9, 28 6, 32 2 C 29 0, 22 2, 18 10 Z"
-          className="animate-[bird-wing-right_0.32s_ease-in-out_infinite] origin-[18px_10px]"
+          className="animate-[bird-wing-right_0.38s_ease-in-out_infinite] origin-[18px_10px]"
         />
         {/* Aerodynamic Bird Body */}
         <ellipse cx="16" cy="10.5" rx="3.5" ry="1.6" />
@@ -43,24 +43,92 @@ const MorningBird: React.FC<{
   );
 };
 
-// Preset star coordinates for natural constellation dispersion
+// 4-point Diamond Twinkling Star
+const TwinklingStar: React.FC<{
+  top: string;
+  left: string;
+  size: number;
+  delay: number;
+  duration?: number;
+}> = ({ top, left, size, delay, duration = 1.4 }) => {
+  return (
+    <div
+      className="absolute flex items-center justify-center pointer-events-none select-none"
+      style={{
+        top,
+        left,
+        width: `${size}px`,
+        height: `${size}px`,
+        animation: `star-twinkle ${duration}s ease-in-out infinite`,
+        animationDelay: `${delay}s`,
+      }}
+    >
+      <svg
+        viewBox="0 0 24 24"
+        className="w-full h-full text-white overflow-visible drop-shadow-[0_0_10px_rgba(255,255,255,1)]"
+      >
+        {/* Diamond Star Shape */}
+        <path
+          d="M 12 0 Q 12 12, 24 12 Q 12 12, 12 24 Q 12 12, 0 12 Q 12 12, 12 0 Z"
+          fill="#ffffff"
+        />
+        {/* Glowing Lavender Core */}
+        <circle cx="12" cy="12" r="3.5" fill="#f3e8ff" />
+      </svg>
+    </div>
+  );
+};
+
+// Shooting Star with glowing meteor tip & luminous trail
+const ShootingStar: React.FC<{
+  top: string;
+  right: string;
+  length?: number;
+  delay: number;
+  angle?: number;
+}> = ({ top, right, length = 200, delay, angle = -32 }) => {
+  return (
+    <div
+      className="absolute pointer-events-none select-none overflow-visible"
+      style={{
+        top,
+        right,
+        animation: `shooting-star 1.4s cubic-bezier(0.2, 0.8, 0.4, 1) forwards`,
+        animationDelay: `${delay}s`,
+        transform: `rotate(${angle}deg)`,
+      }}
+    >
+      <div
+        className="relative h-[3px] rounded-full bg-gradient-to-l from-white via-purple-300 to-transparent shadow-[0_0_12px_rgba(255,255,255,1)]"
+        style={{ width: `${length}px` }}
+      >
+        {/* Glowing Meteor Tip */}
+        <div className="absolute right-0 top-1/2 -translate-y-1/2 w-2.5 h-2.5 rounded-full bg-white shadow-[0_0_16px_#ffffff,0_0_24px_#c084fc]" />
+      </div>
+    </div>
+  );
+};
+
+// Preset star coordinates for natural constellation distribution
 const STAR_COORDINATES = [
-  { top: '12%', left: '15%', size: 14, delay: 0.1 },
-  { top: '22%', left: '28%', size: 10, delay: 0.35 },
-  { top: '16%', left: '42%', size: 16, delay: 0.2 },
-  { top: '35%', left: '18%', size: 8, delay: 0.5 },
-  { top: '28%', left: '55%', size: 12, delay: 0.15 },
-  { top: '14%', left: '68%', size: 10, delay: 0.4 },
-  { top: '42%', left: '72%', size: 14, delay: 0.25 },
-  { top: '25%', left: '84%', size: 18, delay: 0.1 },
-  { top: '48%', left: '88%', size: 8, delay: 0.6 },
-  { top: '55%', left: '24%', size: 12, delay: 0.3 },
-  { top: '65%', left: '40%', size: 10, delay: 0.45 },
-  { top: '60%', left: '62%', size: 16, delay: 0.2 },
-  { top: '72%', left: '78%', size: 12, delay: 0.55 },
-  { top: '80%', left: '16%', size: 14, delay: 0.15 },
-  { top: '82%', left: '52%', size: 8, delay: 0.7 },
-  { top: '78%', left: '85%', size: 12, delay: 0.35 },
+  { top: '10%', left: '12%', size: 18, delay: 0.1 },
+  { top: '18%', left: '26%', size: 14, delay: 0.35 },
+  { top: '14%', left: '44%', size: 20, delay: 0.2 },
+  { top: '32%', left: '15%', size: 12, delay: 0.5 },
+  { top: '26%', left: '56%', size: 16, delay: 0.15 },
+  { top: '12%', left: '68%', size: 14, delay: 0.4 },
+  { top: '38%', left: '72%', size: 18, delay: 0.25 },
+  { top: '22%', left: '86%', size: 22, delay: 0.1 },
+  { top: '45%', left: '88%', size: 14, delay: 0.6 },
+  { top: '52%', left: '22%', size: 16, delay: 0.3 },
+  { top: '62%', left: '38%', size: 14, delay: 0.45 },
+  { top: '58%', left: '60%', size: 20, delay: 0.2 },
+  { top: '70%', left: '76%', size: 16, delay: 0.55 },
+  { top: '78%', left: '14%', size: 18, delay: 0.15 },
+  { top: '80%', left: '50%', size: 12, delay: 0.7 },
+  { top: '75%', left: '85%', size: 16, delay: 0.35 },
+  { top: '86%', left: '68%', size: 14, delay: 0.5 },
+  { top: '28%', left: '34%', size: 12, delay: 0.65 },
 ];
 
 export const CelestialThemeOverlay: React.FC<CelestialThemeOverlayProps> = ({ animation }) => {
@@ -77,7 +145,7 @@ export const CelestialThemeOverlay: React.FC<CelestialThemeOverlayProps> = ({ an
       setActiveAnimation(animation);
       const timer = setTimeout(() => {
         setActiveAnimation(null);
-      }, 1850);
+      }, 3100);
       return () => clearTimeout(timer);
     } else {
       setActiveAnimation(null);
@@ -95,61 +163,61 @@ export const CelestialThemeOverlay: React.FC<CelestialThemeOverlayProps> = ({ an
       {/* 1. MORNING SUNRISE ANIMATION (Switching to Light Mode)         */}
       {/* ============================================================== */}
       {activeAnimation === 'to-light' && (
-        <div className="relative w-full h-full animate-[fade-out-celestial_1.85s_ease-in-out_forwards]">
+        <div className="relative w-full h-full animate-[fade-out-celestial_3.1s_ease-in-out_forwards]">
           {/* Warm sunrise dawn ambient gradient */}
-          <div className="absolute inset-0 bg-gradient-to-t from-amber-400/25 via-amber-200/10 to-transparent" />
-          <div className="absolute -bottom-20 left-0 right-0 h-96 bg-radial-gradient from-amber-300/30 via-orange-200/15 to-transparent blur-2xl" />
+          <div className="absolute inset-0 bg-gradient-to-t from-amber-400/30 via-amber-200/15 to-transparent" />
+          <div className="absolute -bottom-24 left-0 right-0 h-[450px] bg-radial-gradient from-amber-300/40 via-orange-200/20 to-transparent blur-3xl" />
 
           {/* Golden Rising Sun */}
-          <div className="absolute left-[20%] bottom-[24%] -translate-x-1/2 flex items-center justify-center animate-[sun-sunrise_1.85s_ease-out_forwards]">
+          <div className="absolute left-[20%] bottom-[22%] -translate-x-1/2 flex items-center justify-center animate-[sun-sunrise_3.1s_ease-out_forwards]">
             {/* Outer Solar Aura Bloom */}
-            <div className="absolute w-56 h-56 rounded-full bg-amber-400/30 blur-3xl animate-pulse" />
-            <div className="absolute w-40 h-40 rounded-full bg-yellow-300/40 blur-xl" />
+            <div className="absolute w-64 h-64 rounded-full bg-amber-400/35 blur-3xl animate-pulse" />
+            <div className="absolute w-48 h-48 rounded-full bg-yellow-300/45 blur-2xl" />
 
             {/* Rotating Solar Flare Corona Rays */}
-            <div className="absolute w-36 h-36 rounded-full border-2 border-dashed border-amber-400/50 animate-[spin_18s_linear_infinite]" />
-            <div className="absolute w-44 h-44 rounded-full border border-amber-300/30 rotate-45 animate-[spin_24s_linear_infinite_reverse]" />
+            <div className="absolute w-40 h-40 rounded-full border-2 border-dashed border-amber-400/50 animate-[spin_24s_linear_infinite]" />
+            <div className="absolute w-52 h-52 rounded-full border border-amber-300/40 rotate-45 animate-[spin_32s_linear_infinite_reverse]" />
 
             {/* Sun Core */}
-            <div className="relative w-28 h-28 rounded-full bg-gradient-to-tr from-amber-500 via-amber-400 to-yellow-200 shadow-[0_0_60px_rgba(251,191,36,0.9),0_0_120px_rgba(245,158,11,0.5)] flex items-center justify-center">
-              {/* Sun Inner Highlight */}
-              <div className="absolute top-2.5 left-3.5 w-8 h-5 rounded-full bg-white/70 rotate-[-25deg] blur-xs" />
+            <div className="relative w-32 h-32 rounded-full bg-gradient-to-tr from-amber-500 via-amber-400 to-yellow-200 shadow-[0_0_80px_rgba(251,191,36,0.95),0_0_150px_rgba(245,158,11,0.55)] flex items-center justify-center">
+              {/* Sun Inner Highlight Reflection */}
+              <div className="absolute top-3 left-4 w-9 h-5 rounded-full bg-white/75 rotate-[-25deg] blur-xs" />
             </div>
           </div>
 
-          {/* Morning Birds Flying Across the Sky */}
+          {/* Morning Birds Soaring Gracefully Across Sky (Slower, relaxed tempo) */}
           {/* Lead Bird 1 (Center V-formation point) */}
           <MorningBird
-            scale={1.15}
-            className="animate-[bird-flight-lead_1.85s_cubic-bezier(0.25,1,0.5,1)_forwards]"
+            scale={1.2}
+            className="animate-[bird-flight-lead_3.1s_cubic-bezier(0.2,0.8,0.4,1)_forwards]"
           />
 
           {/* Wingman Bird 2 (Upper left of lead) */}
           <MorningBird
-            scale={0.9}
-            className="animate-[bird-flight-wingman1_1.85s_cubic-bezier(0.25,1,0.5,1)_forwards]"
-            style={{ animationDelay: '0.12s' }}
+            scale={0.95}
+            className="animate-[bird-flight-wingman1_3.1s_cubic-bezier(0.2,0.8,0.4,1)_forwards]"
+            style={{ animationDelay: '0.18s' }}
           />
 
           {/* Wingman Bird 3 (Lower right of lead) */}
           <MorningBird
-            scale={0.85}
-            className="animate-[bird-flight-wingman2_1.85s_cubic-bezier(0.25,1,0.5,1)_forwards]"
-            style={{ animationDelay: '0.2s' }}
+            scale={0.9}
+            className="animate-[bird-flight-wingman2_3.1s_cubic-bezier(0.2,0.8,0.4,1)_forwards]"
+            style={{ animationDelay: '0.3s' }}
           />
 
           {/* Young Follower Bird 4 (Trailing behind) */}
           <MorningBird
-            scale={0.7}
-            className="animate-[bird-flight-follower_1.85s_cubic-bezier(0.25,1,0.5,1)_forwards]"
-            style={{ animationDelay: '0.32s' }}
+            scale={0.75}
+            className="animate-[bird-flight-follower_3.1s_cubic-bezier(0.2,0.8,0.4,1)_forwards]"
+            style={{ animationDelay: '0.45s' }}
           />
 
           {/* Distant High Flying Bird 5 */}
           <MorningBird
-            scale={0.55}
-            className="animate-[bird-flight-wingman2_1.85s_cubic-bezier(0.25,1,0.5,1)_forwards]"
-            style={{ animationDelay: '0.42s' }}
+            scale={0.6}
+            className="animate-[bird-flight-wingman2_3.1s_cubic-bezier(0.2,0.8,0.4,1)_forwards]"
+            style={{ animationDelay: '0.6s' }}
           />
         </div>
       )}
@@ -158,64 +226,63 @@ export const CelestialThemeOverlay: React.FC<CelestialThemeOverlayProps> = ({ an
       {/* 2. NIGHT SKY & MOON ANIMATION (Switching to Dark Mode)         */}
       {/* ============================================================== */}
       {activeAnimation === 'to-dark' && (
-        <div className="relative w-full h-full animate-[fade-out-celestial_1.85s_ease-in-out_forwards]">
+        <div className="relative w-full h-full animate-[fade-out-celestial_3.1s_ease-in-out_forwards]">
           {/* Deep midnight twilight ambient backdrop */}
-          <div className="absolute inset-0 bg-gradient-to-b from-[#090714]/75 via-[#120e24]/40 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#090714]/85 via-[#120e24]/50 to-transparent" />
 
-          {/* Luminous Crescent Moon in Night Sky */}
-          <div className="absolute right-[16%] top-[14%] flex items-center justify-center animate-[moon-night_1.85s_ease-out_forwards]">
-            {/* Moon Atmospheric Violet Aura */}
-            <div className="absolute w-52 h-52 rounded-full bg-purple-600/25 blur-3xl" />
-            <div className="absolute w-36 h-36 rounded-full bg-brand-400/20 blur-xl" />
+          {/* Luminous High-Contrast SVG Crescent Moon */}
+          <div className="absolute right-[14%] top-[12%] flex items-center justify-center animate-[moon-night_3.1s_ease-out_forwards]">
+            {/* Moon Atmospheric Moonlight Aura */}
+            <div className="absolute w-64 h-64 rounded-full bg-purple-500/35 blur-3xl" />
+            <div className="absolute w-44 h-44 rounded-full bg-violet-400/30 blur-2xl" />
 
-            {/* Crescent Moon Body */}
-            <div className="relative w-26 h-26 rounded-full overflow-hidden shadow-[0_0_50px_rgba(167,139,250,0.85),0_0_100px_rgba(112,83,222,0.45)]">
-              {/* Moon Luminous Surface */}
-              <div className="w-full h-full rounded-full bg-gradient-to-tr from-[#f5f3ff] via-[#ddd6fe] to-[#c4b5fd]" />
-              {/* Dark Cutout creating sharp crescent curve */}
-              <div className="absolute -top-2 -left-3 w-24 h-24 rounded-full bg-[#090714]" />
-              {/* Moon Lunar Crater Details */}
-              <div className="absolute top-5 right-6 w-2.5 h-2.5 rounded-full bg-purple-400/25 blur-[0.5px]" />
-              <div className="absolute top-10 right-4 w-3.5 h-3.5 rounded-full bg-purple-400/20 blur-[0.5px]" />
-              <div className="absolute bottom-6 right-7 w-2 h-2 rounded-full bg-purple-400/20 blur-[0.5px]" />
-            </div>
+            {/* Vector Crescent Moon — 100% visible, sharp & glowing */}
+            <svg
+              viewBox="0 0 100 100"
+              className="relative w-28 h-28 sm:w-36 sm:h-36 drop-shadow-[0_0_35px_rgba(216,180,254,0.95)]"
+            >
+              <defs>
+                <linearGradient id="moonGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#ffffff" />
+                  <stop offset="35%" stopColor="#f5f3ff" />
+                  <stop offset="70%" stopColor="#ddd6fe" />
+                  <stop offset="100%" stopColor="#a78bfa" />
+                </linearGradient>
+              </defs>
+              {/* Crescent Moon Path */}
+              <path
+                d="M 50 10 A 40 40 0 1 0 90 65 A 34 34 0 1 1 50 10 Z"
+                fill="url(#moonGradient)"
+              />
+              {/* Lunar Crater Details */}
+              <circle cx="42" cy="46" r="3.5" fill="#7c3aed" opacity="0.35" />
+              <circle cx="36" cy="62" r="4.5" fill="#7c3aed" opacity="0.3" />
+              <circle cx="54" cy="70" r="3" fill="#7c3aed" opacity="0.25" />
+              <circle cx="48" cy="30" r="2.5" fill="#7c3aed" opacity="0.25" />
+            </svg>
           </div>
 
-          {/* Twinkling Starry Constellations */}
+          {/* Sparkling Diamond Twinkling Stars */}
           {STAR_COORDINATES.map((star, i) => (
-            <div
+            <TwinklingStar
               key={i}
-              className="absolute text-purple-200/90 animate-[star-twinkle_1.2s_ease-in-out_infinite]"
-              style={{
-                top: star.top,
-                left: star.left,
-                fontSize: `${star.size}px`,
-                animationDelay: `${star.delay}s`,
-                filter: 'drop-shadow(0 0 6px rgba(196,181,253,0.8))',
-              }}
-            >
-              ✦
-            </div>
+              top={star.top}
+              left={star.left}
+              size={star.size}
+              delay={star.delay}
+              duration={1.5}
+            />
           ))}
 
-          {/* Shooting Stars Streaking Diagonally Across Night Sky */}
+          {/* Shooting Stars Streaking Across Night Sky */}
           {/* Shooting Star 1 */}
-          <div
-            className="absolute top-[16%] right-[24%] w-48 h-[2px] bg-gradient-to-l from-white via-purple-300 to-transparent rotate-[-35deg] animate-[shooting-star_1s_ease-out_forwards]"
-            style={{ animationDelay: '0.2s', filter: 'drop-shadow(0 0 8px rgba(255,255,255,0.9))' }}
-          />
+          <ShootingStar top="16%" right="24%" length={220} delay={0.35} />
 
           {/* Shooting Star 2 */}
-          <div
-            className="absolute top-[34%] right-[38%] w-36 h-[2px] bg-gradient-to-l from-white via-indigo-300 to-transparent rotate-[-35deg] animate-[shooting-star_1s_ease-out_forwards]"
-            style={{ animationDelay: '0.6s', filter: 'drop-shadow(0 0 8px rgba(255,255,255,0.9))' }}
-          />
+          <ShootingStar top="36%" right="40%" length={180} delay={1.1} />
 
           {/* Shooting Star 3 */}
-          <div
-            className="absolute top-[52%] right-[18%] w-44 h-[2px] bg-gradient-to-l from-white via-purple-200 to-transparent rotate-[-35deg] animate-[shooting-star_1s_ease-out_forwards]"
-            style={{ animationDelay: '0.95s', filter: 'drop-shadow(0 0 8px rgba(255,255,255,0.9))' }}
-          />
+          <ShootingStar top="54%" right="18%" length={210} delay={1.8} />
         </div>
       )}
     </div>
