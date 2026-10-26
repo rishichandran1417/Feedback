@@ -43,14 +43,14 @@ const MorningBird: React.FC<{
   );
 };
 
-// 4-point Diamond Twinkling Star
-const TwinklingStar: React.FC<{
+// 1. Optical Diffraction Spike Star (Telescopic 4-Point Cross with Ray Glow)
+const DiffractionStar: React.FC<{
   top: string;
   left: string;
   size: number;
   delay: number;
   duration?: number;
-}> = ({ top, left, size, delay, duration = 1.4 }) => {
+}> = ({ top, left, size, delay, duration = 1.6 }) => {
   return (
     <div
       className="absolute flex items-center justify-center pointer-events-none select-none"
@@ -65,17 +65,79 @@ const TwinklingStar: React.FC<{
     >
       <svg
         viewBox="0 0 24 24"
-        className="w-full h-full text-white overflow-visible drop-shadow-[0_0_10px_rgba(255,255,255,1)]"
+        className="w-full h-full overflow-visible drop-shadow-[0_0_8px_rgba(255,255,255,0.95)]"
       >
-        {/* Diamond Star Shape */}
-        <path
-          d="M 12 0 Q 12 12, 24 12 Q 12 12, 12 24 Q 12 12, 0 12 Q 12 12, 12 0 Z"
-          fill="#ffffff"
-        />
-        {/* Glowing Lavender Core */}
-        <circle cx="12" cy="12" r="3.5" fill="#f3e8ff" />
+        {/* Soft violet outer halo */}
+        <circle cx="12" cy="12" r="5" fill="#c4b5fd" opacity="0.45" />
+        {/* Vertical primary ray */}
+        <line x1="12" y1="1" x2="12" y2="23" stroke="#ffffff" strokeWidth="1.3" strokeLinecap="round" />
+        {/* Horizontal primary ray */}
+        <line x1="1" y1="12" x2="23" y2="12" stroke="#ffffff" strokeWidth="1.3" strokeLinecap="round" />
+        {/* Diagonal subtle rays */}
+        <line x1="5.5" y1="5.5" x2="18.5" y2="18.5" stroke="#e0e7ff" strokeWidth="0.8" opacity="0.75" strokeLinecap="round" />
+        <line x1="5.5" y1="18.5" x2="18.5" y2="5.5" stroke="#e0e7ff" strokeWidth="0.8" opacity="0.75" strokeLinecap="round" />
+        {/* Intense white center point */}
+        <circle cx="12" cy="12" r="2.3" fill="#ffffff" />
       </svg>
     </div>
+  );
+};
+
+// 2. Classic 5-Point Twinkling Celestial Star
+const ClassicFivePointStar: React.FC<{
+  top: string;
+  left: string;
+  size: number;
+  delay: number;
+  duration?: number;
+}> = ({ top, left, size, delay, duration = 1.8 }) => {
+  return (
+    <div
+      className="absolute flex items-center justify-center pointer-events-none select-none"
+      style={{
+        top,
+        left,
+        width: `${size}px`,
+        height: `${size}px`,
+        animation: `star-twinkle ${duration}s ease-in-out infinite`,
+        animationDelay: `${delay}s`,
+      }}
+    >
+      <svg
+        viewBox="0 0 24 24"
+        className="w-full h-full text-white overflow-visible drop-shadow-[0_0_10px_rgba(255,255,255,0.95)]"
+      >
+        <polygon
+          points="12,1.5 15.2,8.5 22.8,9.2 17,14.2 18.7,21.8 12,17.8 5.3,21.8 7,14.2 1.2,9.2 8.8,8.5"
+          fill="#ffffff"
+        />
+        <circle cx="12" cy="12" r="2.2" fill="#fef08a" />
+      </svg>
+    </div>
+  );
+};
+
+// 3. Deep Cosmic Starfield Pinpoint Star
+const PinpointStar: React.FC<{
+  top: string;
+  left: string;
+  size: number;
+  delay: number;
+  duration?: number;
+}> = ({ top, left, size, delay, duration = 1.4 }) => {
+  return (
+    <div
+      className="absolute rounded-full pointer-events-none select-none bg-white"
+      style={{
+        top,
+        left,
+        width: `${size}px`,
+        height: `${size}px`,
+        boxShadow: `0 0 ${size * 2}px #ffffff, 0 0 ${size * 4}px rgba(196, 181, 253, 0.9)`,
+        animation: `star-twinkle ${duration}s ease-in-out infinite`,
+        animationDelay: `${delay}s`,
+      }}
+    />
   );
 };
 
@@ -86,7 +148,7 @@ const ShootingStar: React.FC<{
   length?: number;
   delay: number;
   angle?: number;
-}> = ({ top, right, length = 200, delay, angle = -32 }) => {
+}> = ({ top, right, length = 220, delay, angle = -32 }) => {
   return (
     <div
       className="absolute pointer-events-none select-none overflow-visible"
@@ -99,7 +161,7 @@ const ShootingStar: React.FC<{
       }}
     >
       <div
-        className="relative h-[3px] rounded-full bg-gradient-to-l from-white via-purple-300 to-transparent shadow-[0_0_12px_rgba(255,255,255,1)]"
+        className="relative h-[3px] rounded-full bg-gradient-to-l from-white via-purple-300 to-transparent shadow-[0_0_14px_rgba(255,255,255,1)]"
         style={{ width: `${length}px` }}
       >
         {/* Glowing Meteor Tip */}
@@ -109,26 +171,70 @@ const ShootingStar: React.FC<{
   );
 };
 
-// Preset star coordinates for natural constellation distribution
-const STAR_COORDINATES = [
-  { top: '10%', left: '12%', size: 18, delay: 0.1 },
-  { top: '18%', left: '26%', size: 14, delay: 0.35 },
-  { top: '14%', left: '44%', size: 20, delay: 0.2 },
-  { top: '32%', left: '15%', size: 12, delay: 0.5 },
-  { top: '26%', left: '56%', size: 16, delay: 0.15 },
-  { top: '12%', left: '68%', size: 14, delay: 0.4 },
-  { top: '38%', left: '72%', size: 18, delay: 0.25 },
-  { top: '22%', left: '86%', size: 22, delay: 0.1 },
-  { top: '45%', left: '88%', size: 14, delay: 0.6 },
-  { top: '52%', left: '22%', size: 16, delay: 0.3 },
-  { top: '62%', left: '38%', size: 14, delay: 0.45 },
-  { top: '58%', left: '60%', size: 20, delay: 0.2 },
-  { top: '70%', left: '76%', size: 16, delay: 0.55 },
-  { top: '78%', left: '14%', size: 18, delay: 0.15 },
-  { top: '80%', left: '50%', size: 12, delay: 0.7 },
-  { top: '75%', left: '85%', size: 16, delay: 0.35 },
-  { top: '86%', left: '68%', size: 14, delay: 0.5 },
-  { top: '28%', left: '34%', size: 12, delay: 0.65 },
+// Optical Diffraction Cross Stars (Telescopic Stars)
+const DIFFRACTION_STARS = [
+  { top: '9%', left: '14%', size: 22, delay: 0.1 },
+  { top: '16%', left: '32%', size: 20, delay: 0.35 },
+  { top: '12%', left: '52%', size: 24, delay: 0.2 },
+  { top: '24%', left: '68%', size: 18, delay: 0.45 },
+  { top: '35%', left: '84%', size: 22, delay: 0.15 },
+  { top: '28%', left: '18%', size: 18, delay: 0.6 },
+  { top: '48%', left: '12%', size: 20, delay: 0.25 },
+  { top: '42%', left: '62%', size: 22, delay: 0.5 },
+  { top: '58%', left: '78%', size: 20, delay: 0.3 },
+  { top: '65%', left: '25%', size: 18, delay: 0.4 },
+  { top: '72%', left: '45%', size: 22, delay: 0.15 },
+  { top: '80%', left: '60%', size: 20, delay: 0.55 },
+  { top: '75%', left: '88%', size: 24, delay: 0.2 },
+  { top: '86%', left: '30%', size: 18, delay: 0.65 },
+  { top: '84%', left: '10%', size: 22, delay: 0.35 },
+];
+
+// Classic 5-Point Twinkling Stars
+const CLASSIC_STARS = [
+  { top: '15%', left: '22%', size: 14, delay: 0.2 },
+  { top: '22%', left: '42%', size: 16, delay: 0.5 },
+  { top: '30%', left: '76%', size: 15, delay: 0.3 },
+  { top: '44%', left: '28%', size: 14, delay: 0.7 },
+  { top: '54%', left: '48%', size: 16, delay: 0.25 },
+  { top: '68%', left: '82%', size: 15, delay: 0.4 },
+  { top: '76%', left: '20%', size: 14, delay: 0.6 },
+  { top: '82%', left: '72%', size: 16, delay: 0.15 },
+];
+
+// Galaxy Pinpoint Stars (Deep space sparkle field)
+const PINPOINT_STARS = [
+  { top: '6%', left: '8%', size: 3, delay: 0.1 },
+  { top: '8%', left: '28%', size: 2.5, delay: 0.4 },
+  { top: '11%', left: '45%', size: 3.5, delay: 0.2 },
+  { top: '15%', left: '62%', size: 2, delay: 0.6 },
+  { top: '7%', left: '78%', size: 3, delay: 0.3 },
+  { top: '18%', left: '88%', size: 2.5, delay: 0.5 },
+  { top: '25%', left: '6%', size: 3, delay: 0.25 },
+  { top: '27%', left: '25%', size: 2, delay: 0.7 },
+  { top: '32%', left: '50%', size: 3.5, delay: 0.15 },
+  { top: '36%', left: '66%', size: 2.5, delay: 0.45 },
+  { top: '29%', left: '92%', size: 3, delay: 0.35 },
+  { top: '40%', left: '16%', size: 2, delay: 0.55 },
+  { top: '43%', left: '38%', size: 3, delay: 0.2 },
+  { top: '47%', left: '56%', size: 2.5, delay: 0.65 },
+  { top: '45%', left: '74%', size: 3.5, delay: 0.1 },
+  { top: '52%', left: '8%', size: 2, delay: 0.4 },
+  { top: '56%', left: '32%', size: 3, delay: 0.3 },
+  { top: '59%', left: '70%', size: 2.5, delay: 0.5 },
+  { top: '53%', left: '90%', size: 3, delay: 0.25 },
+  { top: '63%', left: '15%', size: 2, delay: 0.7 },
+  { top: '66%', left: '54%', size: 3.5, delay: 0.15 },
+  { top: '69%', left: '35%', size: 2.5, delay: 0.45 },
+  { top: '64%', left: '95%', size: 3, delay: 0.35 },
+  { top: '74%', left: '8%', size: 2, delay: 0.6 },
+  { top: '77%', left: '38%', size: 3, delay: 0.2 },
+  { top: '79%', left: '58%', size: 2.5, delay: 0.5 },
+  { top: '81%', left: '84%', size: 3.5, delay: 0.3 },
+  { top: '88%', left: '18%', size: 2, delay: 0.4 },
+  { top: '91%', left: '48%', size: 3, delay: 0.15 },
+  { top: '89%', left: '76%', size: 2.5, delay: 0.65 },
+  { top: '93%', left: '92%', size: 3, delay: 0.25 },
 ];
 
 export const CelestialThemeOverlay: React.FC<CelestialThemeOverlayProps> = ({ animation }) => {
@@ -229,14 +335,16 @@ export const CelestialThemeOverlay: React.FC<CelestialThemeOverlayProps> = ({ an
         <div className="relative w-full h-full animate-[fade-out-celestial_3.1s_ease-in-out_forwards]">
           {/* Deep midnight twilight ambient backdrop */}
           <div className="absolute inset-0 bg-gradient-to-b from-[#090714]/85 via-[#120e24]/50 to-transparent" />
+          <div className="absolute top-10 right-20 w-96 h-96 rounded-full bg-purple-900/15 blur-3xl pointer-events-none" />
+          <div className="absolute bottom-20 left-10 w-80 h-80 rounded-full bg-indigo-950/20 blur-3xl pointer-events-none" />
 
           {/* Luminous High-Contrast SVG Crescent Moon */}
-          <div className="absolute right-[14%] top-[12%] flex items-center justify-center animate-[moon-night_3.1s_ease-out_forwards]">
+          <div className="absolute right-[12%] sm:right-[15%] top-[10%] sm:top-[12%] flex items-center justify-center animate-[moon-night_3.1s_ease-out_forwards]">
             {/* Moon Atmospheric Moonlight Aura */}
             <div className="absolute w-64 h-64 rounded-full bg-purple-500/35 blur-3xl" />
             <div className="absolute w-44 h-44 rounded-full bg-violet-400/30 blur-2xl" />
 
-            {/* Vector Crescent Moon — 100% visible, sharp & glowing */}
+            {/* Vector Crescent Moon */}
             <svg
               viewBox="0 0 100 100"
               className="relative w-28 h-28 sm:w-36 sm:h-36 drop-shadow-[0_0_35px_rgba(216,180,254,0.95)]"
@@ -249,12 +357,10 @@ export const CelestialThemeOverlay: React.FC<CelestialThemeOverlayProps> = ({ an
                   <stop offset="100%" stopColor="#a78bfa" />
                 </linearGradient>
               </defs>
-              {/* Crescent Moon Path */}
               <path
                 d="M 50 10 A 40 40 0 1 0 90 65 A 34 34 0 1 1 50 10 Z"
                 fill="url(#moonGradient)"
               />
-              {/* Lunar Crater Details */}
               <circle cx="42" cy="46" r="3.5" fill="#7c3aed" opacity="0.35" />
               <circle cx="36" cy="62" r="4.5" fill="#7c3aed" opacity="0.3" />
               <circle cx="54" cy="70" r="3" fill="#7c3aed" opacity="0.25" />
@@ -262,27 +368,46 @@ export const CelestialThemeOverlay: React.FC<CelestialThemeOverlayProps> = ({ an
             </svg>
           </div>
 
-          {/* Sparkling Diamond Twinkling Stars */}
-          {STAR_COORDINATES.map((star, i) => (
-            <TwinklingStar
-              key={i}
+          {/* 1. Telescopic Optical Diffraction Cross Stars */}
+          {DIFFRACTION_STARS.map((star, i) => (
+            <DiffractionStar
+              key={`diff-${i}`}
               top={star.top}
               left={star.left}
               size={star.size}
               delay={star.delay}
-              duration={1.5}
+              duration={1.6}
             />
           ))}
 
-          {/* Shooting Stars Streaking Across Night Sky */}
-          {/* Shooting Star 1 */}
-          <ShootingStar top="16%" right="24%" length={220} delay={0.35} />
+          {/* 2. Classic 5-Point Twinkling Celestial Stars */}
+          {CLASSIC_STARS.map((star, i) => (
+            <ClassicFivePointStar
+              key={`classic-${i}`}
+              top={star.top}
+              left={star.left}
+              size={star.size}
+              delay={star.delay}
+              duration={1.8}
+            />
+          ))}
 
-          {/* Shooting Star 2 */}
-          <ShootingStar top="36%" right="40%" length={180} delay={1.1} />
+          {/* 3. Deep Cosmic Starfield Pinpoint Stars */}
+          {PINPOINT_STARS.map((star, i) => (
+            <PinpointStar
+              key={`pin-${i}`}
+              top={star.top}
+              left={star.left}
+              size={star.size}
+              delay={star.delay}
+              duration={1.4}
+            />
+          ))}
 
-          {/* Shooting Star 3 */}
-          <ShootingStar top="54%" right="18%" length={210} delay={1.8} />
+          {/* 4. Shooting Stars (Meteors) */}
+          <ShootingStar top="14%" right="26%" length={240} delay={0.35} />
+          <ShootingStar top="34%" right="45%" length={190} delay={1.2} />
+          <ShootingStar top="55%" right="20%" length={220} delay={2.0} />
         </div>
       )}
     </div>
