@@ -1,10 +1,12 @@
 import React, { createContext, useContext, useEffect, useState, useCallback, useRef } from 'react';
+import { CelestialThemeOverlay } from '../components/common/CelestialThemeOverlay';
 
 export type Theme = 'dark' | 'light';
 
 interface ThemeContextType {
   theme: Theme;
   isDark: boolean;
+  celestialAnimation: 'to-light' | 'to-dark' | null;
   toggleTheme: (event?: React.MouseEvent | React.KeyboardEvent | HTMLElement) => void;
   setTheme: (theme: Theme) => void;
 }
@@ -28,6 +30,9 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     return 'dark';
   });
 
+  const [celestialAnimation, setCelestialAnimation] = useState<'to-light' | 'to-dark' | null>(null);
+  const celestialTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   const isDark = theme === 'dark';
   const isTransitioningRef = useRef(false);
 
@@ -49,6 +54,13 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       // Ignore storage errors
     }
   }, [theme]);
+
+  // Clean up celestial timer on unmount
+  useEffect(() => {
+    return () => {
+      if (celestialTimerRef.current) clearTimeout(celestialTimerRef.current);
+    };
+  }, []);
 
   // Listen to system preference changes if user hasn't explicitly set preference in localStorage
   useEffect(() => {
@@ -75,10 +87,20 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
     const nextTheme: Theme = theme === 'dark' ? 'light' : 'dark';
 
-    // Check if View Transition API is supported and reduced motion is NOT requested
-    const doc = document as any;
+    // Trigger celestial flight animation (morning birds & sun for light, moon & stars for dark)
     const prefersReducedMotion = typeof window !== 'undefined' &&
       window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (!prefersReducedMotion) {
+      if (celestialTimerRef.current) clearTimeout(celestialTimerRef.current);
+      setCelestialAnimation(nextTheme === 'light' ? 'to-light' : 'to-dark');
+      celestialTimerRef.current = setTimeout(() => {
+        setCelestialAnimation(null);
+      }, 1850);
+    }
+
+    // Check if View Transition API is supported and reduced motion is NOT requested
+    const doc = document as any;
 
     if (doc.startViewTransition && !prefersReducedMotion) {
       isTransitioningRef.current = true;
@@ -167,8 +189,9 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   }, []);
 
   return (
-    <ThemeContext.Provider value={{ theme, isDark, toggleTheme, setTheme }}>
+    <ThemeContext.Provider value={{ theme, isDark, celestialAnimation, toggleTheme, setTheme }}>
       {children}
+      <CelestialThemeOverlay animation={celestialAnimation} />
     </ThemeContext.Provider>
   );
 };

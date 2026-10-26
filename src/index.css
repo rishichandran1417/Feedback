@@ -156,3 +156,176 @@ html.dark ::-webkit-scrollbar-thumb {
 ::-webkit-scrollbar-thumb:hover {
   background: #7053de;
 }
+
+/* ========================================================================== */
+/* Celestial Theme Transition Keyframes: Morning Sun & Birds, Night Moon & Stars */
+/* ========================================================================== */
+
+@keyframes fade-out-celestial {
+  0% {
+    opacity: 0;
+  }
+  12% {
+    opacity: 1;
+  }
+  75% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes bird-wing-left {
+  0%, 100% {
+    transform: rotate(26deg);
+  }
+  50% {
+    transform: rotate(-32deg);
+  }
+}
+
+@keyframes bird-wing-right {
+  0%, 100% {
+    transform: rotate(-26deg);
+  }
+  50% {
+    transform: rotate(32deg);
+  }
+}
+
+@keyframes bird-flight-lead {
+  0% {
+    transform: translate(-10vw, 60vh);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.95;
+  }
+  85% {
+    opacity: 0.95;
+  }
+  100% {
+    transform: translate(110vw, 15vh);
+    opacity: 0;
+  }
+}
+
+@keyframes bird-flight-wingman1 {
+  0% {
+    transform: translate(-15vw, 68vh);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.9;
+  }
+  85% {
+    opacity: 0.9;
+  }
+  100% {
+    transform: translate(110vw, 22vh);
+    opacity: 0;
+  }
+}
+
+@keyframes bird-flight-wingman2 {
+  0% {
+    transform: translate(-18vw, 54vh);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.9;
+  }
+  85% {
+    opacity: 0.9;
+  }
+  100% {
+    transform: translate(110vw, 10vh);
+    opacity: 0;
+  }
+}
+
+@keyframes bird-flight-follower {
+  0% {
+    transform: translate(-24vw, 75vh);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.85;
+  }
+  85% {
+    opacity: 0.85;
+  }
+  100% {
+    transform: translate(110vw, 30vh);
+    opacity: 0;
+  }
+}
+
+@keyframes sun-sunrise {
+  0% {
+    transform: translate(-50%, 90px) scale(0.6);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+    transform: translate(-50%, 25px) scale(0.9);
+  }
+  75% {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -25px) scale(1.05);
+  }
+}
+
+@keyframes moon-night {
+  0% {
+    transform: translate(40px, -40px) scale(0.65);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+  }
+  75% {
+    opacity: 1;
+    transform: translate(-4px, 4px) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-12px, 12px) scale(0.95);
+  }
+}
+
+@keyframes shooting-star {
+  0% {
+    transform: translate(0, 0) scaleX(0);
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+    transform: translate(-40px, 28px) scaleX(1);
+  }
+  70% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translate(-300px, 210px) scaleX(0);
+    opacity: 0;
+  }
+}
+
+@keyframes star-twinkle {
+  0%, 100% {
+    opacity: 0.25;
+    transform: scale(0.75);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.3);
+  }
+}
+
